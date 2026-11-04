@@ -191,6 +191,80 @@
             </select>
           </div>
 
+          <!-- Geometry inputs for the selected shape (unit: m) -->
+          <div id="geom_potato" class="geom-box bg-slate-50 p-2.5 rounded-lg border border-slate-200">
+            <label for="g_potato_R" class="text-slate-600 text-[11px]">대표 크기 R (m) <span class="text-slate-400">— 도심 O에서 가장 먼 경계까지의 거리</span></label>
+            <input type="number" id="g_potato_R" step="0.01" min="0.01" max="5" class="geom-in w-full px-2 py-1 border border-slate-300 rounded bg-white focus:ring-1 focus:ring-blue-500 focus:outline-none">
+          </div>
+
+          <div id="geom_lbar" class="geom-box hidden bg-slate-50 p-2.5 rounded-lg border border-slate-200 space-y-2">
+            <div class="grid grid-cols-3 gap-2">
+              <div>
+                <label for="g_lbar_L1" class="text-slate-600 text-[11px]">가로 막대 L₁ (m)</label>
+                <input type="number" id="g_lbar_L1" step="0.01" min="0.01" max="5" class="geom-in w-full px-2 py-1 border border-slate-300 rounded bg-white focus:ring-1 focus:ring-blue-500 focus:outline-none">
+              </div>
+              <div>
+                <label for="g_lbar_L2" class="text-slate-600 text-[11px]">세로 막대 L₂ (m)</label>
+                <input type="number" id="g_lbar_L2" step="0.01" min="0.01" max="5" class="geom-in w-full px-2 py-1 border border-slate-300 rounded bg-white focus:ring-1 focus:ring-blue-500 focus:outline-none">
+              </div>
+              <div>
+                <label for="g_lbar_w" class="text-slate-600 text-[11px]">막대 두께 w (m)</label>
+                <input type="number" id="g_lbar_w" step="0.005" min="0.001" max="5" class="geom-in w-full px-2 py-1 border border-slate-300 rounded bg-white focus:ring-1 focus:ring-blue-500 focus:outline-none">
+              </div>
+            </div>
+            <svg viewBox="0 0 230 112" class="w-full max-w-[260px] mx-auto block" role="img" aria-label="L-형 바 치수: 가로 막대 L1, 세로 막대 L2, 두께 w">
+              <defs>
+                <marker id="geoAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#475569"/></marker>
+              </defs>
+              <g font-family="Inter, 'Noto Sans KR', sans-serif" font-size="11" fill="#334155">
+                <polygon points="30,86 160,86 160,14 146,14 146,72 30,72" fill="#c7d2fe" stroke="#6366f1" stroke-width="1.5"/>
+                <line x1="30" y1="100" x2="160" y2="100" stroke="#475569" stroke-width="1" marker-start="url(#geoAr)" marker-end="url(#geoAr)"/>
+                <text x="95" y="111" text-anchor="middle" font-style="italic" font-weight="700">L₁</text>
+                <line x1="176" y1="14" x2="176" y2="86" stroke="#475569" stroke-width="1" marker-start="url(#geoAr)" marker-end="url(#geoAr)"/>
+                <text x="183" y="54" font-style="italic" font-weight="700">L₂</text>
+                <line x1="146" y1="6" x2="160" y2="6" stroke="#475569" stroke-width="1"/>
+                <text x="166" y="10" font-style="italic" font-weight="700">w</text>
+                <circle cx="153" cy="14" r="3" fill="#f43f5e"/><text x="134" y="12" fill="#e11d48" font-weight="700">A</text>
+                <circle cx="30" cy="79" r="3" fill="#a855f7"/><text x="16" y="83" fill="#9333ea" font-weight="700">B</text>
+                <circle cx="118" cy="66" r="3" fill="#0ea5e9"/><text x="106" y="62" fill="#0284c7" font-weight="700">O</text>
+              </g>
+            </svg>
+            <p class="text-[10px] text-slate-500 leading-relaxed">L₁, L₂는 바깥 모서리 기준 길이입니다. O는 L-바의 실제 도심(면적 중심), A·B는 각 막대 끝의 중앙입니다.</p>
+          </div>
+
+          <div id="geom_wheel" class="geom-box hidden bg-slate-50 p-2.5 rounded-lg border border-slate-200 space-y-1">
+            <label for="g_wheel_r" class="text-slate-600 text-[11px]">바퀴 반지름 r (m)</label>
+            <input type="number" id="g_wheel_r" step="0.01" min="0.01" max="5" class="geom-in w-full px-2 py-1 border border-slate-300 rounded bg-white focus:ring-1 focus:ring-blue-500 focus:outline-none">
+            <p class="text-[10px] text-slate-500 leading-relaxed">구름 바퀴 프리셋은 이 반지름으로 $v_O = -\omega r$, $a_O = -\alpha r$ 를 맞춥니다.</p>
+          </div>
+
+          <div id="geom_rectangle" class="geom-box hidden bg-slate-50 p-2.5 rounded-lg border border-slate-200">
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label for="g_rect_b" class="text-slate-600 text-[11px]">가로 폭 b (m)</label>
+                <input type="number" id="g_rect_b" step="0.01" min="0.01" max="5" class="geom-in w-full px-2 py-1 border border-slate-300 rounded bg-white focus:ring-1 focus:ring-blue-500 focus:outline-none">
+              </div>
+              <div>
+                <label for="g_rect_h" class="text-slate-600 text-[11px]">세로 높이 h (m)</label>
+                <input type="number" id="g_rect_h" step="0.01" min="0.01" max="5" class="geom-in w-full px-2 py-1 border border-slate-300 rounded bg-white focus:ring-1 focus:ring-blue-500 focus:outline-none">
+              </div>
+            </div>
+          </div>
+
+          <div id="geom_custom" class="geom-box hidden bg-slate-50 p-2.5 rounded-lg border border-slate-200 space-y-1">
+            <label for="g_custom" class="text-slate-600 text-[11px]">꼭짓점 좌표 (m) — 한 줄에 하나씩 <span class="font-mono">x, y</span> (3개 이상)</label>
+            <textarea id="g_custom" rows="5" spellcheck="false" class="geom-in w-full px-2 py-1 border border-slate-300 rounded bg-white font-mono text-[11px] focus:ring-1 focus:ring-blue-500 focus:outline-none"></textarea>
+            <p class="text-[10px] text-slate-500">원점 O = 물체 좌표의 원점 (0, 0), A = 첫 번째 꼭짓점.</p>
+          </div>
+
+          <p id="geomError" class="hidden text-[11px] text-rose-600 font-medium"><i class="fa-solid fa-triangle-exclamation mr-1"></i><span></span></p>
+
+          <!-- Geometry summary -->
+          <div class="bg-blue-50 border border-blue-200 rounded-lg p-2.5 flex justify-between items-center gap-2 text-xs text-blue-900 font-medium">
+            <span>면적 <b class="font-bold">A</b>: <span id="geomArea">-</span></span>
+            <span>외곽 크기: <span id="geomExtent">-</span></span>
+          </div>
+
           <div>
             <label class="font-medium text-slate-700 block mb-1">운동 기준점 R (Kinematic Reference)</label>
             <select id="select_ref_point" class="w-full px-2 py-1.5 border border-blue-300 rounded text-xs bg-blue-50 text-blue-900 focus:ring-1 focus:ring-blue-500 font-semibold">
@@ -219,52 +293,71 @@
 
         <div class="space-y-3 text-xs">
           <div>
-            <div class="flex justify-between mb-1">
-              <label class="font-medium text-slate-700">기준점 병진 속도 $v_{R,x0}$</label>
-              <span id="val_vx0" class="font-semibold text-cyan-700">1.0 m/s</span>
+            <div class="flex justify-between items-center gap-2 mb-1">
+              <label for="num_vx0" class="font-medium text-slate-700">기준점 병진 속도 $v_{R,x0}$</label>
+              <div class="flex items-center gap-1 shrink-0">
+                <input type="number" id="num_vx0" step="0.01" value="1.0" title="직접 입력 (Enter로 확정)" class="w-20 px-1.5 py-0.5 border border-slate-300 rounded text-right text-xs font-semibold text-cyan-700 focus:ring-1 focus:ring-blue-500 focus:outline-none">
+                <span class="text-[11px] text-slate-500 w-11">m/s</span>
+              </div>
             </div>
-            <input type="range" id="slider_vx0" min="-5.0" max="5.0" step="0.1" value="1.0" class="w-full accent-cyan-600 bg-slate-200 h-1.5 rounded-lg cursor-pointer">
+            <input type="range" id="slider_vx0" min="-5" max="5" step="0.1" value="1.0" class="w-full accent-cyan-600 bg-slate-200 h-1.5 rounded-lg cursor-pointer">
           </div>
 
           <div>
-            <div class="flex justify-between mb-1">
-              <label class="font-medium text-slate-700">기준점 병진 속도 $v_{R,y0}$</label>
-              <span id="val_vy0" class="font-semibold text-cyan-700">0.5 m/s</span>
+            <div class="flex justify-between items-center gap-2 mb-1">
+              <label for="num_vy0" class="font-medium text-slate-700">기준점 병진 속도 $v_{R,y0}$</label>
+              <div class="flex items-center gap-1 shrink-0">
+                <input type="number" id="num_vy0" step="0.01" value="0.5" title="직접 입력 (Enter로 확정)" class="w-20 px-1.5 py-0.5 border border-slate-300 rounded text-right text-xs font-semibold text-cyan-700 focus:ring-1 focus:ring-blue-500 focus:outline-none">
+                <span class="text-[11px] text-slate-500 w-11">m/s</span>
+              </div>
             </div>
-            <input type="range" id="slider_vy0" min="-5.0" max="5.0" step="0.1" value="0.5" class="w-full accent-cyan-600 bg-slate-200 h-1.5 rounded-lg cursor-pointer">
+            <input type="range" id="slider_vy0" min="-5" max="5" step="0.1" value="0.5" class="w-full accent-cyan-600 bg-slate-200 h-1.5 rounded-lg cursor-pointer">
           </div>
 
           <div>
-            <div class="flex justify-between mb-1">
-              <label class="font-medium text-slate-700">기준점 병진 가속도 $a_{R,x}$</label>
-              <span id="val_ax" class="font-semibold text-orange-600">0.2 m/s²</span>
+            <div class="flex justify-between items-center gap-2 mb-1">
+              <label for="num_ax" class="font-medium text-slate-700">기준점 병진 가속도 $a_{R,x}$</label>
+              <div class="flex items-center gap-1 shrink-0">
+                <input type="number" id="num_ax" step="0.01" value="0.2" title="직접 입력 (Enter로 확정)" class="w-20 px-1.5 py-0.5 border border-slate-300 rounded text-right text-xs font-semibold text-orange-600 focus:ring-1 focus:ring-blue-500 focus:outline-none">
+                <span class="text-[11px] text-slate-500 w-11">m/s²</span>
+              </div>
             </div>
-            <input type="range" id="slider_ax" min="-3.0" max="3.0" step="0.1" value="0.2" class="w-full accent-orange-500 bg-slate-200 h-1.5 rounded-lg cursor-pointer">
+            <input type="range" id="slider_ax" min="-3" max="3" step="0.1" value="0.2" class="w-full accent-orange-500 bg-slate-200 h-1.5 rounded-lg cursor-pointer">
           </div>
 
           <div>
-            <div class="flex justify-between mb-1">
-              <label class="font-medium text-slate-700">기준점 병진 가속도 $a_{R,y}$</label>
-              <span id="val_ay" class="font-semibold text-orange-600">0.0 m/s²</span>
+            <div class="flex justify-between items-center gap-2 mb-1">
+              <label for="num_ay" class="font-medium text-slate-700">기준점 병진 가속도 $a_{R,y}$</label>
+              <div class="flex items-center gap-1 shrink-0">
+                <input type="number" id="num_ay" step="0.01" value="0.0" title="직접 입력 (Enter로 확정)" class="w-20 px-1.5 py-0.5 border border-slate-300 rounded text-right text-xs font-semibold text-orange-600 focus:ring-1 focus:ring-blue-500 focus:outline-none">
+                <span class="text-[11px] text-slate-500 w-11">m/s²</span>
+              </div>
             </div>
-            <input type="range" id="slider_ay" min="-3.0" max="3.0" step="0.1" value="0.0" class="w-full accent-orange-500 bg-slate-200 h-1.5 rounded-lg cursor-pointer">
+            <input type="range" id="slider_ay" min="-3" max="3" step="0.1" value="0.0" class="w-full accent-orange-500 bg-slate-200 h-1.5 rounded-lg cursor-pointer">
           </div>
 
           <div>
-            <div class="flex justify-between mb-1">
-              <label class="font-medium text-slate-700">강체 초기 각속도 $\omega_0$ (반시계 +)</label>
-              <span id="val_omega0" class="font-semibold text-emerald-600">2.0 rad/s</span>
+            <div class="flex justify-between items-center gap-2 mb-1">
+              <label for="num_omega0" class="font-medium text-slate-700">강체 초기 각속도 $\omega_0$ (반시계 +)</label>
+              <div class="flex items-center gap-1 shrink-0">
+                <input type="number" id="num_omega0" step="0.01" value="2.0" title="직접 입력 (Enter로 확정)" class="w-20 px-1.5 py-0.5 border border-slate-300 rounded text-right text-xs font-semibold text-emerald-600 focus:ring-1 focus:ring-blue-500 focus:outline-none">
+                <span class="text-[11px] text-slate-500 w-11">rad/s</span>
+              </div>
             </div>
-            <input type="range" id="slider_omega0" min="-10.0" max="10.0" step="0.2" value="2.0" class="w-full accent-emerald-600 bg-slate-200 h-1.5 rounded-lg cursor-pointer">
+            <input type="range" id="slider_omega0" min="-10" max="10" step="0.2" value="2.0" class="w-full accent-emerald-600 bg-slate-200 h-1.5 rounded-lg cursor-pointer">
           </div>
 
           <div>
-            <div class="flex justify-between mb-1">
-              <label class="font-medium text-slate-700">강체 각가속도 $\alpha$ (반시계 +)</label>
-              <span id="val_alpha" class="font-semibold text-purple-600">0.5 rad/s²</span>
+            <div class="flex justify-between items-center gap-2 mb-1">
+              <label for="num_alpha" class="font-medium text-slate-700">강체 각가속도 $\alpha$ (반시계 +)</label>
+              <div class="flex items-center gap-1 shrink-0">
+                <input type="number" id="num_alpha" step="0.01" value="0.5" title="직접 입력 (Enter로 확정)" class="w-20 px-1.5 py-0.5 border border-slate-300 rounded text-right text-xs font-semibold text-purple-600 focus:ring-1 focus:ring-blue-500 focus:outline-none">
+                <span class="text-[11px] text-slate-500 w-11">rad/s²</span>
+              </div>
             </div>
-            <input type="range" id="slider_alpha" min="-5.0" max="5.0" step="0.1" value="0.5" class="w-full accent-purple-600 bg-slate-200 h-1.5 rounded-lg cursor-pointer">
+            <input type="range" id="slider_alpha" min="-5" max="5" step="0.1" value="0.5" class="w-full accent-purple-600 bg-slate-200 h-1.5 rounded-lg cursor-pointer">
           </div>
+          <p class="text-[10px] text-slate-400 leading-relaxed"><i class="fa-solid fa-keyboard mr-1"></i>숫자 칸에 직접 입력하면 슬라이더 범위를 넘는 값도 쓸 수 있습니다 (속도·가속도 ±20, ω ±50, α ±20).</p>
         </div>
       </div>
 
@@ -377,6 +470,8 @@
             <span class="text-[11px] font-mono text-slate-500">0 s</span>
             <input type="range" id="slider_time" min="0" max="10" step="0.02" value="0" class="flex-1 slider-thumb accent-blue-600 bg-slate-200 h-1 rounded cursor-pointer">
             <span class="text-[11px] font-mono text-slate-500">10 s</span>
+            <input type="number" id="num_time" min="0" max="10" step="0.01" value="0" title="시간 직접 입력 (0 ~ 10 s)" class="w-16 px-1.5 py-0.5 border border-slate-300 rounded text-right text-xs font-mono focus:ring-1 focus:ring-blue-500 focus:outline-none">
+            <span class="text-[11px] text-slate-500">s</span>
           </div>
 
           <div class="flex items-center gap-2 bg-slate-50 px-2.5 py-1 rounded-lg border border-slate-200">
@@ -444,16 +539,25 @@
           <h2 class="font-bold text-slate-800 text-sm flex items-center gap-2">
             <i class="fa-solid fa-table text-blue-600"></i> 탐색점 운동 벡터 및 성분 분석 (Real-time Inspector)
           </h2>
-          <button onclick="togglePanel('panel-inspector')" class="panel-toggle" title="최소화 / 펼치기"><i class="fa-solid fa-minus"></i><i class="fa-solid fa-plus"></i></button>
+          <div class="flex items-center gap-2">
+            <button id="btn_add_point" class="px-2 py-1 text-xs bg-blue-600 hover:bg-blue-700 text-white rounded transition font-medium flex items-center gap-1">
+              <i class="fa-solid fa-plus"></i> 점 추가 (좌표 입력)
+            </button>
+            <button onclick="togglePanel('panel-inspector')" class="panel-toggle" title="최소화 / 펼치기"><i class="fa-solid fa-minus"></i><i class="fa-solid fa-plus"></i></button>
+          </div>
         </div>
         <div class="panel-body">
-          <p class="text-[11px] text-slate-500 mb-2">모든 값은 고정 좌표계(x 오른쪽 +, y 위쪽 +) 성분입니다. 괄호 안은 (x, y) 성분, 단위는 m, m/s, m/s².</p>
-          <div class="resize-y overflow-x-auto border-b border-slate-200 pb-2" style="height: 14rem; min-height: 6rem;">
+          <p class="text-[11px] text-slate-500 mb-2">
+            <b class="text-blue-700">초기 위치 (t = 0)</b> 칸에 좌표를 입력하면 점의 위치가 바로 바뀝니다. t = 0에서 θ = 0이므로 이 좌표는 강체에 고정된 점의 위치(물체 좌표)와 같습니다.
+            나머지 값은 현재 시각의 고정 좌표계(x 오른쪽 +, y 위쪽 +) 성분이며 괄호 안은 (x, y) 성분, 단위는 m, m/s, m/s²입니다.
+          </p>
+          <div class="resize-y overflow-x-auto border-b border-slate-200 pb-2" style="height: 19rem; min-height: 6rem;">
             <table class="w-full text-left border-collapse text-xs">
-              <thead class="sticky top-0">
+              <thead class="sticky top-0 z-10">
                 <tr class="bg-slate-50 text-slate-600 border-b border-slate-200">
                   <th class="p-2 font-semibold">탐색점</th>
-                  <th class="p-2 font-semibold">위치 $(x, y)$</th>
+                  <th class="p-2 font-semibold text-blue-700">초기 위치 $x_0,\ y_0$ (m)</th>
+                  <th class="p-2 font-semibold">현재 위치 $(x, y)$</th>
                   <th class="p-2 font-semibold text-emerald-700">속도 $\mathbf{v}$</th>
                   <th class="p-2 font-semibold text-cyan-700">$\mathbf{v}_R + \mathbf{v}_{P/R}$</th>
                   <th class="p-2 font-semibold text-rose-600">가속도 $\mathbf{a}$</th>
@@ -462,7 +566,7 @@
                 </tr>
               </thead>
               <tbody id="table_probe_body" class="divide-y divide-slate-100 font-mono">
-                <!-- Dynamically populated -->
+                <!-- Rows are built when the point set changes; values are refreshed every frame -->
               </tbody>
             </table>
           </div>
@@ -583,6 +687,8 @@
       selectedRefId: 'O',  // ID of the probe point acting as Motion Reference Point R
       eqPointId: 'A',      // Point shown in the real-time equation panel
       nextPointNum: 1,     // Counter for user-added points (P1, P2, ...)
+      pointsVersion: 0,
+      geom: null,          // Shape dimensions (m), see defaultGeom()    // Bumped whenever points are added / removed / replaced (rebuilds the table)
       groundY: null,       // Ground line (world y) for the rolling-wheel preset
 
       // Kinematic Inputs (Applied DIRECTLY to the selected Reference Point R)
@@ -623,13 +729,16 @@
     };
 
     const SLIDERS = [
-      { id: 'slider_vx0',    prop: 'vx0',    disp: 'val_vx0',    unit: 'm/s' },
-      { id: 'slider_vy0',    prop: 'vy0',    disp: 'val_vy0',    unit: 'm/s' },
-      { id: 'slider_ax',     prop: 'ax',     disp: 'val_ax',     unit: 'm/s²' },
-      { id: 'slider_ay',     prop: 'ay',     disp: 'val_ay',     unit: 'm/s²' },
-      { id: 'slider_omega0', prop: 'omega0', disp: 'val_omega0', unit: 'rad/s' },
-      { id: 'slider_alpha',  prop: 'alpha',  disp: 'val_alpha',  unit: 'rad/s²' }
+      { id: 'slider_vx0',    num: 'num_vx0',    prop: 'vx0',    lim: 20 },
+      { id: 'slider_vy0',    num: 'num_vy0',    prop: 'vy0',    lim: 20 },
+      { id: 'slider_ax',     num: 'num_ax',     prop: 'ax',     lim: 20 },
+      { id: 'slider_ay',     num: 'num_ay',     prop: 'ay',     lim: 20 },
+      { id: 'slider_omega0', num: 'num_omega0', prop: 'omega0', lim: 50 },
+      { id: 'slider_alpha',  num: 'num_alpha',  prop: 'alpha',  lim: 20 }
     ];
+
+    // 1.0 -> "1.0", 1.234 -> "1.234" (at most 3 decimals)
+    const fmtNum = v => (Number.isInteger(Math.round(v * 1e6) / 1e5) ? v.toFixed(1) : String(Number(v.toFixed(3))));
 
     /* ==========================================================================
        2. SHAPE INITIALIZATION & POINT SELECTORS
@@ -658,79 +767,218 @@
       fill(document.getElementById('select_eq_point'), state.eqPointId);
     }
 
-    function initShape(type) {
-      state.shapeType = type;
+    /* ---------- Parametric geometry (body coordinates, unit: m) ---------- */
+    const defaultGeom = () => ({
+      potato: { R: 0.38 },
+      lbar: { L1: 0.40, L2: 0.40, w: 0.08 },
+      wheel: { r: 0.30 },
+      rectangle: { b: 0.70, h: 0.40 },
+      custom: { text: '0.2, 0.2\n-0.2, 0.2\n-0.1, -0.2\n0.3, -0.1' }
+    });
+
+    const POTATO_BASE = [
+      { x: 0.35, y: 0.05 }, { x: 0.25, y: 0.25 }, { x: 0.0, y: 0.32 },
+      { x: -0.25, y: 0.22 }, { x: -0.38, y: -0.05 }, { x: -0.20, y: -0.28 },
+      { x: 0.10, y: -0.30 }, { x: 0.30, y: -0.15 }
+    ];
+    const POTATO_R0 = Math.max(...POTATO_BASE.map(v => Math.hypot(v.x, v.y)));
+    const POINT_COLORS = { O: '#38bdf8', A: '#f43f5e', B: '#a855f7' };
+
+    // "x, y" per line (also accepts ';' separators). Returns null if invalid.
+    function parseVertices(text) {
+      const verts = [];
+      for (const raw of text.split(/[\n;]+/)) {
+        const line = raw.trim();
+        if (!line) continue;
+        const nums = line.split(/[\s,]+/).filter(Boolean).map(Number);
+        if (nums.length !== 2 || !nums.every(n => isFinite(n) && Math.abs(n) <= 5)) return null;
+        verts.push({ x: nums[0], y: nums[1] });
+      }
+      return verts.length >= 3 ? verts : null;
+    }
+
+    // Vertices and the default points (O, A, B) of a shape in body coordinates
+    function buildGeometry(type) {
+      const g = state.geom[type];
       if (type === 'potato') {
-        state.shapeVertices = [
-          { x: 0.35, y: 0.05 }, { x: 0.25, y: 0.25 }, { x: 0.0, y: 0.32 },
-          { x: -0.25, y: 0.22 }, { x: -0.38, y: -0.05 }, { x: -0.20, y: -0.28 },
-          { x: 0.10, y: -0.30 }, { x: 0.30, y: -0.15 }
-        ];
-        state.probePoints = [
-          { id: 'O', label: '도심 O', localPos: { x: 0, y: 0 }, color: '#38bdf8', isFixed: true },
-          { id: 'A', label: '점 A', localPos: { x: 0.25, y: 0.25 }, color: '#f43f5e', isFixed: false },
-          { id: 'B', label: '점 B', localPos: { x: -0.25, y: -0.20 }, color: '#a855f7', isFixed: false }
-        ];
-      } else if (type === 'lbar') {
-        state.shapeVertices = [
-          { x: -0.30, y: -0.15 }, { x: 0.10, y: -0.15 }, { x: 0.10, y: 0.25 },
-          { x: 0.02, y: 0.25 }, { x: 0.02, y: -0.07 }, { x: -0.30, y: -0.07 }
-        ];
-        state.probePoints = [
-          { id: 'O', label: '도심 O', localPos: { x: -0.10, y: 0.04 }, color: '#38bdf8', isFixed: true },
-          { id: 'A', label: '정점 A', localPos: { x: 0.06, y: 0.23 }, color: '#f43f5e', isFixed: false },
-          { id: 'B', label: '정점 B', localPos: { x: -0.28, y: -0.11 }, color: '#a855f7', isFixed: false }
-        ];
-      } else if (type === 'wheel') {
-        const N = 32;
-        const R = 0.30;
-        state.shapeVertices = [];
+        const k = g.R / POTATO_R0;
+        return {
+          vertices: POTATO_BASE.map(v => ({ x: v.x * k, y: v.y * k })),
+          points: { O: ['도심 O', 0, 0], A: ['점 A', 0.25 * k, 0.25 * k], B: ['점 B', -0.25 * k, -0.20 * k] }
+        };
+      }
+      if (type === 'lbar') {
+        // Outer corner at the lower right; horizontal bar to the left, vertical bar upward.
+        const { L1, L2, w } = g;
+        const A1 = L1 * w, A2 = w * (L2 - w);
+        const cx = (A1 * (-L1 / 2) + A2 * (-w / 2)) / (A1 + A2);
+        const cy = (A1 * (w / 2) + A2 * (w + (L2 - w) / 2)) / (A1 + A2);
+        const raw = [[-L1, 0], [0, 0], [0, L2], [-w, L2], [-w, w], [-L1, w]];
+        return {
+          vertices: raw.map(([x, y]) => ({ x: x - cx, y: y - cy })),
+          points: { O: ['도심 O', 0, 0], A: ['세로 막대 끝 A', -w / 2 - cx, L2 - cy], B: ['가로 막대 끝 B', -L1 - cx, w / 2 - cy] }
+        };
+      }
+      if (type === 'wheel') {
+        const N = 48, r = g.r;
+        const vertices = [];
         for (let i = 0; i < N; i++) {
           const ang = (i / N) * Math.PI * 2;
-          state.shapeVertices.push({ x: R * Math.cos(ang), y: R * Math.sin(ang) });
+          vertices.push({ x: r * Math.cos(ang), y: r * Math.sin(ang) });
         }
-        state.probePoints = [
-          { id: 'O', label: '휠 중심 O', localPos: { x: 0, y: 0 }, color: '#38bdf8', isFixed: true },
-          { id: 'A', label: '림 상단 A', localPos: { x: 0, y: 0.30 }, color: '#f43f5e', isFixed: false },
-          { id: 'B', label: '림 측면 B', localPos: { x: 0.30, y: 0 }, color: '#a855f7', isFixed: false }
-        ];
-      } else if (type === 'rectangle') {
-        state.shapeVertices = [
-          { x: 0.35, y: 0.20 }, { x: -0.35, y: 0.20 },
-          { x: -0.35, y: -0.20 }, { x: 0.35, y: -0.20 }
-        ];
-        state.probePoints = [
-          { id: 'O', label: '중심 O', localPos: { x: 0, y: 0 }, color: '#38bdf8', isFixed: true },
-          { id: 'A', label: '우상단 A', localPos: { x: 0.35, y: 0.20 }, color: '#f43f5e', isFixed: false },
-          { id: 'B', label: '좌하단 B', localPos: { x: -0.35, y: -0.20 }, color: '#a855f7', isFixed: false }
-        ];
-      } else if (type === 'custom') {
-        state.shapeVertices = [
-          { x: 0.2, y: 0.2 }, { x: -0.2, y: 0.2 }, { x: -0.1, y: -0.2 }, { x: 0.3, y: -0.1 }
-        ];
-        state.probePoints = [
-          { id: 'O', label: '원점 O', localPos: { x: 0, y: 0 }, color: '#38bdf8', isFixed: true },
-          { id: 'A', label: '정점 A', localPos: { x: 0.2, y: 0.2 }, color: '#f43f5e', isFixed: false }
-        ];
+        return { vertices, points: { O: ['휠 중심 O', 0, 0], A: ['림 상단 A', 0, r], B: ['림 측면 B', r, 0] } };
       }
+      if (type === 'rectangle') {
+        const hb = g.b / 2, hh = g.h / 2;
+        return {
+          vertices: [{ x: hb, y: hh }, { x: -hb, y: hh }, { x: -hb, y: -hh }, { x: hb, y: -hh }],
+          points: { O: ['중심 O', 0, 0], A: ['우상단 A', hb, hh], B: ['좌하단 B', -hb, -hh] }
+        };
+      }
+      // custom polygon
+      const verts = parseVertices(g.text) || parseVertices(defaultGeom().custom.text);
+      return { vertices: verts, points: { O: ['원점 O', 0, 0], A: ['정점 A', verts[0].x, verts[0].y] } };
+    }
+
+    function initShape(type) {
+      state.shapeType = type;
+      const geo = buildGeometry(type);
+      state.shapeVertices = geo.vertices;
+      state.probePoints = Object.entries(geo.points).map(([id, [label, x, y]]) => ({
+        id, label, localPos: { x, y }, color: POINT_COLORS[id], isFixed: id === 'O'
+      }));
 
       const selectShape = document.getElementById('select_shape');
       if (selectShape) selectShape.value = type;
       state.selectedRefId = 'O';
       state.eqPointId = 'A';
       state.nextPointNum = 1;
+      state.pointsVersion++;
       state.groundY = null;
       refreshPointSelectors();
+      showGeomInputs(type);
+      updateGeomSummary();
+    }
+
+    // Geometry input changed: rebuild the outline and move the default points; user points are kept
+    function applyGeometry() {
+      const geo = buildGeometry(state.shapeType);
+      state.shapeVertices = geo.vertices;
+      state.probePoints.forEach(p => {
+        const d = geo.points[p.id];
+        if (d) { p.label = d[0]; p.localPos = { x: d[1], y: d[2] }; }
+      });
+      state.pointsVersion++;
+      // Rolling wheel: keep v_O = -ω r, a_O = -α r and the ground under the new radius
+      if (state.shapeType === 'wheel' && state.groundY !== null) {
+        const r = state.geom.wheel.r;
+        setParams({ vx0: -state.omega0 * r, ax: -state.alpha * r });
+        state.groundY = -r;
+      }
+      refreshPointSelectors();
+      updateGeomSummary();
+      draw();
+    }
+
+    function showGeomInputs(type) {
+      document.querySelectorAll('.geom-box').forEach(el => el.classList.toggle('hidden', el.id !== `geom_${type}`));
+      setGeomError('');
+    }
+
+    function setGeomError(msg) {
+      const el = document.getElementById('geomError');
+      if (!el) return;
+      el.classList.toggle('hidden', !msg);
+      el.querySelector('span').textContent = msg;
+    }
+
+    function updateGeomSummary() {
+      const v = state.shapeVertices;
+      let area = 0;
+      for (let i = 0; i < v.length; i++) {
+        const a = v[i], b = v[(i + 1) % v.length];
+        area += a.x * b.y - b.x * a.y;
+      }
+      area = Math.abs(area) / 2;
+      let approx = state.shapeType === 'potato' ? '≈ ' : '';
+      if (state.shapeType === 'wheel') area = Math.PI * state.geom.wheel.r ** 2;
+      const xs = v.map(p => p.x), ys = v.map(p => p.y);
+      const W = Math.max(...xs) - Math.min(...xs), H = Math.max(...ys) - Math.min(...ys);
+      document.getElementById('geomArea').textContent = `${approx}${area.toFixed(4)} m²`;
+      document.getElementById('geomExtent').textContent = `${W.toFixed(3)} × ${H.toFixed(3)} m`;
+    }
+
+    const GEOM_FIELDS = [
+      { id: 'g_potato_R', shape: 'potato', key: 'R' },
+      { id: 'g_lbar_L1', shape: 'lbar', key: 'L1' },
+      { id: 'g_lbar_L2', shape: 'lbar', key: 'L2' },
+      { id: 'g_lbar_w', shape: 'lbar', key: 'w' },
+      { id: 'g_wheel_r', shape: 'wheel', key: 'r' },
+      { id: 'g_rect_b', shape: 'rectangle', key: 'b' },
+      { id: 'g_rect_h', shape: 'rectangle', key: 'h' }
+    ];
+
+    function syncGeomInputs() {
+      GEOM_FIELDS.forEach(f => {
+        const el = document.getElementById(f.id);
+        el.value = fmtNum(state.geom[f.shape][f.key]);
+        el.classList.remove('border-rose-500', 'bg-rose-50');
+      });
+      const ta = document.getElementById('g_custom');
+      ta.value = state.geom.custom.text;
+      ta.classList.remove('border-rose-500', 'bg-rose-50');
+      setGeomError('');
+    }
+
+    function bindGeomInputs() {
+      const mark = (el, bad) => { el.classList.toggle('border-rose-500', bad); el.classList.toggle('bg-rose-50', bad); };
+
+      GEOM_FIELDS.forEach(f => {
+        const el = document.getElementById(f.id);
+        el.addEventListener('input', () => {
+          const v = parseFloat(el.value);
+          const cand = { ...state.geom[f.shape], [f.key]: v };
+          let msg = '';
+          if (!isFinite(v) || v <= 0 || v > 5) msg = '0보다 크고 5 m 이하인 값을 입력하세요.';
+          else if (f.shape === 'lbar' && !(cand.w < Math.min(cand.L1, cand.L2))) msg = '두께 w는 L₁, L₂보다 작아야 합니다.';
+          mark(el, !!msg);
+          setGeomError(msg);
+          if (msg) return;
+          state.geom[f.shape] = cand;
+          if (state.shapeType === f.shape) applyGeometry();
+        });
+        el.addEventListener('change', () => {
+          // Leaving an invalid field restores the last valid value
+          el.value = fmtNum(state.geom[f.shape][f.key]);
+          mark(el, false);
+          setGeomError('');
+        });
+        el.addEventListener('keydown', e => { if (e.key === 'Enter') el.blur(); });
+      });
+
+      const ta = document.getElementById('g_custom');
+      ta.addEventListener('input', () => {
+        const ok = parseVertices(ta.value) !== null;
+        mark(ta, !ok);
+        setGeomError(ok ? '' : '각 줄에 "x, y" 형식(|값| ≤ 5 m)으로 꼭짓점을 3개 이상 입력하세요.');
+        if (!ok) return;
+        state.geom.custom.text = ta.value;
+        if (state.shapeType === 'custom') applyGeometry();
+      });
+      ta.addEventListener('change', () => {
+        if (parseVertices(ta.value) === null) { ta.value = state.geom.custom.text; mark(ta, false); setGeomError(''); }
+      });
     }
 
     function setParams(params) {
       SLIDERS.forEach(s => {
-        if (params[s.prop] === undefined) return;
-        state[s.prop] = params[s.prop];
-        const el = document.getElementById(s.id);
-        if (el) el.value = params[s.prop];
-        const disp = document.getElementById(s.disp);
-        if (disp) disp.innerText = `${params[s.prop].toFixed(1)} ${s.unit}`;
+        if (params[s.prop] === undefined || !isFinite(params[s.prop])) return;
+        const v = Math.min(Math.max(params[s.prop], -s.lim), s.lim);
+        state[s.prop] = v;
+        const slider = document.getElementById(s.id);
+        if (slider) slider.value = v; // the browser clamps it to the slider range
+        const num = document.getElementById(s.num);
+        if (num && document.activeElement !== num) num.value = fmtNum(v);
       });
     }
 
@@ -738,8 +986,10 @@
       state.t = Math.min(Math.max(t, 0), state.maxT);
       const slider = document.getElementById('slider_time');
       const display = document.getElementById('display_time');
+      const num = document.getElementById('num_time');
       if (slider) slider.value = state.t;
       if (display) display.innerText = `${state.t.toFixed(2)} s`;
+      if (num && document.activeElement !== num) num.value = state.t.toFixed(2);
     }
 
     function stopPlayback() {
@@ -769,7 +1019,7 @@
       } else if (name === 'rolling') {
         // Rolling without slipping: v_O = -ω r, a_O = -α r (r = 0.30 m)
         initShape('wheel');
-        const r = 0.30, w0 = -4.0, al = -1.0;
+        const r = state.geom.wheel.r, w0 = -4.0, al = -1.0;
         setParams({ vx0: -w0 * r, vy0: 0, ax: -al * r, ay: 0, omega0: w0, alpha: al });
         state.groundY = -r;
       }
@@ -1538,43 +1788,69 @@
       }
     }
 
-    function updateInspectorTable(kin) {
-      const tbody = document.getElementById('table_probe_body');
-      if (!tbody) return;
+    // Rows are rebuilt only when the point set or the reference point changes, so the
+    // coordinate inputs keep focus while the animation refreshes the numbers.
+    let inspectorSig = '';
+    let inspectorCells = {};
 
-      const rows = state.probePoints.map(p => {
-        const pk = evalPointKinematics(p.localPos, kin);
-        const isRef = (p.id === kin.refLocal.id);
+    function rebuildInspectorRows() {
+      const tbody = document.getElementById('table_probe_body');
+      const refId = state.selectedRefId;
+      const inputCls = 'w-[4.2rem] px-1 py-0.5 border border-slate-300 rounded text-right text-[11px] font-mono text-blue-800 bg-white focus:ring-1 focus:ring-blue-500 focus:outline-none disabled:bg-slate-100 disabled:text-slate-400';
+
+      tbody.innerHTML = state.probePoints.map(p => {
+        const isRef = p.id === refId;
         const refBadge = isRef ? '<span class="text-[9px] bg-blue-100 text-blue-700 px-1 rounded font-bold font-sans">기준점 R</span>' : '';
+        const lock = p.isFixed ? 'disabled title="도심(중심) O는 강체 형상에 고정되어 있습니다"' : 'title="Enter 또는 칸을 벗어나면 확정"';
+        const inp = axis => `<input type="number" step="0.01" min="-5" max="5" data-pos="${p.id}" data-axis="${axis}" value="${fmtNum(p.localPos[axis])}" ${lock} class="${inputCls}">`;
         const deleteBtnHtml = !p.isFixed
           ? `<button data-del="${p.id}" class="px-2 py-0.5 rounded bg-rose-50 hover:bg-rose-600 hover:text-white text-rose-600 border border-rose-200 text-[10px] font-sans transition">삭제</button>`
           : '<span class="text-slate-400 text-[10px] font-sans">고정</span>';
 
-        return `<tr class="hover:bg-slate-50 transition">
+        return `<tr data-row="${p.id}" class="hover:bg-slate-50 transition">
           <td class="p-2 font-bold font-sans whitespace-nowrap">
             <span class="w-2.5 h-2.5 rounded-full inline-block align-middle mr-1" style="background-color:${p.color}"></span>${p.label} ${refBadge}
           </td>
-          <td class="p-2 text-slate-600 whitespace-nowrap">(${pk.pos.x.toFixed(2)}, ${pk.pos.y.toFixed(2)})</td>
-          <td class="p-2 text-emerald-700 font-bold whitespace-nowrap">
-            ${pk.v_total.mag.toFixed(2)}
-            <span class="block text-[10px] text-slate-400 font-normal">(${pk.v_total.x.toFixed(2)}, ${pk.v_total.y.toFixed(2)})</span>
+          <td class="p-2 whitespace-nowrap">
+            <div class="flex items-center gap-1"><span class="text-[10px] text-slate-400 font-sans w-2">x</span>${inp('x')}</div>
+            <div class="flex items-center gap-1 mt-0.5"><span class="text-[10px] text-slate-400 font-sans w-2">y</span>${inp('y')}</div>
           </td>
-          <td class="p-2 text-cyan-700 text-[11px] whitespace-nowrap leading-tight">
-            (${pk.v_trans.x.toFixed(2)}, ${pk.v_trans.y.toFixed(2)})
-            <span class="block">+ (${pk.v_rot.x.toFixed(2)}, ${pk.v_rot.y.toFixed(2)})</span>
-          </td>
-          <td class="p-2 text-rose-600 font-bold whitespace-nowrap">
-            ${pk.a_total.mag.toFixed(2)}
-            <span class="block text-[10px] text-slate-400 font-normal">(${pk.a_total.x.toFixed(2)}, ${pk.a_total.y.toFixed(2)})</span>
-          </td>
-          <td class="p-2 text-amber-700 text-[11px] whitespace-nowrap leading-tight">
-            a<sub>t</sub> ${Math.hypot(pk.a_t.x, pk.a_t.y).toFixed(2)}
-            <span class="block">a<sub>n</sub> ${Math.hypot(pk.a_n.x, pk.a_n.y).toFixed(2)}</span>
-          </td>
+          <td class="p-2 text-slate-600 whitespace-nowrap" data-f="pos"></td>
+          <td class="p-2 text-emerald-700 font-bold whitespace-nowrap" data-f="v"></td>
+          <td class="p-2 text-cyan-700 text-[11px] whitespace-nowrap leading-tight" data-f="vc"></td>
+          <td class="p-2 text-rose-600 font-bold whitespace-nowrap" data-f="a"></td>
+          <td class="p-2 text-amber-700 text-[11px] whitespace-nowrap leading-tight" data-f="ac"></td>
           <td class="p-2 text-center">${deleteBtnHtml}</td>
         </tr>`;
+      }).join('');
+
+      inspectorCells = {};
+      tbody.querySelectorAll('tr[data-row]').forEach(tr => {
+        const c = {};
+        tr.querySelectorAll('[data-f]').forEach(td => { c[td.dataset.f] = td; });
+        inspectorCells[tr.dataset.row] = c;
       });
-      tbody.innerHTML = rows.join('');
+    }
+
+    function updateInspectorTable(kin) {
+      const tbody = document.getElementById('table_probe_body');
+      if (!tbody) return;
+      const sig = `${state.pointsVersion}|${state.probePoints.map(p => p.id).join(',')}|${state.selectedRefId}`;
+      if (sig !== inspectorSig) {
+        inspectorSig = sig;
+        rebuildInspectorRows();
+      }
+
+      state.probePoints.forEach(p => {
+        const c = inspectorCells[p.id];
+        if (!c) return;
+        const pk = evalPointKinematics(p.localPos, kin);
+        c.pos.textContent = `(${pk.pos.x.toFixed(2)}, ${pk.pos.y.toFixed(2)})`;
+        c.v.innerHTML = `${pk.v_total.mag.toFixed(2)}<span class="block text-[10px] text-slate-400 font-normal">(${pk.v_total.x.toFixed(2)}, ${pk.v_total.y.toFixed(2)})</span>`;
+        c.vc.innerHTML = `(${pk.v_trans.x.toFixed(2)}, ${pk.v_trans.y.toFixed(2)})<span class="block">+ (${pk.v_rot.x.toFixed(2)}, ${pk.v_rot.y.toFixed(2)})</span>`;
+        c.a.innerHTML = `${pk.a_total.mag.toFixed(2)}<span class="block text-[10px] text-slate-400 font-normal">(${pk.a_total.x.toFixed(2)}, ${pk.a_total.y.toFixed(2)})</span>`;
+        c.ac.innerHTML = `a<sub>t</sub> ${Math.hypot(pk.a_t.x, pk.a_t.y).toFixed(2)}<span class="block">a<sub>n</sub> ${Math.hypot(pk.a_n.x, pk.a_n.y).toFixed(2)}</span>`;
+      });
     }
 
     const f2 = v => (Math.abs(v) < 0.005 ? 0 : v).toFixed(2);
@@ -1607,33 +1883,39 @@
       const pt = state.probePoints.find(p => p.id === id);
       if (!pt || pt.isFixed) return;
       state.probePoints = state.probePoints.filter(p => p.id !== id);
+      state.pointsVersion++;
       refreshPointSelectors();
       draw();
     };
 
-    function addProbePointAtPixel(mousePx, mousePy) {
-      const mouseWorld = pixelToWorld(mousePx, mousePy);
-      const kin = evalKinematics(state.t);
-
-      const cosT = Math.cos(kin.theta);
-      const sinT = Math.sin(kin.theta);
-      const dx = mouseWorld.x - kin.originPos.x;
-      const dy = mouseWorld.y - kin.originPos.y;
-
+    // Add a point fixed to the body at local (body) coordinates = its position at t = 0
+    function addProbePoint(localX, localY) {
       const newId = `P${state.nextPointNum++}`;
       const colors = ['#f59e0b', '#10b981', '#ec4899', '#8b5cf6', '#06b6d4'];
 
       state.probePoints.push({
         id: newId,
         label: `점 ${newId}`,
-        localPos: { x: dx * cosT + dy * sinT, y: -dx * sinT + dy * cosT },
+        localPos: { x: localX, y: localY },
         color: colors[(state.nextPointNum - 2) % colors.length],
         isFixed: false
       });
 
+      state.pointsVersion++;
       state.eqPointId = newId;
       refreshPointSelectors();
       draw();
+      return newId;
+    }
+
+    function addProbePointAtPixel(mousePx, mousePy) {
+      const mouseWorld = pixelToWorld(mousePx, mousePy);
+      const kin = evalKinematics(state.t);
+      const cosT = Math.cos(kin.theta);
+      const sinT = Math.sin(kin.theta);
+      const dx = mouseWorld.x - kin.originPos.x;
+      const dy = mouseWorld.y - kin.originPos.y;
+      addProbePoint(dx * cosT + dy * sinT, -dx * sinT + dy * cosT);
     }
 
     /* ==========================================================================
@@ -1886,13 +2168,58 @@
         draw();
       });
 
-      // Parameter sliders
+      // Parameter sliders + number inputs (kept in sync)
       SLIDERS.forEach(s => {
-        document.getElementById(s.id).addEventListener('input', (e) => {
-          setParams({ [s.prop]: parseFloat(e.target.value) });
+        const apply = v => {
+          setParams({ [s.prop]: v });
           state.groundY = null; // parameters no longer guarantee rolling without slipping
           draw();
+        };
+        document.getElementById(s.id).addEventListener('input', e => apply(parseFloat(e.target.value)));
+        const num = document.getElementById(s.num);
+        num.addEventListener('input', e => {
+          const v = parseFloat(e.target.value);
+          if (isFinite(v)) apply(v);
         });
+        num.addEventListener('change', e => { e.target.value = fmtNum(state[s.prop]); });
+        num.addEventListener('keydown', e => { if (e.key === 'Enter') e.target.blur(); });
+      });
+
+      // Time number input
+      const numTime = document.getElementById('num_time');
+      numTime.addEventListener('input', e => {
+        const v = parseFloat(e.target.value);
+        if (isFinite(v)) { setTime(v); draw(); }
+      });
+      numTime.addEventListener('change', e => { e.target.value = state.t.toFixed(2); });
+      numTime.addEventListener('keydown', e => { if (e.key === 'Enter') e.target.blur(); });
+
+      // Inspector: initial-position inputs
+      const tbodyEl = document.getElementById('table_probe_body');
+      tbodyEl.addEventListener('input', e => {
+        const inp = e.target.closest('input[data-pos]');
+        if (!inp) return;
+        const p = state.probePoints.find(q => q.id === inp.dataset.pos);
+        const v = parseFloat(inp.value);
+        if (!p || p.isFixed || !isFinite(v)) return;
+        p.localPos[inp.dataset.axis] = Math.min(Math.max(v, -5), 5);
+        draw();
+      });
+      tbodyEl.addEventListener('change', e => {
+        const inp = e.target.closest('input[data-pos]');
+        if (!inp) return;
+        const p = state.probePoints.find(q => q.id === inp.dataset.pos);
+        if (p) inp.value = fmtNum(p.localPos[inp.dataset.axis]);
+      });
+      tbodyEl.addEventListener('keydown', e => {
+        if (e.key === 'Enter' && e.target.matches('input[data-pos]')) e.target.blur();
+      });
+
+      // Inspector: add a point by coordinates
+      document.getElementById('btn_add_point').addEventListener('click', () => {
+        const id = addProbePoint(0, 0);
+        const inp = document.querySelector(`input[data-pos="${id}"][data-axis="x"]`);
+        if (inp) { inp.focus(); inp.select(); }
       });
 
       // Pure rotation preset
@@ -1979,7 +2306,13 @@
       document.getElementById('btn_reset_view').addEventListener('click', resetViewOffset);
 
       // Global reset
-      document.getElementById('btn_reset_all').addEventListener('click', () => applyPreset('general'));
+      document.getElementById('btn_reset_all').addEventListener('click', () => {
+        state.geom = defaultGeom();
+        syncGeomInputs();
+        applyPreset('general');
+      });
+
+      bindGeomInputs();
 
       // Redraw the canvas when its card is resized (column splitter, corner drag, window)
       if (window.ResizeObserver) {
@@ -2004,6 +2337,8 @@
         });
       }
 
+      state.geom = defaultGeom();
+      syncGeomInputs();
       initShape('potato');
       setParams({ vx0: 1.0, vy0: 0.5, ax: 0.2, ay: 0.0, omega0: 2.0, alpha: 0.5 });
       bindEvents();
