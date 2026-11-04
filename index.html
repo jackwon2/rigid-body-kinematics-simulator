@@ -1,0 +1,2018 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>동역학 강체 평면 운동학 시뮬레이터</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- KaTeX for LaTeX Math Rendering -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts (Noto Sans KR & Inter) -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Inter', 'Noto Sans KR', sans-serif;
+    }
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+    /* Two-column layout with draggable splitters (desktop only):
+       [left column] [splitter] [right column] [right-edge handle] */
+    .layout-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.25rem; }
+    .col-splitter { display: none; }
+    @media (min-width: 1024px) {
+      .layout-grid { grid-template-columns: var(--left-w, 33.333%) 14px minmax(0, 1fr) 14px; column-gap: 0.4rem; }
+      .col-splitter {
+        display: block;
+        position: relative;
+        cursor: col-resize;
+        border-radius: 7px;
+        touch-action: none;
+        outline: none;
+      }
+      .col-splitter::before {
+        content: '';
+        position: absolute; top: 0; bottom: 0; left: 50%;
+        width: 2px; transform: translateX(-50%);
+        background: #e2e8f0; border-radius: 1px;
+        transition: background 0.15s, width 0.15s;
+      }
+      .col-splitter.edge::before { background: transparent; }
+      .col-splitter:hover::before, .col-splitter:focus-visible::before, .col-splitter.dragging::before {
+        background: #6366f1; width: 4px;
+      }
+      .col-splitter .splitter-grip {
+        position: sticky; top: 45vh;
+        margin: 0 auto; width: 14px; height: 44px;
+        display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+        background: #fff; border: 1px solid #cbd5e1; border-radius: 7px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+      }
+      .col-splitter:hover .splitter-grip, .col-splitter.dragging .splitter-grip { border-color: #6366f1; }
+      .col-splitter .splitter-grip span { width: 4px; height: 4px; border-radius: 50%; background: #94a3b8; }
+    }
+    body.col-resizing { cursor: col-resize; user-select: none; }
+    /* Full-width mode: remove the 1280px page width cap */
+    body.wide-layout .max-w-7xl { max-width: none; }
+
+    /* Minimize / restore panels */
+    .panel.collapsed .panel-body { display: none !important; }
+    .panel.collapsed .panel-head { margin-bottom: 0; padding-bottom: 0; border-bottom-color: transparent; }
+    .panel.collapsed { opacity: 0.85; }
+    .panel-toggle {
+      flex-shrink: 0;
+      width: 26px; height: 26px;
+      display: inline-flex; align-items: center; justify-content: center;
+      border-radius: 6px;
+      border: 1px solid #e2e8f0;
+      background: #f8fafc;
+      color: #64748b;
+      font-size: 11px;
+      transition: background 0.15s, color 0.15s;
+    }
+    .panel-toggle:hover { background: #2563eb; color: #fff; border-color: #2563eb; }
+    .panel-toggle-sm { width: 20px; height: 20px; font-size: 9px; }
+    .panel-toggle .fa-plus { display: none; }
+    .panel.collapsed .panel-toggle .fa-minus { display: none; }
+    .panel.collapsed .panel-toggle .fa-plus { display: inline; }
+
+    /* Vertically resizable panels (drag the bottom-right corner) */
+    .resize-y {
+      resize: vertical;
+      overflow-y: auto;
+    }
+    .resize-y-canvas {
+      resize: vertical;
+      overflow: hidden;
+    }
+    .resize-y::-webkit-resizer,
+    .resize-y-canvas::-webkit-resizer {
+      background: linear-gradient(135deg, transparent 0 45%, #94a3b8 45% 55%, transparent 55% 65%, #94a3b8 65% 75%, transparent 75%);
+      border-radius: 0 0 6px 0;
+    }
+    .slider-thumb::-webkit-slider-thumb {
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #3b82f6;
+      cursor: pointer;
+      box-shadow: 0 0 4px rgba(0,0,0,0.2);
+    }
+    #simCanvas { touch-action: none; cursor: crosshair; }
+    .katex { font-size: 1.05em; }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col">
+
+
+  <!-- Header Bar -->
+  <header class="bg-slate-900 text-white shadow-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="p-2 bg-blue-600 rounded-lg text-white">
+          <i class="fa-solid me-1 fa-rotate text-xl"></i>
+        </div>
+        <div>
+          <div class="flex flex-wrap items-baseline gap-x-3 gap-y-0.5">
+            <h1 class="font-bold text-lg leading-tight">동역학: 강체 평면 운동학 시뮬레이터</h1>
+            <span class="text-[11px] text-slate-300">
+              Copyright by <b class="text-white">Prof. Hyuk Lee</b>
+              (Hongik University,
+              <a href="mailto:jackwon2@hongik.ac.kr" class="text-blue-300 hover:underline">jackwon2@hongik.ac.kr</a>,
+              Homepage: <a href="https://sites.google.com/view/headlab" target="_blank" rel="noopener" class="text-blue-300 hover:underline">https://sites.google.com/view/headlab</a>)
+            </span>
+          </div>
+          <p class="text-xs text-slate-400">기준점 병진 + 기준점에 대한 회전으로 분해한 일반 평면운동 · 속도/가속도 벡터 및 영속도 순간중심(ICZV) 실시간 해석</p>
+        </div>
+      </div>
+
+      <!-- Motion Presets -->
+      <div class="flex items-center gap-1.5 overflow-x-auto py-1">
+        <span class="text-xs text-slate-400 mr-1 font-semibold hidden md:inline"><i class="fa-solid fa-bookmark mr-1"></i>프리셋:</span>
+        <button onclick="applyPreset('general')" class="px-2.5 py-1 text-xs bg-slate-800 hover:bg-blue-600 text-slate-200 hover:text-white rounded-md transition font-medium border border-slate-700">일반 평면운동</button>
+        <button onclick="applyPreset('translation')" class="px-2.5 py-1 text-xs bg-slate-800 hover:bg-blue-600 text-slate-200 hover:text-white rounded-md transition font-medium border border-slate-700">순수 병진</button>
+        <button onclick="applyPreset('rotation')" class="px-2.5 py-1 text-xs bg-slate-800 hover:bg-blue-600 text-slate-200 hover:text-white rounded-md transition font-medium border border-slate-700">고정축 회전</button>
+        <button onclick="applyPreset('rolling')" class="px-2.5 py-1 text-xs bg-slate-800 hover:bg-blue-600 text-slate-200 hover:text-white rounded-md transition font-medium border border-slate-700">구름 바퀴</button>
+        <span class="w-px h-5 bg-slate-700 mx-1 hidden lg:inline-block"></span>
+        <button id="wideToggle" onclick="toggleWideLayout()" title="화면 전체 폭 사용 / 기본 폭" class="hidden lg:inline-flex items-center gap-1 px-2.5 py-1 text-xs bg-slate-800 hover:bg-indigo-600 text-slate-200 hover:text-white rounded-md transition font-medium border border-slate-700">
+          <i class="fa-solid fa-left-right"></i> <span id="wideToggleLabel">전체 폭</span>
+        </button>
+        <button onclick="resetLayout()" title="좌우 열 비율과 전체 폭을 기본값으로" class="hidden lg:inline-flex items-center gap-1 px-2.5 py-1 text-xs bg-slate-800 hover:bg-indigo-600 text-slate-200 hover:text-white rounded-md transition font-medium border border-slate-700">
+          <i class="fa-solid fa-table-columns"></i> 레이아웃 초기화
+        </button>
+        <button id="btn_reset_all" title="모든 매개변수와 시간을 초기 상태로" class="inline-flex items-center gap-1 px-2.5 py-1 text-xs bg-slate-800 hover:bg-rose-600 text-slate-200 hover:text-white rounded-md transition font-medium border border-slate-700">
+          <i class="fa-solid fa-rotate-left"></i> 전체 초기화
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Grid Layout -->
+  <div id="layoutGrid" class="layout-grid max-w-7xl mx-auto px-4 py-4 w-full flex-grow">
+
+    <!-- Left Controls Panel (Sidebar; width adjustable with the splitter) -->
+    <aside class="min-w-0 flex flex-col gap-4">
+
+      <!-- Shape & Reference Point -->
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4">
+        <h2 class="font-bold text-slate-800 text-sm flex items-center gap-2 mb-3">
+          <i class="fa-solid fa-shapes text-blue-600"></i> 강체 형상 및 운동 기준점 (Shape & Reference)
+        </h2>
+
+        <div class="space-y-3 text-xs">
+          <div>
+            <label class="font-medium text-slate-700 block mb-1">강체 모양 (Shape Preset)</label>
+            <select id="select_shape" class="w-full px-2 py-1.5 border border-slate-300 rounded text-xs bg-slate-50 focus:ring-1 focus:ring-blue-500 font-medium">
+              <option value="potato" selected>곡선형 임의 강체 (Smooth Potato)</option>
+              <option value="lbar">L-형 바 (Right-Angle Bar - Ex 5/3)</option>
+              <option value="wheel">원형 바퀴 (Rolling Wheel)</option>
+              <option value="rectangle">직사각형 판 (Rectangular Plate)</option>
+              <option value="custom">사용자 지정 다각형 (Custom Polygon)</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="font-medium text-slate-700 block mb-1">운동 기준점 R (Kinematic Reference)</label>
+            <select id="select_ref_point" class="w-full px-2 py-1.5 border border-blue-300 rounded text-xs bg-blue-50 text-blue-900 focus:ring-1 focus:ring-blue-500 font-semibold">
+              <!-- Dynamically populated with all available probe points -->
+            </select>
+          </div>
+
+          <div class="bg-blue-50 border border-blue-200 rounded-lg p-2.5 text-[11px] text-blue-900 leading-relaxed">
+            <i class="fa-solid fa-lightbulb mr-1 text-amber-500"></i>
+            <b>운동 기준점 $R$의 역할:</b> 아래에서 입력하는 병진 속도 $(v_{R,x0}, v_{R,y0})$와 병진 가속도 $(a_{R,x}, a_{R,y})$는 <b>선택한 기준점 $R$에 직접 부여</b>됩니다.
+            기준점을 바꾸면 같은 입력값이라도 강체 전체의 공간 궤적이 달라집니다. 캔버스를 클릭하면 탐색점을 추가할 수 있습니다.
+          </div>
+        </div>
+      </div>
+
+      <!-- Kinematic Parameters -->
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4">
+        <div class="flex justify-between items-center mb-3">
+          <h2 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+            <i class="fa-solid fa-sliders text-emerald-600"></i> 운동 매개변수 (Parameter Study)
+          </h2>
+          <button id="btn_preset_pure_rot" class="px-2 py-1 text-xs bg-emerald-600 hover:bg-emerald-700 text-white rounded transition font-medium flex items-center gap-1">
+            <i class="fa-solid fa-rotate"></i> 회전전용 리셋
+          </button>
+        </div>
+
+        <div class="space-y-3 text-xs">
+          <div>
+            <div class="flex justify-between mb-1">
+              <label class="font-medium text-slate-700">기준점 병진 속도 $v_{R,x0}$</label>
+              <span id="val_vx0" class="font-semibold text-cyan-700">1.0 m/s</span>
+            </div>
+            <input type="range" id="slider_vx0" min="-5.0" max="5.0" step="0.1" value="1.0" class="w-full accent-cyan-600 bg-slate-200 h-1.5 rounded-lg cursor-pointer">
+          </div>
+
+          <div>
+            <div class="flex justify-between mb-1">
+              <label class="font-medium text-slate-700">기준점 병진 속도 $v_{R,y0}$</label>
+              <span id="val_vy0" class="font-semibold text-cyan-700">0.5 m/s</span>
+            </div>
+            <input type="range" id="slider_vy0" min="-5.0" max="5.0" step="0.1" value="0.5" class="w-full accent-cyan-600 bg-slate-200 h-1.5 rounded-lg cursor-pointer">
+          </div>
+
+          <div>
+            <div class="flex justify-between mb-1">
+              <label class="font-medium text-slate-700">기준점 병진 가속도 $a_{R,x}$</label>
+              <span id="val_ax" class="font-semibold text-orange-600">0.2 m/s²</span>
+            </div>
+            <input type="range" id="slider_ax" min="-3.0" max="3.0" step="0.1" value="0.2" class="w-full accent-orange-500 bg-slate-200 h-1.5 rounded-lg cursor-pointer">
+          </div>
+
+          <div>
+            <div class="flex justify-between mb-1">
+              <label class="font-medium text-slate-700">기준점 병진 가속도 $a_{R,y}$</label>
+              <span id="val_ay" class="font-semibold text-orange-600">0.0 m/s²</span>
+            </div>
+            <input type="range" id="slider_ay" min="-3.0" max="3.0" step="0.1" value="0.0" class="w-full accent-orange-500 bg-slate-200 h-1.5 rounded-lg cursor-pointer">
+          </div>
+
+          <div>
+            <div class="flex justify-between mb-1">
+              <label class="font-medium text-slate-700">강체 초기 각속도 $\omega_0$ (반시계 +)</label>
+              <span id="val_omega0" class="font-semibold text-emerald-600">2.0 rad/s</span>
+            </div>
+            <input type="range" id="slider_omega0" min="-10.0" max="10.0" step="0.2" value="2.0" class="w-full accent-emerald-600 bg-slate-200 h-1.5 rounded-lg cursor-pointer">
+          </div>
+
+          <div>
+            <div class="flex justify-between mb-1">
+              <label class="font-medium text-slate-700">강체 각가속도 $\alpha$ (반시계 +)</label>
+              <span id="val_alpha" class="font-semibold text-purple-600">0.5 rad/s²</span>
+            </div>
+            <input type="range" id="slider_alpha" min="-5.0" max="5.0" step="0.1" value="0.5" class="w-full accent-purple-600 bg-slate-200 h-1.5 rounded-lg cursor-pointer">
+          </div>
+        </div>
+      </div>
+
+      <!-- Visual Layers -->
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4">
+        <h2 class="font-bold text-slate-800 text-sm flex items-center gap-2 mb-3">
+          <i class="fa-solid fa-eye text-amber-600"></i> 시각화 벡터 및 요소 (Visual Layers)
+        </h2>
+
+        <div class="grid grid-cols-2 gap-2 text-xs">
+          <label class="flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-slate-200 cursor-pointer hover:border-slate-300">
+            <input type="checkbox" id="chk_vtotal" checked class="accent-emerald-600">
+            <span class="text-emerald-700 font-semibold">전체 속도 $\mathbf{v}$</span>
+          </label>
+          <label class="flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-slate-200 cursor-pointer hover:border-slate-300">
+            <input type="checkbox" id="chk_vcomp" checked class="accent-cyan-600">
+            <span class="text-cyan-700">속도 성분 $\mathbf{v}_R,\ \mathbf{v}_{P/R}$</span>
+          </label>
+          <label class="flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-slate-200 cursor-pointer hover:border-slate-300">
+            <input type="checkbox" id="chk_atotal" checked class="accent-rose-600">
+            <span class="text-rose-600 font-semibold">전체 가속도 $\mathbf{a}$</span>
+          </label>
+          <label class="flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-slate-200 cursor-pointer hover:border-slate-300">
+            <input type="checkbox" id="chk_acomp" checked class="accent-amber-600">
+            <span class="text-amber-700">가속도 성분 $\mathbf{a}_t,\ \mathbf{a}_n$</span>
+          </label>
+          <label class="flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-slate-200 cursor-pointer hover:border-slate-300">
+            <input type="checkbox" id="chk_omega" checked class="accent-lime-600">
+            <span class="text-lime-700 font-semibold">각속도 $\omega$ (↺ +)</span>
+          </label>
+          <label class="flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-slate-200 cursor-pointer hover:border-slate-300">
+            <input type="checkbox" id="chk_alpha" checked class="accent-fuchsia-600">
+            <span class="text-fuchsia-700 font-semibold">각가속도 $\alpha$ (↺ +)</span>
+          </label>
+          <label class="flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-slate-200 cursor-pointer hover:border-slate-300">
+            <input type="checkbox" id="chk_iczv" checked class="accent-purple-600">
+            <span class="text-purple-700 font-semibold">영속도 순간중심 C</span>
+          </label>
+          <label class="flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-slate-200 cursor-pointer hover:border-slate-300">
+            <input type="checkbox" id="chk_paths" checked class="accent-slate-600">
+            <span class="text-slate-700">점 이동 궤적 (Trace)</span>
+          </label>
+        </div>
+        <p class="text-[10px] text-slate-500 mt-2 leading-relaxed">
+          ω, α는 기준점 R 둘레의 곡선 화살표로 표시합니다 (↺ 반시계 = +, ↻ 시계 = −, 호의 길이 ∝ 크기).
+          궤적: 실선 = 지나온 경로 (0 → t), 옅은 점선 = 전체 경로 (0 → 10 s).
+        </p>
+      </div>
+
+    </aside>
+
+    <!-- Column splitter: drag to resize the two columns (double-click: reset) -->
+    <div id="colSplitter" class="col-splitter" role="separator" aria-orientation="vertical" aria-label="좌우 열 폭 조절" tabindex="0"
+         title="드래그하여 좌우 폭 조절 (더블클릭: 기본값, ←/→ 키로도 조절)">
+      <div class="splitter-grip"><span></span><span></span><span></span></div>
+    </div>
+
+    <!-- Right Visualization Panel (Main; takes the remaining width) -->
+    <main class="min-w-0 flex flex-col gap-4">
+
+      <!-- Interactive Rigid Body Canvas Card -->
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 relative">
+        <div class="flex justify-between items-center mb-2 flex-wrap gap-2">
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="text-xs font-bold text-slate-700 uppercase tracking-wider bg-slate-100 px-2.5 py-1 rounded-md border border-slate-200 flex items-center gap-1.5">
+              <i class="fa-solid fa-drafting-compass text-blue-600"></i> 강체 운동 시각화 (Rigid Body Motion)
+            </span>
+            <span class="text-[11px] text-slate-500">
+              <i class="fa-solid fa-hand-pointer mr-1"></i>클릭: 점 추가 · 드래그: 이동 · 휠: 확대/축소
+            </span>
+          </div>
+
+          <!-- Camera & Zoom Controls -->
+          <div class="flex items-center gap-1">
+            <label title="재생 중에도 기준점 R이 화면 안에 머물도록 시점을 따라 이동" class="flex items-center gap-1 h-7 text-[11px] font-semibold text-slate-600 bg-slate-50 px-2 rounded-md border border-slate-200 cursor-pointer mr-1">
+              <input type="checkbox" id="chk_follow" checked class="accent-blue-600"> 기준점 따라가기
+            </label>
+            <button id="btn_zoom_in" title="확대" class="w-7 h-7 text-xs bg-slate-100 hover:bg-blue-600 hover:text-white text-slate-600 rounded-md border border-slate-200 transition"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
+            <button id="btn_zoom_out" title="축소" class="w-7 h-7 text-xs bg-slate-100 hover:bg-blue-600 hover:text-white text-slate-600 rounded-md border border-slate-200 transition"><i class="fa-solid fa-magnifying-glass-minus"></i></button>
+            <button id="btn_reset_view" title="보기 초기화" class="h-7 px-2 text-[11px] font-semibold bg-slate-100 hover:bg-blue-600 hover:text-white text-slate-600 rounded-md border border-slate-200 transition"><i class="fa-solid fa-expand mr-1"></i>초기화</button>
+          </div>
+        </div>
+
+        <!-- Main Interactive Canvas -->
+        <div id="canvasWrap" class="resize-y-canvas relative w-full rounded-lg border border-slate-200 bg-slate-900 shadow-inner" style="height: 28rem; min-height: 16rem;">
+          <canvas id="simCanvas" class="absolute inset-0 w-full h-full block"></canvas>
+          <!-- Time HUD -->
+          <div class="pointer-events-none absolute top-2 left-2 bg-slate-900/85 border border-slate-700 px-2.5 py-1 rounded-md flex items-center gap-2 text-[11px] text-slate-300 font-mono z-10">
+            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+            t = <span id="display_time" class="font-bold text-emerald-400">0.00 s</span>
+          </div>
+        </div>
+
+        <!-- Playback Controller Bar -->
+        <div class="mt-3 flex flex-wrap items-center justify-between gap-3">
+          <div class="flex items-center gap-1.5">
+            <button id="btn_step_prev" title="이전 프레임 (-0.02 s)" class="w-8 h-8 text-xs bg-slate-100 hover:bg-blue-600 hover:text-white text-slate-600 rounded-md border border-slate-200 transition">
+              <i class="fa-solid fa-backward-step"></i>
+            </button>
+            <button id="btn_play" class="px-4 h-8 rounded-md bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs shadow-sm transition flex items-center gap-1.5">
+              <i id="icon_play" class="fa-solid fa-play"></i>
+              <span id="text_play">재생 (Play)</span>
+            </button>
+            <button id="btn_step_next" title="다음 프레임 (+0.02 s)" class="w-8 h-8 text-xs bg-slate-100 hover:bg-blue-600 hover:text-white text-slate-600 rounded-md border border-slate-200 transition">
+              <i class="fa-solid fa-forward-step"></i>
+            </button>
+          </div>
+
+          <div class="flex-1 flex items-center gap-2 min-w-[180px] bg-slate-50 px-2.5 py-1.5 rounded-lg border border-slate-200">
+            <span class="text-[11px] font-mono text-slate-500">0 s</span>
+            <input type="range" id="slider_time" min="0" max="10" step="0.02" value="0" class="flex-1 slider-thumb accent-blue-600 bg-slate-200 h-1 rounded cursor-pointer">
+            <span class="text-[11px] font-mono text-slate-500">10 s</span>
+          </div>
+
+          <div class="flex items-center gap-2 bg-slate-50 px-2.5 py-1 rounded-lg border border-slate-200">
+            <label for="select_speed" class="text-[11px] font-semibold text-slate-600">재생 속도:</label>
+            <select id="select_speed" class="bg-white border border-slate-300 rounded px-1.5 py-0.5 text-xs text-slate-700 focus:ring-1 focus:ring-blue-500">
+              <option value="0.25">0.25×</option>
+              <option value="0.5">0.5×</option>
+              <option value="1.0" selected>1.0×</option>
+              <option value="2.0">2.0×</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Key Kinematic State Stat Cards -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 items-start">
+        <div id="panel-stat-omega" class="panel bg-white rounded-xl p-3 border border-slate-200 shadow-sm flex flex-col justify-between">
+          <div class="flex items-start justify-between gap-1">
+            <span class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider"><i class="fa-solid fa-rotate text-emerald-500 mr-1"></i>각속도 (ω)</span>
+            <button onclick="togglePanel('panel-stat-omega')" class="panel-toggle panel-toggle-sm" title="최소화 / 펼치기"><i class="fa-solid fa-minus"></i><i class="fa-solid fa-plus"></i></button>
+          </div>
+          <div class="panel-body mt-1">
+            <span id="statOmega" class="text-lg font-extrabold text-emerald-600">0.00 rad/s</span>
+            <span id="statAlpha" class="block text-[10px] text-slate-400">α = 0.00 rad/s²</span>
+          </div>
+        </div>
+
+        <div id="panel-stat-theta" class="panel bg-white rounded-xl p-3 border border-slate-200 shadow-sm flex flex-col justify-between">
+          <div class="flex items-start justify-between gap-1">
+            <span class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider"><i class="fa-solid fa-compass text-indigo-500 mr-1"></i>회전각 (θ)</span>
+            <button onclick="togglePanel('panel-stat-theta')" class="panel-toggle panel-toggle-sm" title="최소화 / 펼치기"><i class="fa-solid fa-minus"></i><i class="fa-solid fa-plus"></i></button>
+          </div>
+          <div class="panel-body mt-1">
+            <span id="statTheta" class="text-lg font-extrabold text-indigo-600">0.000 rad</span>
+            <span id="statThetaDeg" class="block text-[10px] text-slate-400">0.0°</span>
+          </div>
+        </div>
+
+        <div id="panel-stat-vref" class="panel bg-white rounded-xl p-3 border border-slate-200 shadow-sm flex flex-col justify-between">
+          <div class="flex items-start justify-between gap-1">
+            <span class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider"><i class="fa-solid fa-gauge-high text-cyan-500 mr-1"></i>기준점 속도 (|v_R|)</span>
+            <button onclick="togglePanel('panel-stat-vref')" class="panel-toggle panel-toggle-sm" title="최소화 / 펼치기"><i class="fa-solid fa-minus"></i><i class="fa-solid fa-plus"></i></button>
+          </div>
+          <div class="panel-body mt-1">
+            <span id="statVref" class="text-lg font-extrabold text-cyan-600">0.00 m/s</span>
+            <span id="statAref" class="block text-[10px] text-slate-400">|a_R| = 0.00 m/s²</span>
+          </div>
+        </div>
+
+        <div id="panel-stat-iczv" class="panel bg-white rounded-xl p-3 border border-slate-200 shadow-sm flex flex-col justify-between">
+          <div class="flex items-start justify-between gap-1">
+            <span class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider"><i class="fa-solid fa-bullseye text-purple-500 mr-1"></i>순간중심 (C)</span>
+            <button onclick="togglePanel('panel-stat-iczv')" class="panel-toggle panel-toggle-sm" title="최소화 / 펼치기"><i class="fa-solid fa-minus"></i><i class="fa-solid fa-plus"></i></button>
+          </div>
+          <div class="panel-body mt-1">
+            <span id="statIczv" class="text-lg font-extrabold text-purple-600">(0.00, 0.00)</span>
+            <span id="statIczvDist" class="block text-[10px] text-slate-400">|r_C/R| = 0.00 m</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Probe Points Real-time Inspector Table -->
+      <div id="panel-inspector" class="panel bg-white rounded-xl shadow-sm border border-slate-200 p-4">
+        <div class="panel-head flex justify-between items-center mb-2 flex-wrap gap-2 border-b border-slate-100 pb-2">
+          <h2 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+            <i class="fa-solid fa-table text-blue-600"></i> 탐색점 운동 벡터 및 성분 분석 (Real-time Inspector)
+          </h2>
+          <button onclick="togglePanel('panel-inspector')" class="panel-toggle" title="최소화 / 펼치기"><i class="fa-solid fa-minus"></i><i class="fa-solid fa-plus"></i></button>
+        </div>
+        <div class="panel-body">
+          <p class="text-[11px] text-slate-500 mb-2">모든 값은 고정 좌표계(x 오른쪽 +, y 위쪽 +) 성분입니다. 괄호 안은 (x, y) 성분, 단위는 m, m/s, m/s².</p>
+          <div class="resize-y overflow-x-auto border-b border-slate-200 pb-2" style="height: 14rem; min-height: 6rem;">
+            <table class="w-full text-left border-collapse text-xs">
+              <thead class="sticky top-0">
+                <tr class="bg-slate-50 text-slate-600 border-b border-slate-200">
+                  <th class="p-2 font-semibold">탐색점</th>
+                  <th class="p-2 font-semibold">위치 $(x, y)$</th>
+                  <th class="p-2 font-semibold text-emerald-700">속도 $\mathbf{v}$</th>
+                  <th class="p-2 font-semibold text-cyan-700">$\mathbf{v}_R + \mathbf{v}_{P/R}$</th>
+                  <th class="p-2 font-semibold text-rose-600">가속도 $\mathbf{a}$</th>
+                  <th class="p-2 font-semibold text-amber-700">$|\mathbf{a}_t|,\ |\mathbf{a}_n|$</th>
+                  <th class="p-2 font-semibold text-center">관리</th>
+                </tr>
+              </thead>
+              <tbody id="table_probe_body" class="divide-y divide-slate-100 font-mono">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+          <p class="text-[10px] text-slate-400 text-right mt-1"><i class="fa-solid fa-up-down mr-1"></i>오른쪽 아래 모서리를 드래그해 높이 조절</p>
+        </div>
+      </div>
+
+      <!-- Real-time Equations for a Selected Point -->
+      <div id="panel-equations" class="panel bg-white rounded-xl shadow-sm border border-slate-200 p-4">
+        <div class="panel-head flex justify-between items-center mb-2 flex-wrap gap-2 border-b border-slate-100 pb-2">
+          <h2 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+            <i class="fa-solid fa-square-root-variable text-indigo-600"></i> 선택점의 상대운동 수식 대입 (Real-time Equations)
+          </h2>
+          <div class="flex items-center gap-2 text-xs">
+            <label for="select_eq_point" class="font-semibold text-slate-600">관찰점 P</label>
+            <select id="select_eq_point" class="px-2 py-1 border border-slate-300 rounded text-xs bg-white focus:ring-1 focus:ring-fuchsia-500"></select>
+            <button onclick="togglePanel('panel-equations')" class="panel-toggle" title="최소화 / 펼치기"><i class="fa-solid fa-minus"></i><i class="fa-solid fa-plus"></i></button>
+          </div>
+        </div>
+        <div class="panel-body">
+          <p class="text-[11px] text-slate-500 mb-2">현재 시각의 기준점 $R$ 운동과 강체 각운동 $(\omega, \alpha)$를 상대운동 식에 직접 대입한 결과입니다. 2차원에서 $\boldsymbol{\omega}\times\mathbf{r} = \omega(-r_y,\ r_x)$ 입니다.</p>
+          <div id="liveEqKaTeX" class="bg-slate-50 p-3 rounded-lg border border-slate-200 overflow-x-auto text-slate-800 min-h-[120px]"></div>
+        </div>
+      </div>
+
+      <!-- Theory Card -->
+      <div id="panel-theory" class="panel bg-white rounded-xl shadow-sm border border-slate-200 p-4">
+        <div class="panel-head flex justify-between items-center gap-2 mb-3 border-b border-slate-100 pb-2">
+          <h2 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+            <i class="fa-solid fa-graduation-cap text-indigo-600"></i> 강체 평면 운동학 핵심 원리 (Key Principles)
+          </h2>
+          <button onclick="togglePanel('panel-theory')" class="panel-toggle" title="최소화 / 펼치기"><i class="fa-solid fa-minus"></i><i class="fa-solid fa-plus"></i></button>
+        </div>
+
+        <div class="panel-body">
+          <div class="resize-y grid grid-cols-1 md:grid-cols-2 gap-4 text-xs content-start pr-2 border-b border-slate-200 pb-2" style="height: 26rem; min-height: 6rem;">
+
+            <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
+              <h3 class="font-bold text-slate-700 mb-1.5 flex items-center gap-1.5 text-[12px]">
+                <i class="fa-solid fa-equals text-indigo-600"></i> ① 모든 점에서 동일한 $\omega$, $\alpha$
+              </h3>
+              <p class="text-slate-600 leading-relaxed">강체 내 임의의 두 선분 사이 각도 $\beta$는 변하지 않으므로, 어떤 선분을 택해도 회전각의 변화율(각속도·각가속도)은 같습니다. 즉 $\omega$, $\alpha$는 강체 전체의 성질입니다.</p>
+              <div class="py-1">$$\theta_2 = \theta_1 + \beta \;\Rightarrow\; \dot\theta_1 = \dot\theta_2 = \omega,\quad \ddot\theta_1 = \ddot\theta_2 = \alpha$$</div>
+            </div>
+
+            <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
+              <h3 class="font-bold text-slate-700 mb-1.5 flex items-center gap-1.5 text-[12px]">
+                <i class="fa-solid fa-code-merge text-cyan-600"></i> ② 상대속도: 병진 + 회전의 합성
+              </h3>
+              <p class="text-slate-600 leading-relaxed">점 $P$의 속도는 기준점 $R$의 병진 속도와, $R$에 대한 순수 회전에 의한 상대속도의 벡터합입니다. 상대속도는 $\mathbf{r}_{P/R}$에 수직이고 크기는 $\omega r$입니다.</p>
+              <div class="py-1">$$\mathbf{v}_P = \mathbf{v}_R + \mathbf{v}_{P/R} = \mathbf{v}_R + \boldsymbol{\omega}\times\mathbf{r}_{P/R}$$</div>
+            </div>
+
+            <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
+              <h3 class="font-bold text-slate-700 mb-1.5 flex items-center gap-1.5 text-[12px]">
+                <i class="fa-solid fa-gauge text-rose-600"></i> ③ 상대가속도: 접선 + 법선 성분
+              </h3>
+              <p class="text-slate-600 leading-relaxed">$R$에 대한 상대가속도는 $\mathbf{r}_{P/R}$에 수직인 접선 성분 $(\alpha r)$과 $R$을 향하는 법선(구심) 성분 $(\omega^2 r)$으로 나뉩니다.</p>
+              <div class="py-1">$$\mathbf{a}_P = \mathbf{a}_R + \underbrace{\boldsymbol{\alpha}\times\mathbf{r}_{P/R}}_{(\mathbf{a}_{P/R})_t} \underbrace{-\,\omega^2\,\mathbf{r}_{P/R}}_{(\mathbf{a}_{P/R})_n}$$</div>
+            </div>
+
+            <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
+              <h3 class="font-bold text-slate-700 mb-1.5 flex items-center gap-1.5 text-[12px]">
+                <i class="fa-solid fa-bullseye text-purple-600"></i> ④ 영속도 순간중심 (ICZV)
+              </h3>
+              <p class="text-slate-600 leading-relaxed">$\omega \neq 0$이면 매 순간 속도가 0인 점 $C$가 존재하며, 그 순간 강체는 $C$를 중심으로 순수 회전합니다. ($C$의 <b>가속도는 일반적으로 0이 아닙니다</b>.)</p>
+              <div class="py-1">$$\mathbf{r}_{C/R} = \frac{\boldsymbol{\omega}\times\mathbf{v}_R}{\omega^2}\;\Rightarrow\;\mathbf{v}_C = \mathbf{0},\qquad v_P = \omega\, r_{P/C}$$</div>
+            </div>
+
+            <div class="bg-slate-50 p-3 rounded-lg border border-slate-200 md:col-span-2">
+              <h3 class="font-bold text-slate-700 mb-1.5 flex items-center gap-1.5 text-[12px]">
+                <i class="fa-solid fa-clock text-emerald-600"></i> ⑤ 이 시뮬레이터의 운동 모델 (등가속 병진 + 등각가속 회전)
+              </h3>
+              <div class="py-1">$$\mathbf{r}_R(t) = \mathbf{r}_{R,0} + \mathbf{v}_{R,0}\,t + \tfrac12\,\mathbf{a}_R\,t^2,\qquad \theta(t) = \omega_0 t + \tfrac12\alpha t^2,\qquad \omega(t) = \omega_0 + \alpha t$$</div>
+              <p class="text-[10px] text-slate-500 mt-1 leading-relaxed">
+                부호 규약: x는 오른쪽 +, y는 위쪽 +, 각속도·각가속도는 반시계방향 +. 구름 바퀴(미끄럼 없음, 반지름 $r$)는 $v_O = -\omega r$, $a_O = -\alpha r$이고 순간중심이 접촉점과 일치합니다.
+              </p>
+            </div>
+
+          </div>
+          <p class="text-[10px] text-slate-400 text-right mt-1"><i class="fa-solid fa-up-down mr-1"></i>오른쪽 아래 모서리를 드래그해 높이 조절</p>
+        </div>
+      </div>
+
+    </main>
+
+    <!-- Right-edge handle: drag to widen / narrow the right column (overall page width) -->
+    <div id="rightSplitter" class="col-splitter edge" role="separator" aria-orientation="vertical" aria-label="오른쪽 열 폭 조절" tabindex="0"
+         title="드래그하여 오른쪽 열 폭 조절 (더블클릭: 기본 폭, ←/→ 키로도 조절)">
+      <div class="splitter-grip"><span></span><span></span><span></span></div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-slate-900 text-slate-400 text-xs py-3 border-t border-slate-800 mt-auto">
+    <div class="max-w-7xl mx-auto px-4 text-center">
+      동역학(Dynamics) 강체 평면 운동학 시뮬레이터 &copy; 홍익대학교 기계·시스템디자인공학과 교육용 시뮬레이션
+    </div>
+  </footer>
+
+
+  <!-- SIMULATOR APPLICATION JAVASCRIPT -->
+  <script>
+    /* ==========================================================================
+       1. GLOBAL STATE & CONFIGURATION
+       ========================================================================== */
+    const state = {
+      // Time & Playback
+      t: 0,
+      maxT: 10.0,
+      isPlaying: false,
+      speed: 1.0,
+      animationFrameId: null,
+      lastTimestamp: null,
+
+      // Rigid Body Geometry & Reference Point
+      shapeType: 'potato', // 'potato', 'lbar', 'wheel', 'rectangle', 'custom'
+      selectedRefId: 'O',  // ID of the probe point acting as Motion Reference Point R
+      eqPointId: 'A',      // Point shown in the real-time equation panel
+      nextPointNum: 1,     // Counter for user-added points (P1, P2, ...)
+      groundY: null,       // Ground line (world y) for the rolling-wheel preset
+
+      // Kinematic Inputs (Applied DIRECTLY to the selected Reference Point R)
+      vx0: 1.0,
+      vy0: 0.5,
+      ax: 0.2,
+      ay: 0.0,
+      omega0: 2.0,
+      alpha: 0.5,
+      theta0: 0,
+
+      // Rigid Body Geometry Vertices (local body coords relative to centroid O)
+      shapeVertices: [],
+
+      // Probe Points attached to the rigid body (local coords relative to centroid O)
+      probePoints: [],
+
+      // Visualization Toggles
+      showVTotal: true,
+      showVComp: true,
+      showATotal: true,
+      showAComp: true,
+      showICZV: true,
+      showPaths: true,
+      showOmega: true,
+      showAlpha: true,
+
+      // Camera: when following, the reference point R stays at (canvas centre + cam)
+      follow: true,
+      cam: { x: 0, y: 0 },
+
+      // View Transformation (Scale & Offset for Pan and Zoom), CSS px
+      scale: 230, // 1 meter = scale px
+      defaultScale: 230,
+      originOffset: { x: 0, y: 0 },
+      viewW: 0,
+      viewH: 0
+    };
+
+    const SLIDERS = [
+      { id: 'slider_vx0',    prop: 'vx0',    disp: 'val_vx0',    unit: 'm/s' },
+      { id: 'slider_vy0',    prop: 'vy0',    disp: 'val_vy0',    unit: 'm/s' },
+      { id: 'slider_ax',     prop: 'ax',     disp: 'val_ax',     unit: 'm/s²' },
+      { id: 'slider_ay',     prop: 'ay',     disp: 'val_ay',     unit: 'm/s²' },
+      { id: 'slider_omega0', prop: 'omega0', disp: 'val_omega0', unit: 'rad/s' },
+      { id: 'slider_alpha',  prop: 'alpha',  disp: 'val_alpha',  unit: 'rad/s²' }
+    ];
+
+    /* ==========================================================================
+       2. SHAPE INITIALIZATION & POINT SELECTORS
+       ========================================================================== */
+    function refreshPointSelectors() {
+      const fill = (select, current) => {
+        if (!select) return;
+        select.innerHTML = '';
+        state.probePoints.forEach(p => {
+          const opt = document.createElement('option');
+          opt.value = p.id;
+          opt.innerText = `${p.label} (ID: ${p.id})`;
+          select.appendChild(opt);
+        });
+        if (state.probePoints.some(p => p.id === current)) select.value = current;
+      };
+
+      if (!state.probePoints.some(p => p.id === state.selectedRefId) && state.probePoints.length > 0) {
+        state.selectedRefId = state.probePoints[0].id;
+      }
+      if (!state.probePoints.some(p => p.id === state.eqPointId) && state.probePoints.length > 0) {
+        const nonRef = state.probePoints.find(p => p.id !== state.selectedRefId);
+        state.eqPointId = (nonRef || state.probePoints[0]).id;
+      }
+      fill(document.getElementById('select_ref_point'), state.selectedRefId);
+      fill(document.getElementById('select_eq_point'), state.eqPointId);
+    }
+
+    function initShape(type) {
+      state.shapeType = type;
+      if (type === 'potato') {
+        state.shapeVertices = [
+          { x: 0.35, y: 0.05 }, { x: 0.25, y: 0.25 }, { x: 0.0, y: 0.32 },
+          { x: -0.25, y: 0.22 }, { x: -0.38, y: -0.05 }, { x: -0.20, y: -0.28 },
+          { x: 0.10, y: -0.30 }, { x: 0.30, y: -0.15 }
+        ];
+        state.probePoints = [
+          { id: 'O', label: '도심 O', localPos: { x: 0, y: 0 }, color: '#38bdf8', isFixed: true },
+          { id: 'A', label: '점 A', localPos: { x: 0.25, y: 0.25 }, color: '#f43f5e', isFixed: false },
+          { id: 'B', label: '점 B', localPos: { x: -0.25, y: -0.20 }, color: '#a855f7', isFixed: false }
+        ];
+      } else if (type === 'lbar') {
+        state.shapeVertices = [
+          { x: -0.30, y: -0.15 }, { x: 0.10, y: -0.15 }, { x: 0.10, y: 0.25 },
+          { x: 0.02, y: 0.25 }, { x: 0.02, y: -0.07 }, { x: -0.30, y: -0.07 }
+        ];
+        state.probePoints = [
+          { id: 'O', label: '도심 O', localPos: { x: -0.10, y: 0.04 }, color: '#38bdf8', isFixed: true },
+          { id: 'A', label: '정점 A', localPos: { x: 0.06, y: 0.23 }, color: '#f43f5e', isFixed: false },
+          { id: 'B', label: '정점 B', localPos: { x: -0.28, y: -0.11 }, color: '#a855f7', isFixed: false }
+        ];
+      } else if (type === 'wheel') {
+        const N = 32;
+        const R = 0.30;
+        state.shapeVertices = [];
+        for (let i = 0; i < N; i++) {
+          const ang = (i / N) * Math.PI * 2;
+          state.shapeVertices.push({ x: R * Math.cos(ang), y: R * Math.sin(ang) });
+        }
+        state.probePoints = [
+          { id: 'O', label: '휠 중심 O', localPos: { x: 0, y: 0 }, color: '#38bdf8', isFixed: true },
+          { id: 'A', label: '림 상단 A', localPos: { x: 0, y: 0.30 }, color: '#f43f5e', isFixed: false },
+          { id: 'B', label: '림 측면 B', localPos: { x: 0.30, y: 0 }, color: '#a855f7', isFixed: false }
+        ];
+      } else if (type === 'rectangle') {
+        state.shapeVertices = [
+          { x: 0.35, y: 0.20 }, { x: -0.35, y: 0.20 },
+          { x: -0.35, y: -0.20 }, { x: 0.35, y: -0.20 }
+        ];
+        state.probePoints = [
+          { id: 'O', label: '중심 O', localPos: { x: 0, y: 0 }, color: '#38bdf8', isFixed: true },
+          { id: 'A', label: '우상단 A', localPos: { x: 0.35, y: 0.20 }, color: '#f43f5e', isFixed: false },
+          { id: 'B', label: '좌하단 B', localPos: { x: -0.35, y: -0.20 }, color: '#a855f7', isFixed: false }
+        ];
+      } else if (type === 'custom') {
+        state.shapeVertices = [
+          { x: 0.2, y: 0.2 }, { x: -0.2, y: 0.2 }, { x: -0.1, y: -0.2 }, { x: 0.3, y: -0.1 }
+        ];
+        state.probePoints = [
+          { id: 'O', label: '원점 O', localPos: { x: 0, y: 0 }, color: '#38bdf8', isFixed: true },
+          { id: 'A', label: '정점 A', localPos: { x: 0.2, y: 0.2 }, color: '#f43f5e', isFixed: false }
+        ];
+      }
+
+      const selectShape = document.getElementById('select_shape');
+      if (selectShape) selectShape.value = type;
+      state.selectedRefId = 'O';
+      state.eqPointId = 'A';
+      state.nextPointNum = 1;
+      state.groundY = null;
+      refreshPointSelectors();
+    }
+
+    function setParams(params) {
+      SLIDERS.forEach(s => {
+        if (params[s.prop] === undefined) return;
+        state[s.prop] = params[s.prop];
+        const el = document.getElementById(s.id);
+        if (el) el.value = params[s.prop];
+        const disp = document.getElementById(s.disp);
+        if (disp) disp.innerText = `${params[s.prop].toFixed(1)} ${s.unit}`;
+      });
+    }
+
+    function setTime(t) {
+      state.t = Math.min(Math.max(t, 0), state.maxT);
+      const slider = document.getElementById('slider_time');
+      const display = document.getElementById('display_time');
+      if (slider) slider.value = state.t;
+      if (display) display.innerText = `${state.t.toFixed(2)} s`;
+    }
+
+    function stopPlayback() {
+      state.isPlaying = false;
+      if (state.animationFrameId) cancelAnimationFrame(state.animationFrameId);
+      document.getElementById('icon_play').className = 'fa-solid fa-play';
+      document.getElementById('text_play').innerText = '재생 (Play)';
+    }
+
+    // Header motion presets
+    function applyPreset(name) {
+      stopPlayback();
+      setTime(0);
+      if (name === 'general') {
+        initShape('potato');
+        setParams({ vx0: 1.0, vy0: 0.5, ax: 0.2, ay: 0.0, omega0: 2.0, alpha: 0.5 });
+      } else if (name === 'translation') {
+        initShape('rectangle');
+        setParams({ vx0: 1.5, vy0: 0.5, ax: 0.2, ay: -0.2, omega0: 0, alpha: 0 });
+      } else if (name === 'rotation') {
+        // Fixed-axis rotation about end B of the L-bar
+        initShape('lbar');
+        state.selectedRefId = 'B';
+        state.eqPointId = 'A';
+        refreshPointSelectors();
+        setParams({ vx0: 0, vy0: 0, ax: 0, ay: 0, omega0: 2.0, alpha: 1.0 });
+      } else if (name === 'rolling') {
+        // Rolling without slipping: v_O = -ω r, a_O = -α r (r = 0.30 m)
+        initShape('wheel');
+        const r = 0.30, w0 = -4.0, al = -1.0;
+        setParams({ vx0: -w0 * r, vy0: 0, ax: -al * r, ay: 0, omega0: w0, alpha: al });
+        state.groundY = -r;
+      }
+      resetViewOffset();
+    }
+
+    /* ==========================================================================
+       3. KINEMATICS EVALUATION ENGINE
+       ========================================================================== */
+    function getRefPointLocalPos() {
+      const refPt = state.probePoints.find(p => p.id === state.selectedRefId) || state.probePoints[0];
+      return refPt ? { x: refPt.localPos.x, y: refPt.localPos.y, id: refPt.id, label: refPt.label } : { x: 0, y: 0, id: 'O', label: '도심 O' };
+    }
+
+    function evalKinematics(t) {
+      const theta = state.theta0 + state.omega0 * t + 0.5 * state.alpha * t * t;
+      const omega = state.omega0 + state.alpha * t;
+      const alpha = state.alpha;
+
+      const refLocal = getRefPointLocalPos();
+
+      const x_ref = refLocal.x + state.vx0 * t + 0.5 * state.ax * t * t;
+      const y_ref = refLocal.y + state.vy0 * t + 0.5 * state.ay * t * t;
+
+      const vx_ref = state.vx0 + state.ax * t;
+      const vy_ref = state.vy0 + state.ay * t;
+
+      const ax_ref = state.ax;
+      const ay_ref = state.ay;
+
+      const cosT = Math.cos(theta);
+      const sinT = Math.sin(theta);
+
+      const relO_x = -refLocal.x;
+      const relO_y = -refLocal.y;
+
+      const rx_O = relO_x * cosT - relO_y * sinT;
+      const ry_O = relO_x * sinT + relO_y * cosT;
+
+      let iczv = null;
+      if (Math.abs(omega) > 1e-5) {
+        const rx_c = -vy_ref / omega;
+        const ry_c = vx_ref / omega;
+        iczv = { x: x_ref + rx_c, y: y_ref + ry_c, relX: rx_c, relY: ry_c };
+      }
+
+      return {
+        t,
+        theta,
+        omega,
+        alpha,
+        refLocal,
+        originPos: { x: x_ref + rx_O, y: y_ref + ry_O },
+        refPos: { x: x_ref, y: y_ref },
+        refVel: { x: vx_ref, y: vy_ref, mag: Math.hypot(vx_ref, vy_ref) },
+        refAcc: { x: ax_ref, y: ay_ref, mag: Math.hypot(ax_ref, ay_ref) },
+        iczv
+      };
+    }
+
+    function evalPointKinematics(localPos, kin) {
+      const cosT = Math.cos(kin.theta);
+      const sinT = Math.sin(kin.theta);
+
+      const relBodyX = localPos.x - kin.refLocal.x;
+      const relBodyY = localPos.y - kin.refLocal.y;
+
+      const rx = relBodyX * cosT - relBodyY * sinT;
+      const ry = relBodyX * sinT + relBodyY * cosT;
+
+      const v_trans = { x: kin.refVel.x, y: kin.refVel.y };
+      const v_rot = { x: -kin.omega * ry, y: kin.omega * rx };
+      const vx = v_trans.x + v_rot.x;
+      const vy = v_trans.y + v_rot.y;
+
+      const a_trans = { x: kin.refAcc.x, y: kin.refAcc.y };
+      const a_t = { x: -kin.alpha * ry, y: kin.alpha * rx };
+      const omegaSq = kin.omega * kin.omega;
+      const a_n = { x: -omegaSq * rx, y: -omegaSq * ry };
+      const ax = a_trans.x + a_t.x + a_n.x;
+      const ay = a_trans.y + a_t.y + a_n.y;
+
+      return {
+        pos: { x: kin.refPos.x + rx, y: kin.refPos.y + ry },
+        r_rel: { x: rx, y: ry, mag: Math.hypot(rx, ry) },
+        v_trans,
+        v_rot,
+        v_total: { x: vx, y: vy, mag: Math.hypot(vx, vy) },
+        a_trans,
+        a_t,
+        a_n,
+        a_total: { x: ax, y: ay, mag: Math.hypot(ax, ay) }
+      };
+    }
+
+    /* ==========================================================================
+       4. CANVAS RENDERING & VIEW ENGINE
+       ========================================================================== */
+    const canvas = document.getElementById('simCanvas');
+    const ctx = canvas.getContext('2d');
+    const canvasWrap = document.getElementById('canvasWrap');
+
+    function resetViewOffset() {
+      state.scale = state.defaultScale;
+      state.cam = { x: 0, y: 0 };
+      state.originOffset = { x: state.viewW * 0.45, y: state.viewH * 0.55 };
+      draw();
+    }
+
+    // After a manual pan / zoom, store where R now sits relative to the canvas centre
+    function syncCam() {
+      const k = evalKinematics(state.t);
+      const p = worldToPixel(k.refPos.x, k.refPos.y);
+      state.cam = { x: p.px - state.viewW / 2, y: p.py - state.viewH / 2 };
+    }
+
+    function resizeCanvas() {
+      const rect = canvasWrap.getBoundingClientRect();
+      if (rect.width < 10 || rect.height < 10) return;
+      const dpr = window.devicePixelRatio || 1;
+      const first = state.viewW === 0;
+      if (!first) {
+        // Keep the view centred while the canvas is resized
+        state.originOffset.x += (rect.width - state.viewW) / 2;
+        state.originOffset.y += (rect.height - state.viewH) / 2;
+      }
+      state.viewW = rect.width;
+      state.viewH = rect.height;
+      canvas.width = Math.round(rect.width * dpr);
+      canvas.height = Math.round(rect.height * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      if (first) resetViewOffset(); else draw();
+    }
+
+    function worldToPixel(x, y) {
+      return {
+        px: state.originOffset.x + x * state.scale,
+        py: state.originOffset.y - y * state.scale
+      };
+    }
+
+    function pixelToWorld(px, py) {
+      return {
+        x: (px - state.originOffset.x) / state.scale,
+        y: (state.originOffset.y - py) / state.scale
+      };
+    }
+
+    // Zoom about a screen point (px, py) in CSS px relative to the canvas
+    function zoomAt(px, py, factor) {
+      const w = pixelToWorld(px, py);
+      state.scale = Math.max(30, Math.min(1200, state.scale * factor));
+      state.originOffset.x = px - w.x * state.scale;
+      state.originOffset.y = py + w.y * state.scale;
+      if (state.follow) syncCam();
+      draw();
+    }
+
+    /* ---------- Label layout: arrows / points register obstacles, labels are placed last ---------- */
+    const overlay = { labels: [], segs: [], dots: [] };
+    const LABEL_FONT = "bold 11px Inter, 'Noto Sans KR', sans-serif";
+    const NAME_FONT = "bold 12px Inter, 'Noto Sans KR', sans-serif";
+
+    function resetOverlay() { overlay.labels = []; overlay.segs = []; overlay.dots = []; }
+
+    function queueLabel(text, color, ax, ay, dir, prio = 1, font = LABEL_FONT) {
+      overlay.labels.push({ text, color, ax, ay, dir, prio, font });
+    }
+
+    function drawArrow(ctx, fromX, fromY, toX, toY, color, width = 2, headLen = 10, label = '', prio = 1) {
+      const dx = toX - fromX;
+      const dy = toY - fromY;
+      const len = Math.hypot(dx, dy);
+      if (len < 2) return;
+
+      const angle = Math.atan2(dy, dx);
+      const head = Math.min(headLen, len * 0.7);
+
+      ctx.save();
+      ctx.strokeStyle = color;
+      ctx.fillStyle = color;
+      ctx.lineWidth = width;
+      ctx.lineCap = 'round';
+
+      ctx.beginPath();
+      ctx.moveTo(fromX, fromY);
+      ctx.lineTo(toX - head * 0.5 * Math.cos(angle), toY - head * 0.5 * Math.sin(angle));
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.moveTo(toX, toY);
+      ctx.lineTo(toX - head * Math.cos(angle - Math.PI / 7), toY - head * Math.sin(angle - Math.PI / 7));
+      ctx.lineTo(toX - head * Math.cos(angle + Math.PI / 7), toY - head * Math.sin(angle + Math.PI / 7));
+      ctx.closePath();
+      ctx.fill();
+      ctx.restore();
+
+      overlay.segs.push({ x1: fromX, y1: fromY, x2: toX, y2: toY });
+      if (label) queueLabel(label, color, toX, toY, angle, prio);
+    }
+
+    let lastEqRender = 0;
+
+    function draw() {
+      if (state.viewW === 0) return;
+      ctx.clearRect(0, 0, state.viewW, state.viewH);
+      resetOverlay();
+
+      const kin = evalKinematics(state.t);
+
+      if (state.follow) {
+        state.originOffset.x = state.viewW / 2 + state.cam.x - kin.refPos.x * state.scale;
+        state.originOffset.y = state.viewH / 2 + state.cam.y + kin.refPos.y * state.scale;
+      }
+
+      drawGrid();
+      if (state.groundY !== null) drawGround();
+      if (state.showPaths) drawPaths(kin);
+
+      drawRigidBody(kin);
+      drawReferenceLines(kin);
+      if (state.showICZV && kin.iczv) drawICZV(kin);
+      drawProbePointsAndVectors(kin);
+      drawSpinArrows(kin);
+
+      const legendRect = drawLegend();
+      const hudRect = { x: 6, y: 6, w: 132, h: 30 };
+      placeLabels([hudRect, legendRect].filter(Boolean));
+
+      updateInspectorTable(kin);
+      updateStats(kin);
+
+      const now = performance.now();
+      if (!state.isPlaying || now - lastEqRender > 120) {
+        lastEqRender = now;
+        renderLiveEquations(kin);
+      }
+    }
+
+    function drawGrid() {
+      const W = state.viewW, H = state.viewH;
+      ctx.save();
+      ctx.strokeStyle = '#1e293b';
+      ctx.lineWidth = 1;
+
+      const gridSize = 0.5 * state.scale;
+      const startX = ((state.originOffset.x % gridSize) + gridSize) % gridSize;
+      for (let x = startX; x < W; x += gridSize) {
+        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
+      }
+      const startY = ((state.originOffset.y % gridSize) + gridSize) % gridSize;
+      for (let y = startY; y < H; y += gridSize) {
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+      }
+
+      // Axes
+      ctx.strokeStyle = '#334155';
+      ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(0, state.originOffset.y); ctx.lineTo(W, state.originOffset.y); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(state.originOffset.x, 0); ctx.lineTo(state.originOffset.x, H); ctx.stroke();
+
+      ctx.fillStyle = '#64748b';
+      ctx.font = "11px Inter, sans-serif";
+      ctx.fillText('x (m)', W - 40, state.originOffset.y - 6);
+      ctx.fillText('y (m)', state.originOffset.x + 6, 50);
+      ctx.restore();
+    }
+
+    function drawGround() {
+      const W = state.viewW, H = state.viewH;
+      const gy = worldToPixel(0, state.groundY).py;
+      if (gy > H + 20 || gy < -20) return;
+      ctx.save();
+      ctx.fillStyle = 'rgba(100, 116, 139, 0.18)';
+      ctx.fillRect(0, gy, W, H - gy);
+      ctx.strokeStyle = '#94a3b8';
+      ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(W, gy); ctx.stroke();
+      ctx.lineWidth = 1;
+      const hatch0 = ((state.originOffset.x % 14) + 14) % 14;
+      for (let x = hatch0; x < W + 14; x += 14) {
+        ctx.beginPath(); ctx.moveTo(x, gy); ctx.lineTo(x - 8, gy + 8); ctx.stroke();
+      }
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = "11px Inter, 'Noto Sans KR', sans-serif";
+      ctx.fillText('지면 (미끄럼 없음)', W - 120, gy + 20);
+      ctx.restore();
+    }
+
+    // Trajectories are evaluated analytically, so they are visible while paused or scrubbing:
+    // solid = path already travelled (0 → t), faint dashed = whole run (0 → maxT)
+    function drawPaths(kin) {
+      const N = 300;
+      const pts = state.probePoints;
+      const full = pts.map(() => []);
+      const done = pts.map(() => []);
+      for (let i = 0; i <= N; i++) {
+        const t = state.maxT * i / N;
+        const k = evalKinematics(t);
+        pts.forEach((p, j) => {
+          const pk = evalPointKinematics(p.localPos, k);
+          const pix = worldToPixel(pk.pos.x, pk.pos.y);
+          full[j].push(pix);
+          if (t < state.t) done[j].push(pix);
+        });
+      }
+      pts.forEach((p, j) => {
+        const pk = evalPointKinematics(p.localPos, kin);
+        done[j].push(worldToPixel(pk.pos.x, pk.pos.y));
+      });
+
+      const stroke = arr => {
+        ctx.beginPath();
+        arr.forEach((q, i) => (i ? ctx.lineTo(q.px, q.py) : ctx.moveTo(q.px, q.py)));
+        ctx.stroke();
+      };
+
+      ctx.save();
+      ctx.lineJoin = 'round';
+      pts.forEach((p, j) => {
+        ctx.strokeStyle = p.color;
+        ctx.globalAlpha = 0.4;
+        ctx.lineWidth = 1.2;
+        ctx.setLineDash([3, 5]);
+        stroke(full[j]);
+        if (done[j].length > 1) {
+          ctx.globalAlpha = 0.95;
+          ctx.lineWidth = 2;
+          ctx.setLineDash([]);
+          stroke(done[j]);
+        }
+      });
+      ctx.restore();
+    }
+
+    function drawSmoothClosedCurve(ctx, verts) {
+      if (verts.length < 3) return;
+      ctx.beginPath();
+
+      const pLast = verts[verts.length - 1];
+      const pFirst = verts[0];
+      ctx.moveTo((pLast.px + pFirst.px) / 2, (pLast.py + pFirst.py) / 2);
+
+      for (let i = 0; i < verts.length; i++) {
+        const pCurrent = verts[i];
+        const pNext = verts[(i + 1) % verts.length];
+        ctx.quadraticCurveTo(pCurrent.px, pCurrent.py, (pCurrent.px + pNext.px) / 2, (pCurrent.py + pNext.py) / 2);
+      }
+      ctx.closePath();
+    }
+
+    function drawRigidBody(kin) {
+      const cosT = Math.cos(kin.theta);
+      const sinT = Math.sin(kin.theta);
+
+      const worldVerts = state.shapeVertices.map(v => {
+        const wx = kin.originPos.x + (v.x * cosT - v.y * sinT);
+        const wy = kin.originPos.y + (v.x * sinT + v.y * cosT);
+        return worldToPixel(wx, wy);
+      });
+      if (worldVerts.length === 0) return;
+
+      ctx.save();
+      if (state.shapeType === 'potato') {
+        drawSmoothClosedCurve(ctx, worldVerts);
+      } else {
+        ctx.beginPath();
+        ctx.moveTo(worldVerts[0].px, worldVerts[0].py);
+        for (let i = 1; i < worldVerts.length; i++) {
+          ctx.lineTo(worldVerts[i].px, worldVerts[i].py);
+        }
+        ctx.closePath();
+      }
+
+      ctx.fillStyle = 'rgba(79, 70, 229, 0.25)';
+      ctx.fill();
+      ctx.strokeStyle = '#6366f1';
+      ctx.lineWidth = 3;
+      ctx.lineJoin = 'round';
+      ctx.stroke();
+
+      // Internal hatch lines make the rotation visible
+      ctx.strokeStyle = 'rgba(99, 102, 241, 0.15)';
+      ctx.lineWidth = 1;
+      for (let i = 0; i < worldVerts.length; i += 2) {
+        const j = (i + 2) % worldVerts.length;
+        ctx.beginPath();
+        ctx.moveTo(worldVerts[i].px, worldVerts[i].py);
+        ctx.lineTo(worldVerts[j].px, worldVerts[j].py);
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    function drawReferenceLines(kin) {
+      ctx.save();
+      const refPix = worldToPixel(kin.refPos.x, kin.refPos.y);
+
+      ctx.strokeStyle = '#64748b';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([4, 4]);
+
+      state.probePoints.forEach(p => {
+        const pk = evalPointKinematics(p.localPos, kin);
+        const pix = worldToPixel(pk.pos.x, pk.pos.y);
+        if (Math.hypot(pix.px - refPix.px, pix.py - refPix.py) > 5) {
+          ctx.beginPath();
+          ctx.moveTo(refPix.px, refPix.py);
+          ctx.lineTo(pix.px, pix.py);
+          ctx.stroke();
+        }
+      });
+      ctx.restore();
+    }
+
+    function drawProbePointsAndVectors(kin) {
+      const vScale = 0.25 * state.scale;
+      const aScale = 0.12 * state.scale;
+
+      const refPix = worldToPixel(kin.refPos.x, kin.refPos.y);
+      const refId = kin.refLocal.id;
+
+      // Reference point marker rings
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(refPix.px, refPix.py, 12, 0, Math.PI * 2);
+      ctx.strokeStyle = 'rgba(56, 189, 248, 0.6)';
+      ctx.lineWidth = 2;
+      ctx.setLineDash([3, 3]);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(refPix.px, refPix.py, 16, 0, Math.PI * 2);
+      ctx.strokeStyle = 'rgba(99, 102, 241, 0.3)';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([]);
+      ctx.stroke();
+      ctx.restore();
+
+      // Reference point R: v_R and a_R (identical to its own total v and a)
+      if (state.showVComp || state.showVTotal) {
+        drawArrow(ctx, refPix.px, refPix.py,
+          refPix.px + kin.refVel.x * vScale, refPix.py - kin.refVel.y * vScale,
+          '#38bdf8', 3.5, 11, `v_R = ${kin.refVel.mag.toFixed(2)} m/s`, 1);
+      }
+      if (state.showAComp || state.showATotal) {
+        drawArrow(ctx, refPix.px, refPix.py,
+          refPix.px + kin.refAcc.x * aScale, refPix.py - kin.refAcc.y * aScale,
+          '#f97316', 3.5, 11, `a_R = ${kin.refAcc.mag.toFixed(2)} m/s²`, 1);
+      }
+
+      const pks = state.probePoints.map(p => {
+        const pk = evalPointKinematics(p.localPos, kin);
+        return { p, pk, pix: worldToPixel(pk.pos.x, pk.pos.y) };
+      });
+
+      // 1) Vectors of all other points
+      pks.forEach(({ p, pk, pix }) => {
+        if (p.id === refId) return;
+        if (state.showVComp) {
+          drawArrow(ctx, pix.px, pix.py,
+            pix.px + pk.v_rot.x * vScale, pix.py - pk.v_rot.y * vScale,
+            '#2dd4bf', 2, 8, `v_${p.id}/R`, 2);
+        }
+        if (state.showVTotal) {
+          drawArrow(ctx, pix.px, pix.py,
+            pix.px + pk.v_total.x * vScale, pix.py - pk.v_total.y * vScale,
+            '#10b981', 3.5, 12, `v_${p.id} = ${pk.v_total.mag.toFixed(2)}`, 1);
+        }
+        if (state.showAComp) {
+          drawArrow(ctx, pix.px, pix.py,
+            pix.px + pk.a_t.x * aScale, pix.py - pk.a_t.y * aScale,
+            '#eab308', 2, 8, `(a_t)_${p.id}`, 2);
+          drawArrow(ctx, pix.px, pix.py,
+            pix.px + pk.a_n.x * aScale, pix.py - pk.a_n.y * aScale,
+            '#ec4899', 2, 8, `(a_n)_${p.id}`, 2);
+        }
+        if (state.showATotal) {
+          drawArrow(ctx, pix.px, pix.py,
+            pix.px + pk.a_total.x * aScale, pix.py - pk.a_total.y * aScale,
+            '#f43f5e', 3.5, 12, `a_${p.id} = ${pk.a_total.mag.toFixed(2)}`, 1);
+        }
+      });
+
+      // 2) Point markers on top of all arrows; names point away from the body centre
+      const bodyPix = worldToPixel(kin.originPos.x, kin.originPos.y);
+      pks.forEach(({ p, pix }) => {
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(pix.px, pix.py, 7, 0, Math.PI * 2);
+        ctx.fillStyle = p.color;
+        ctx.fill();
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.restore();
+
+        overlay.dots.push({ x: pix.px, y: pix.py, r: 9 });
+        const isRef = p.id === refId;
+        let dir = Math.atan2(pix.py - bodyPix.py, pix.px - bodyPix.px);
+        if (Math.hypot(pix.px - bodyPix.px, pix.py - bodyPix.py) < 3) dir = -Math.PI * 0.75;
+        queueLabel(`${p.label}${isRef ? ' = 기준점 R' : ''}`, isRef ? '#7dd3fc' : '#ffffff', pix.px, pix.py, dir, 0, NAME_FONT);
+      });
+    }
+
+    // Curved arrow around (cx, cy): counter-clockwise for value > 0, clockwise for value < 0.
+    // Arc length grows with |value|.
+    function drawSpinArrow(cx, cy, r, value, color, text, base) {
+      if (Math.abs(value) < 1e-6) {
+        queueLabel(text, color, cx + r * Math.cos(base), cy + r * Math.sin(base), base, 1);
+        return;
+      }
+      const ccw = value > 0;
+      const sgn = ccw ? -1 : 1; // canvas angle direction of travel (canvas y axis points down)
+      const span = Math.min(1.7 * Math.PI, 0.35 * Math.PI + 0.12 * Math.PI * Math.abs(value));
+      const a0 = base - sgn * span / 2;
+      const a1 = base + sgn * span / 2;
+
+      ctx.save();
+      ctx.strokeStyle = color;
+      ctx.fillStyle = color;
+      ctx.lineWidth = 2.5;
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.arc(cx, cy, r, a0, a1 - sgn * 0.12, ccw);
+      ctx.stroke();
+
+      // Arrowhead at the end of the arc, along the direction of travel
+      const ex = cx + r * Math.cos(a1), ey = cy + r * Math.sin(a1);
+      const tAng = Math.atan2(sgn * Math.cos(a1), -sgn * Math.sin(a1));
+      const tipX = ex + 4 * Math.cos(tAng), tipY = ey + 4 * Math.sin(tAng);
+      const head = 10;
+      ctx.beginPath();
+      ctx.moveTo(tipX, tipY);
+      ctx.lineTo(tipX - head * Math.cos(tAng - Math.PI / 7), tipY - head * Math.sin(tAng - Math.PI / 7));
+      ctx.lineTo(tipX - head * Math.cos(tAng + Math.PI / 7), tipY - head * Math.sin(tAng + Math.PI / 7));
+      ctx.closePath();
+      ctx.fill();
+      ctx.restore();
+
+      // Register the arc as obstacles for label placement
+      const n = 12;
+      let px = cx + r * Math.cos(a0), py = cy + r * Math.sin(a0);
+      for (let i = 1; i <= n; i++) {
+        const a = a0 + (a1 - a0) * i / n;
+        const qx = cx + r * Math.cos(a), qy = cy + r * Math.sin(a);
+        overlay.segs.push({ x1: px, y1: py, x2: qx, y2: qy });
+        px = qx; py = qy;
+      }
+      queueLabel(text, color, cx + r * Math.cos(base), cy + r * Math.sin(base), base, 1);
+    }
+
+    function drawSpinArrows(kin) {
+      if (!state.showOmega && !state.showAlpha) return;
+      const refPix = worldToPixel(kin.refPos.x, kin.refPos.y);
+      // Centre the arcs on the side opposite to v_R so they do not sit on the velocity arrow
+      const base = kin.refVel.mag > 1e-6 ? Math.atan2(kin.refVel.y, -kin.refVel.x) : Math.PI * 0.75;
+      const sym = v => (v > 1e-6 ? ' ↺' : v < -1e-6 ? ' ↻' : '');
+      if (state.showOmega) {
+        drawSpinArrow(refPix.px, refPix.py, 26, kin.omega, '#a3e635',
+          `ω = ${kin.omega.toFixed(2)} rad/s${sym(kin.omega)}`, base);
+      }
+      if (state.showAlpha) {
+        drawSpinArrow(refPix.px, refPix.py, 40, kin.alpha, '#e879f9',
+          `α = ${kin.alpha.toFixed(2)} rad/s²${sym(kin.alpha)}`, base);
+      }
+    }
+
+    function drawICZV(kin) {
+      const iczvPix = worldToPixel(kin.iczv.x, kin.iczv.y);
+
+      ctx.save();
+      ctx.strokeStyle = '#a855f7';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([2, 4]);
+      state.probePoints.forEach(p => {
+        const pk = evalPointKinematics(p.localPos, kin);
+        const pix = worldToPixel(pk.pos.x, pk.pos.y);
+        ctx.beginPath();
+        ctx.moveTo(iczvPix.px, iczvPix.py);
+        ctx.lineTo(pix.px, pix.py);
+        ctx.stroke();
+      });
+      ctx.setLineDash([]);
+
+      ctx.beginPath();
+      ctx.arc(iczvPix.px, iczvPix.py, 10, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(168, 85, 247, 0.3)';
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.arc(iczvPix.px, iczvPix.py, 5, 0, Math.PI * 2);
+      ctx.fillStyle = '#a855f7';
+      ctx.fill();
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+      ctx.restore();
+
+      overlay.dots.push({ x: iczvPix.px, y: iczvPix.py, r: 10 });
+      queueLabel('순간중심 C (ICZV)', '#c084fc', iczvPix.px, iczvPix.py, -Math.PI / 4, 0, NAME_FONT);
+    }
+
+    // Small colour legend at the bottom-left of the canvas; returns its rectangle
+    function drawLegend() {
+      const items = [];
+      if (state.showVTotal) items.push(['#10b981', 'v (전체 속도)']);
+      if (state.showVComp || state.showVTotal) items.push(['#38bdf8', 'v_R (기준점 속도)']);
+      if (state.showVComp) items.push(['#2dd4bf', 'v_P/R = ω × r']);
+      if (state.showATotal) items.push(['#f43f5e', 'a (전체 가속도)']);
+      if (state.showAComp || state.showATotal) items.push(['#f97316', 'a_R (기준점 가속도)']);
+      if (state.showAComp) items.push(['#eab308', 'a_t = α × r'], ['#ec4899', 'a_n = −ω² r']);
+      if (state.showOmega) items.push(['#a3e635', 'ω (각속도, ↺ 반시계 +)']);
+      if (state.showAlpha) items.push(['#e879f9', 'α (각가속도, ↺ 반시계 +)']);
+      if (items.length === 0) return null;
+
+      ctx.save();
+      ctx.font = "11px Inter, 'Noto Sans KR', sans-serif";
+      const pad = 8, rowH = 16;
+      const w = Math.max(...items.map(i => ctx.measureText(i[1]).width)) + 38;
+      const h = items.length * rowH + pad;
+      const x0 = 8, y0 = state.viewH - h - 8;
+      ctx.fillStyle = 'rgba(15, 23, 42, 0.85)';
+      ctx.strokeStyle = '#334155';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      if (ctx.roundRect) ctx.roundRect(x0, y0, w, h, 6); else ctx.rect(x0, y0, w, h);
+      ctx.fill();
+      ctx.stroke();
+      items.forEach((it, i) => {
+        const y = y0 + pad / 2 + i * rowH + rowH / 2;
+        ctx.strokeStyle = it[0];
+        ctx.lineWidth = 3;
+        ctx.beginPath(); ctx.moveTo(x0 + 8, y); ctx.lineTo(x0 + 24, y); ctx.stroke();
+        ctx.fillStyle = '#cbd5e1';
+        ctx.fillText(it[1], x0 + 30, y + 4);
+      });
+      ctx.restore();
+      return { x: x0, y: y0, w, h };
+    }
+
+    /* ---------- Greedy label placement (avoids arrows, points, other labels and canvas edges) ---------- */
+    function rectsOverlap(a, b, m = 2) {
+      return a.x < b.x + b.w + m && a.x + a.w + m > b.x && a.y < b.y + b.h + m && a.y + a.h + m > b.y;
+    }
+
+    // Liang–Barsky segment / rectangle intersection
+    function segHitsRect(s, r) {
+      const dx = s.x2 - s.x1, dy = s.y2 - s.y1;
+      const p = [-dx, dx, -dy, dy];
+      const q = [s.x1 - r.x, r.x + r.w - s.x1, s.y1 - r.y, r.y + r.h - s.y1];
+      let t0 = 0, t1 = 1;
+      for (let i = 0; i < 4; i++) {
+        if (p[i] === 0) {
+          if (q[i] < 0) return false;
+        } else {
+          const t = q[i] / p[i];
+          if (p[i] < 0) { if (t > t1) return false; if (t > t0) t0 = t; }
+          else { if (t < t0) return false; if (t < t1) t1 = t; }
+        }
+      }
+      return true;
+    }
+
+    function circleHitsRect(c, r) {
+      const qx = Math.min(Math.max(c.x, r.x), r.x + r.w);
+      const qy = Math.min(Math.max(c.y, r.y), r.y + r.h);
+      return Math.hypot(c.x - qx, c.y - qy) < c.r;
+    }
+
+    function placeLabels(obstacles) {
+      const W = state.viewW, H = state.viewH;
+      const placed = obstacles.slice();
+      const offsets = [0, 25, -25, 50, -50, 80, -80, 115, -115, 150, -150, 180].map(d => d * Math.PI / 180);
+      const gaps = [5, 16, 30, 48];
+      const order = overlay.labels.map((l, i) => ({ l, i })).sort((a, b) => a.l.prio - b.l.prio || a.i - b.i);
+      const results = [];
+
+      ctx.save();
+      order.forEach(({ l }) => {
+        ctx.font = l.font;
+        const w = ctx.measureText(l.text).width + 10;
+        const h = l.font === NAME_FONT ? 19 : 17;
+        let best = null, bestCost = Infinity, bestPenalty = Infinity;
+
+        search:
+        for (let gi = 0; gi < gaps.length; gi++) {
+          for (let oi = 0; oi < offsets.length; oi++) {
+            const a = l.dir + offsets[oi];
+            const ux = Math.cos(a), uy = Math.sin(a);
+            const ext = (Math.abs(ux) * w + Math.abs(uy) * h) / 2;
+            const cx = l.ax + ux * (gaps[gi] + ext);
+            const cy = l.ay + uy * (gaps[gi] + ext);
+            const r = { x: cx - w / 2, y: cy - h / 2, w, h };
+
+            let penalty = 0;
+            if (r.x < 2 || r.y < 2 || r.x + w > W - 2 || r.y + h > H - 2) penalty += 600;
+            for (const p of placed) if (rectsOverlap(r, p)) penalty += 1000;
+            for (const s of overlay.segs) if (segHitsRect(s, r)) penalty += 250;
+            for (const d of overlay.dots) if (circleHitsRect(d, r)) penalty += 400;
+
+            const cost = penalty + gi * 14 + oi * 5;
+            if (cost < bestCost) { bestCost = cost; best = r; bestPenalty = penalty; }
+            if (penalty === 0) break search;
+          }
+        }
+
+        // Minor component labels are dropped rather than drawn on top of another label
+        if (!best || (l.prio >= 2 && bestPenalty >= 1000)) return;
+        placed.push(best);
+        results.push({ l, r: best });
+      });
+
+      // Leader lines (only when the label had to move away from its anchor)
+      results.forEach(({ l, r }) => {
+        const qx = Math.min(Math.max(l.ax, r.x), r.x + r.w);
+        const qy = Math.min(Math.max(l.ay, r.y), r.y + r.h);
+        if (Math.hypot(qx - l.ax, qy - l.ay) > 12) {
+          ctx.strokeStyle = l.color;
+          ctx.globalAlpha = 0.55;
+          ctx.lineWidth = 1;
+          ctx.setLineDash([]);
+          ctx.beginPath();
+          ctx.moveTo(l.ax, l.ay);
+          ctx.lineTo(qx, qy);
+          ctx.stroke();
+          ctx.globalAlpha = 1;
+        }
+      });
+
+      // Label pills
+      results.forEach(({ l, r }) => {
+        ctx.font = l.font;
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.85)';
+        ctx.beginPath();
+        if (ctx.roundRect) ctx.roundRect(r.x, r.y, r.w, r.h, 4); else ctx.rect(r.x, r.y, r.w, r.h);
+        ctx.fill();
+        ctx.strokeStyle = l.color;
+        ctx.globalAlpha = 0.5;
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+        ctx.fillStyle = l.color;
+        ctx.textBaseline = 'middle';
+        ctx.fillText(l.text, r.x + 5, r.y + r.h / 2 + 0.5);
+      });
+      ctx.restore();
+    }
+
+    /* ==========================================================================
+       5. UI OUTPUTS: STATS, INSPECTOR TABLE, LIVE EQUATIONS
+       ========================================================================== */
+    function updateStats(kin) {
+      const set = (id, txt) => { const el = document.getElementById(id); if (el) el.innerText = txt; };
+      set('statOmega', `${kin.omega.toFixed(2)} rad/s`);
+      set('statAlpha', `α = ${kin.alpha.toFixed(2)} rad/s² (${kin.omega >= 0 ? '반시계' : '시계'} 회전)`);
+      set('statTheta', `${kin.theta.toFixed(3)} rad`);
+      set('statThetaDeg', `${(kin.theta * 180 / Math.PI).toFixed(1)}°`);
+      set('statVref', `${kin.refVel.mag.toFixed(2)} m/s`);
+      set('statAref', `|a_R| = ${kin.refAcc.mag.toFixed(2)} m/s² · R = ${kin.refLocal.label}`);
+      if (kin.iczv) {
+        set('statIczv', `(${kin.iczv.x.toFixed(2)}, ${kin.iczv.y.toFixed(2)})`);
+        set('statIczvDist', `|r_C/R| = ${Math.hypot(kin.iczv.relX, kin.iczv.relY).toFixed(2)} m`);
+      } else {
+        set('statIczv', '없음 (∞)');
+        set('statIczvDist', 'ω = 0 → 순수 병진');
+      }
+    }
+
+    function updateInspectorTable(kin) {
+      const tbody = document.getElementById('table_probe_body');
+      if (!tbody) return;
+
+      const rows = state.probePoints.map(p => {
+        const pk = evalPointKinematics(p.localPos, kin);
+        const isRef = (p.id === kin.refLocal.id);
+        const refBadge = isRef ? '<span class="text-[9px] bg-blue-100 text-blue-700 px-1 rounded font-bold font-sans">기준점 R</span>' : '';
+        const deleteBtnHtml = !p.isFixed
+          ? `<button data-del="${p.id}" class="px-2 py-0.5 rounded bg-rose-50 hover:bg-rose-600 hover:text-white text-rose-600 border border-rose-200 text-[10px] font-sans transition">삭제</button>`
+          : '<span class="text-slate-400 text-[10px] font-sans">고정</span>';
+
+        return `<tr class="hover:bg-slate-50 transition">
+          <td class="p-2 font-bold font-sans whitespace-nowrap">
+            <span class="w-2.5 h-2.5 rounded-full inline-block align-middle mr-1" style="background-color:${p.color}"></span>${p.label} ${refBadge}
+          </td>
+          <td class="p-2 text-slate-600 whitespace-nowrap">(${pk.pos.x.toFixed(2)}, ${pk.pos.y.toFixed(2)})</td>
+          <td class="p-2 text-emerald-700 font-bold whitespace-nowrap">
+            ${pk.v_total.mag.toFixed(2)}
+            <span class="block text-[10px] text-slate-400 font-normal">(${pk.v_total.x.toFixed(2)}, ${pk.v_total.y.toFixed(2)})</span>
+          </td>
+          <td class="p-2 text-cyan-700 text-[11px] whitespace-nowrap leading-tight">
+            (${pk.v_trans.x.toFixed(2)}, ${pk.v_trans.y.toFixed(2)})
+            <span class="block">+ (${pk.v_rot.x.toFixed(2)}, ${pk.v_rot.y.toFixed(2)})</span>
+          </td>
+          <td class="p-2 text-rose-600 font-bold whitespace-nowrap">
+            ${pk.a_total.mag.toFixed(2)}
+            <span class="block text-[10px] text-slate-400 font-normal">(${pk.a_total.x.toFixed(2)}, ${pk.a_total.y.toFixed(2)})</span>
+          </td>
+          <td class="p-2 text-amber-700 text-[11px] whitespace-nowrap leading-tight">
+            a<sub>t</sub> ${Math.hypot(pk.a_t.x, pk.a_t.y).toFixed(2)}
+            <span class="block">a<sub>n</sub> ${Math.hypot(pk.a_n.x, pk.a_n.y).toFixed(2)}</span>
+          </td>
+          <td class="p-2 text-center">${deleteBtnHtml}</td>
+        </tr>`;
+      });
+      tbody.innerHTML = rows.join('');
+    }
+
+    const f2 = v => (Math.abs(v) < 0.005 ? 0 : v).toFixed(2);
+    const vecTex = (v) => `\\begin{pmatrix}${f2(v.x)}\\\\ ${f2(v.y)}\\end{pmatrix}`;
+
+    function renderLiveEquations(kin) {
+      const box = document.getElementById('liveEqKaTeX');
+      if (!box || typeof katex === 'undefined') return;
+      const panel = document.getElementById('panel-equations');
+      if (panel && panel.classList.contains('collapsed')) return;
+
+      const p = state.probePoints.find(q => q.id === state.eqPointId);
+      if (!p) { box.innerHTML = '<span class="text-slate-400 text-xs">관찰점을 선택하세요.</span>'; return; }
+      const pk = evalPointKinematics(p.localPos, kin);
+      const P = p.id, R = kin.refLocal.id;
+
+      const tex = String.raw`\begin{aligned}
+        &t = ${kin.t.toFixed(2)}\,\text{s},\quad \omega = ${f2(kin.omega)}\,\text{rad/s},\quad \alpha = ${f2(kin.alpha)}\,\text{rad/s}^2,\quad
+          \mathbf{r}_{${P}/${R}} = ${vecTex(pk.r_rel)}\,\text{m}\\[6pt]
+        &\mathbf{v}_{${P}} = \mathbf{v}_{${R}} + \boldsymbol{\omega}\times\mathbf{r}_{${P}/${R}}
+          = ${vecTex(pk.v_trans)} + ${vecTex(pk.v_rot)} = ${vecTex(pk.v_total)}\,\text{m/s},\quad |\mathbf{v}_{${P}}| = ${f2(pk.v_total.mag)}\,\text{m/s}\\[6pt]
+        &\mathbf{a}_{${P}} = \mathbf{a}_{${R}} + \boldsymbol{\alpha}\times\mathbf{r}_{${P}/${R}} - \omega^2\mathbf{r}_{${P}/${R}}
+          = ${vecTex(pk.a_trans)} + ${vecTex(pk.a_t)} + ${vecTex(pk.a_n)}\\[4pt]
+        &\phantom{\mathbf{a}_{${P}}} = ${vecTex(pk.a_total)}\,\text{m/s}^2,\quad |\mathbf{a}_{${P}}| = ${f2(pk.a_total.mag)}\,\text{m/s}^2
+      \end{aligned}`;
+      katex.render(tex, box, { displayMode: true, throwOnError: false });
+    }
+
+    window.deletePoint = function(id) {
+      const pt = state.probePoints.find(p => p.id === id);
+      if (!pt || pt.isFixed) return;
+      state.probePoints = state.probePoints.filter(p => p.id !== id);
+      refreshPointSelectors();
+      draw();
+    };
+
+    function addProbePointAtPixel(mousePx, mousePy) {
+      const mouseWorld = pixelToWorld(mousePx, mousePy);
+      const kin = evalKinematics(state.t);
+
+      const cosT = Math.cos(kin.theta);
+      const sinT = Math.sin(kin.theta);
+      const dx = mouseWorld.x - kin.originPos.x;
+      const dy = mouseWorld.y - kin.originPos.y;
+
+      const newId = `P${state.nextPointNum++}`;
+      const colors = ['#f59e0b', '#10b981', '#ec4899', '#8b5cf6', '#06b6d4'];
+
+      state.probePoints.push({
+        id: newId,
+        label: `점 ${newId}`,
+        localPos: { x: dx * cosT + dy * sinT, y: -dx * sinT + dy * cosT },
+        color: colors[(state.nextPointNum - 2) % colors.length],
+        isFixed: false
+      });
+
+      state.eqPointId = newId;
+      refreshPointSelectors();
+      draw();
+    }
+
+    /* ==========================================================================
+       6. SIMULATION LOOP & PLAYBACK
+       ========================================================================== */
+    function updateTime(dt) {
+      let t = state.t + dt * state.speed;
+      if (t > state.maxT) {
+        t = 0;
+      }
+      setTime(t);
+
+      draw();
+    }
+
+    function animate(timestamp) {
+      if (!state.isPlaying) return;
+      if (!state.lastTimestamp) state.lastTimestamp = timestamp;
+      const dt = Math.min((timestamp - state.lastTimestamp) / 1000, 0.1);
+      state.lastTimestamp = timestamp;
+      updateTime(dt);
+      state.animationFrameId = requestAnimationFrame(animate);
+    }
+
+    function togglePlay() {
+      if (state.isPlaying) { stopPlayback(); draw(); return; }
+      state.isPlaying = true;
+      document.getElementById('icon_play').className = 'fa-solid fa-pause';
+      document.getElementById('text_play').innerText = '일시정지 (Pause)';
+      state.lastTimestamp = performance.now();
+      state.animationFrameId = requestAnimationFrame(animate);
+    }
+
+    /* ---------- Resizable two-column layout & full-width mode (remembered in this browser) ---------- */
+    const SPLIT_KEY = 'rigidBodySim.leftColPct', WIDTH_KEY = 'rigidBodySim.layoutWidth';
+    const SPLIT_DEFAULT = 33.333;
+    const MIN_LEFT_PX = 260, MIN_RIGHT_PX = 480;
+    let layoutMode = 'default'; // 'default' (1280px cap) | 'full' | number (custom px width)
+
+    function redrawCanvases() {
+      resizeCanvas();
+    }
+
+    function gridInnerWidth() {
+      const grid = document.getElementById('layoutGrid');
+      const cs = getComputedStyle(grid);
+      return (grid.clientWidth - (parseFloat(cs.paddingLeft) || 0) - (parseFloat(cs.paddingRight) || 0)) || 1;
+    }
+
+    function setLeftPct(pct, save = true) {
+      const grid = document.getElementById('layoutGrid');
+      const w = gridInnerWidth();
+      const minPct = MIN_LEFT_PX / w * 100;
+      const maxPct = 100 - (MIN_RIGHT_PX + 50) / w * 100; // 50 ≈ splitters + gaps
+      const p = Math.min(Math.max(pct, minPct), Math.max(minPct, maxPct));
+      grid.style.setProperty('--left-w', `${p}%`);
+      document.getElementById('colSplitter').setAttribute('aria-valuenow', Math.round(p));
+      if (save) { try { localStorage.setItem(SPLIT_KEY, String(p)); } catch (e) { /* ignore */ } }
+      return p;
+    }
+
+    // Overall layout width: 'default' | 'full' | px
+    function applyLayoutWidth(mode, save = true) {
+      const grid = document.getElementById('layoutGrid');
+      layoutMode = mode;
+      document.body.classList.toggle('wide-layout', mode === 'full');
+      grid.style.maxWidth = typeof mode === 'number' ? `${Math.round(mode)}px` : '';
+      document.getElementById('wideToggleLabel').innerText = mode === 'full' ? '기본 폭' : '전체 폭';
+      if (save) { try { localStorage.setItem(WIDTH_KEY, String(typeof mode === 'number' ? Math.round(mode) : mode)); } catch (e) { /* ignore */ } }
+    }
+
+    function resetColumnSplit() {
+      setLeftPct(SPLIT_DEFAULT);
+      redrawCanvases();
+    }
+
+    function resetLayout() {
+      applyLayoutWidth('default');
+      setLeftPct(SPLIT_DEFAULT);
+      redrawCanvases();
+    }
+
+    // Change the overall width while keeping the left column at the same pixel width
+    function changeWidthKeepLeft(mode) {
+      const leftPx = document.querySelector('aside').getBoundingClientRect().width;
+      applyLayoutWidth(mode);
+      setLeftPct(leftPx / gridInnerWidth() * 100);
+      redrawCanvases();
+    }
+
+    function toggleWideLayout(force) {
+      const on = typeof force === 'boolean' ? force : layoutMode !== 'full';
+      changeWidthKeepLeft(on ? 'full' : 'default');
+    }
+
+    // Generic drag helper for a splitter element
+    function makeDraggable(el, onMove, onEnd) {
+      let dragging = false;
+      el.addEventListener('pointerdown', e => {
+        dragging = true;
+        try { el.setPointerCapture(e.pointerId); } catch (err) { /* synthetic events */ }
+        el.classList.add('dragging');
+        document.body.classList.add('col-resizing');
+        onMove(e, true);
+        e.preventDefault();
+      });
+      el.addEventListener('pointermove', e => { if (dragging) onMove(e, false); });
+      const end = () => {
+        if (!dragging) return;
+        dragging = false;
+        el.classList.remove('dragging');
+        document.body.classList.remove('col-resizing');
+        onEnd();
+      };
+      el.addEventListener('pointerup', end);
+      el.addEventListener('pointercancel', end);
+    }
+
+    function initColumnSplitter() {
+      const grid = document.getElementById('layoutGrid');
+      const sp = document.getElementById('colSplitter');
+      const rsp = document.getElementById('rightSplitter');
+      const aside = document.querySelector('aside');
+
+      // Restore saved layout
+      let saved = NaN, width = null;
+      try {
+        saved = parseFloat(localStorage.getItem(SPLIT_KEY));
+        width = localStorage.getItem(WIDTH_KEY);
+      } catch (e) { /* ignore */ }
+      if (width === 'full') applyLayoutWidth('full', false);
+      else if (width && isFinite(parseFloat(width))) applyLayoutWidth(parseFloat(width), false);
+      setLeftPct(isFinite(saved) ? saved : SPLIT_DEFAULT, false);
+
+      // --- Middle splitter: left / right column ratio ---
+      const pctFromClientX = clientX => {
+        const r = grid.getBoundingClientRect();
+        const padL = parseFloat(getComputedStyle(grid).paddingLeft) || 0;
+        return (clientX - r.left - padL - 7) / gridInnerWidth() * 100; // 7 = half splitter width
+      };
+      makeDraggable(sp,
+        (e, first) => { if (!first) { setLeftPct(pctFromClientX(e.clientX), false); redrawCanvases(); } },
+        () => {
+          const cur = parseFloat(grid.style.getPropertyValue('--left-w'));
+          if (isFinite(cur)) setLeftPct(cur, true);
+          redrawCanvases();
+        });
+      sp.addEventListener('dblclick', resetColumnSplit);
+      sp.addEventListener('keydown', e => {
+        if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+        const cur = parseFloat(grid.style.getPropertyValue('--left-w')) || SPLIT_DEFAULT;
+        setLeftPct(cur + (e.key === 'ArrowLeft' ? -2 : 2));
+        redrawCanvases();
+        e.preventDefault();
+      });
+
+      // --- Right-edge handle: right column width (left column keeps its pixel width; page stays centred) ---
+      let leftPxAtStart = 0;
+      const setRightEdge = (gridWidth, save) => {
+        const vw = document.documentElement.clientWidth;
+        const cs = getComputedStyle(grid);
+        const pad = (parseFloat(cs.paddingLeft) || 0) + (parseFloat(cs.paddingRight) || 0);
+        const minW = leftPxAtStart + MIN_RIGHT_PX + 50 + pad;
+        const w = Math.min(Math.max(gridWidth, minW), vw);
+        if (w >= vw - 1) applyLayoutWidth('full', save);
+        else applyLayoutWidth(w, save);
+        // Keep the left column at the same pixel width
+        setLeftPct(leftPxAtStart / gridInnerWidth() * 100, save);
+        redrawCanvases();
+      };
+      makeDraggable(rsp,
+        (e, first) => {
+          if (first) { leftPxAtStart = aside.getBoundingClientRect().width; return; }
+          // Page is centred: right edge follows the cursor -> width = 2 × (edge − centre)
+          const centre = document.documentElement.clientWidth / 2;
+          const padR = parseFloat(getComputedStyle(grid).paddingRight) || 0;
+          setRightEdge(2 * (e.clientX + 7 + padR - centre), false);
+        },
+        () => {
+          // Persist the final state
+          applyLayoutWidth(layoutMode, true);
+          const cur = parseFloat(grid.style.getPropertyValue('--left-w'));
+          if (isFinite(cur)) setLeftPct(cur, true);
+        });
+      rsp.addEventListener('dblclick', () => changeWidthKeepLeft('default'));
+      rsp.addEventListener('keydown', e => {
+        if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+        leftPxAtStart = aside.getBoundingClientRect().width;
+        setRightEdge(grid.getBoundingClientRect().width + (e.key === 'ArrowLeft' ? -80 : 80), true);
+        e.preventDefault();
+      });
+
+      // Re-clamp when the window size changes
+      window.addEventListener('resize', () => {
+        const cur = parseFloat(grid.style.getPropertyValue('--left-w'));
+        if (isFinite(cur)) setLeftPct(cur, false);
+      });
+    }
+
+    /* ---------- Minimize / restore panels (state remembered in this browser) ---------- */
+    const PANEL_KEY = 'rigidBodySim.collapsedPanels';
+    function saveCollapsed() {
+      try {
+        const ids = [...document.querySelectorAll('.panel.collapsed')].map(el => el.id);
+        localStorage.setItem(PANEL_KEY, JSON.stringify(ids));
+      } catch (e) { /* storage unavailable: ignore */ }
+    }
+    function togglePanel(id) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const collapsed = el.classList.toggle('collapsed');
+      saveCollapsed();
+      if (!collapsed) draw();
+    }
+    function restoreCollapsed() {
+      try {
+        const ids = JSON.parse(localStorage.getItem(PANEL_KEY) || '[]');
+        ids.forEach(id => { const el = document.getElementById(id); if (el) el.classList.add('collapsed'); });
+      } catch (e) { /* ignore */ }
+    }
+
+    /* ==========================================================================
+       7. EVENT LISTENERS & BINDINGS
+       ========================================================================== */
+    function bindEvents() {
+      // Play / Pause & time controls
+      document.getElementById('btn_play').addEventListener('click', togglePlay);
+
+      document.getElementById('slider_time').addEventListener('input', (e) => {
+        setTime(parseFloat(e.target.value));
+        draw();
+      });
+      document.getElementById('btn_step_prev').addEventListener('click', () => { setTime(state.t - 0.02); draw(); });
+      document.getElementById('btn_step_next').addEventListener('click', () => { setTime(state.t + 0.02); draw(); });
+      document.getElementById('select_speed').addEventListener('change', (e) => {
+        state.speed = parseFloat(e.target.value);
+      });
+
+      // Shape and point selectors
+      document.getElementById('select_shape').addEventListener('change', (e) => {
+        initShape(e.target.value);
+        draw();
+      });
+      document.getElementById('select_ref_point').addEventListener('change', (e) => {
+        state.selectedRefId = e.target.value;
+        draw();
+      });
+      document.getElementById('select_eq_point').addEventListener('change', (e) => {
+        state.eqPointId = e.target.value;
+        draw();
+      });
+
+      // Parameter sliders
+      SLIDERS.forEach(s => {
+        document.getElementById(s.id).addEventListener('input', (e) => {
+          setParams({ [s.prop]: parseFloat(e.target.value) });
+          state.groundY = null; // parameters no longer guarantee rolling without slipping
+          draw();
+        });
+      });
+
+      // Pure rotation preset
+      document.getElementById('btn_preset_pure_rot').addEventListener('click', () => {
+        setParams({ vx0: 0, vy0: 0, ax: 0, ay: 0, omega0: 3.0, alpha: 0 });
+        state.groundY = null;
+        draw();
+      });
+
+      // Visual toggles
+      const toggles = { chk_vtotal: 'showVTotal', chk_vcomp: 'showVComp', chk_atotal: 'showATotal',
+                        chk_acomp: 'showAComp', chk_iczv: 'showICZV', chk_paths: 'showPaths',
+                        chk_omega: 'showOmega', chk_alpha: 'showAlpha' };
+      Object.entries(toggles).forEach(([id, prop]) => {
+        document.getElementById(id).addEventListener('change', (e) => {
+          state[prop] = e.target.checked;
+          draw();
+        });
+      });
+
+      // Camera follow toggle (keeps the current view when switched on)
+      document.getElementById('chk_follow').addEventListener('change', (e) => {
+        state.follow = e.target.checked;
+        if (state.follow) syncCam();
+        draw();
+      });
+
+      // Inspector: delete buttons (pointerdown, because rows are rebuilt every frame while playing)
+      document.getElementById('table_probe_body').addEventListener('pointerdown', (e) => {
+        const btn = e.target.closest('[data-del]');
+        if (btn) { e.preventDefault(); deletePoint(btn.dataset.del); }
+      });
+
+      // Canvas zoom & pan
+      let isPanning = false;
+      let startX = 0, startY = 0;
+      let initialOffsetX = 0, initialOffsetY = 0;
+      let hasDragged = false;
+
+      canvas.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        const rect = canvas.getBoundingClientRect();
+        zoomAt(e.clientX - rect.left, e.clientY - rect.top, e.deltaY < 0 ? 1.15 : 1 / 1.15);
+      }, { passive: false });
+
+      canvas.addEventListener('pointerdown', (e) => {
+        isPanning = true;
+        hasDragged = false;
+        startX = e.clientX;
+        startY = e.clientY;
+        initialOffsetX = state.originOffset.x;
+        initialOffsetY = state.originOffset.y;
+        try { canvas.setPointerCapture(e.pointerId); } catch (err) { /* ignore */ }
+        canvas.style.cursor = 'grabbing';
+      });
+
+      canvas.addEventListener('pointermove', (e) => {
+        if (!isPanning) return;
+        const dx = e.clientX - startX;
+        const dy = e.clientY - startY;
+        if (Math.hypot(dx, dy) > 4) hasDragged = true;
+        if (!hasDragged) return;
+        state.originOffset.x = initialOffsetX + dx;
+        state.originOffset.y = initialOffsetY + dy;
+        if (state.follow) syncCam();
+        draw();
+      });
+
+      const endPan = (e, allowClick) => {
+        if (!isPanning) return;
+        isPanning = false;
+        canvas.style.cursor = 'crosshair';
+        if (allowClick && !hasDragged) {
+          const rect = canvas.getBoundingClientRect();
+          addProbePointAtPixel(e.clientX - rect.left, e.clientY - rect.top);
+        }
+      };
+      canvas.addEventListener('pointerup', (e) => endPan(e, true));
+      canvas.addEventListener('pointercancel', (e) => endPan(e, false));
+
+      // Zoom buttons (about the canvas centre)
+      document.getElementById('btn_zoom_in').addEventListener('click', () => zoomAt(state.viewW / 2, state.viewH / 2, 1.25));
+      document.getElementById('btn_zoom_out').addEventListener('click', () => zoomAt(state.viewW / 2, state.viewH / 2, 0.8));
+      document.getElementById('btn_reset_view').addEventListener('click', resetViewOffset);
+
+      // Global reset
+      document.getElementById('btn_reset_all').addEventListener('click', () => applyPreset('general'));
+
+      // Redraw the canvas when its card is resized (column splitter, corner drag, window)
+      if (window.ResizeObserver) {
+        new ResizeObserver(() => resizeCanvas()).observe(canvasWrap);
+      }
+      window.addEventListener('resize', resizeCanvas);
+    }
+
+    /* ==========================================================================
+       8. INITIALIZATION ENTRYPOINT
+       ========================================================================== */
+    window.addEventListener('load', () => {
+      // Render the static $...$ / $$...$$ math in labels and theory boxes
+      if (typeof renderMathInElement === 'function') {
+        renderMathInElement(document.body, {
+          delimiters: [
+            { left: '$$', right: '$$', display: true },
+            { left: '$', right: '$', display: false }
+          ],
+          ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code', 'option', 'select'],
+          throwOnError: false
+        });
+      }
+
+      initShape('potato');
+      setParams({ vx0: 1.0, vy0: 0.5, ax: 0.2, ay: 0.0, omega0: 2.0, alpha: 0.5 });
+      bindEvents();
+
+      // Restore layout (column split, full width) and minimized panels
+      initColumnSplitter();
+      restoreCollapsed();
+      resizeCanvas();
+    });
+  </script>
+</body>
+</html>
