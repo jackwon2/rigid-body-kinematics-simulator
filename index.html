@@ -3,17 +3,24 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0f172a">
   <title>동역학 강체 평면 운동학 시뮬레이터</title>
 
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- KaTeX for LaTeX Math Rendering -->
+  <!-- Tailwind CSS v3.4.17, precompiled: only the classes used in this file.
+       (The Play CDN compiler used before re-scanned the whole page on every change and made phones/tablets lag.)
+       After adding NEW Tailwind classes to this file, regenerate this block:  python tools/build_tailwind_css.py -->
+  <style id="tailwind-css">
+*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.pointer-events-none{pointer-events:none}.visible{visibility:visible}.static{position:static}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.sticky{position:sticky}.inset-0{inset:0px}.left-2{left:0.5rem}.right-2{right:0.5rem}.top-0{top:0px}.top-2{top:0.5rem}.z-10{z-index:10}.z-50{z-index:50}.mx-1{margin-left:0.25rem;margin-right:0.25rem}.mx-auto{margin-left:auto;margin-right:auto}.mb-1{margin-bottom:0.25rem}.mb-1\.5{margin-bottom:0.375rem}.mb-2{margin-bottom:0.5rem}.mb-3{margin-bottom:0.75rem}.me-1{margin-inline-end:0.25rem}.mr-1{margin-right:0.25rem}.mt-0\.5{margin-top:0.125rem}.mt-1{margin-top:0.25rem}.mt-2{margin-top:0.5rem}.mt-3{margin-top:0.75rem}.mt-auto{margin-top:auto}.block{display:block}.inline-block{display:inline-block}.inline{display:inline}.flex{display:flex}.inline-flex{display:inline-flex}.table{display:table}.grid{display:grid}.contents{display:contents}.hidden{display:none}.h-1{height:0.25rem}.h-1\.5{height:0.375rem}.h-2{height:0.5rem}.h-2\.5{height:0.625rem}.h-5{height:1.25rem}.h-7{height:1.75rem}.h-8{height:2rem}.h-full{height:100%}.min-h-\[120px\]{min-height:120px}.min-h-screen{min-height:100vh}.w-11{width:2.75rem}.w-16{width:4rem}.w-2{width:0.5rem}.w-2\.5{width:0.625rem}.w-20{width:5rem}.w-7{width:1.75rem}.w-8{width:2rem}.w-\[4\.2rem\]{width:4.2rem}.w-full{width:100%}.w-px{width:1px}.min-w-0{min-width:0px}.min-w-\[180px\]{min-width:180px}.max-w-7xl{max-width:80rem}.max-w-\[260px\]{max-width:260px}.flex-1{flex:1 1 0%}.shrink-0{flex-shrink:0}.flex-grow{flex-grow:1}.grow{flex-grow:1}.border-collapse{border-collapse:collapse}.cursor-pointer{cursor:pointer}.resize-y{resize:vertical}.resize{resize:both}.grid-cols-1{grid-template-columns:repeat(1, minmax(0, 1fr))}.grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.grid-cols-3{grid-template-columns:repeat(3, minmax(0, 1fr))}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.content-start{align-content:flex-start}.items-start{align-items:flex-start}.items-center{align-items:center}.items-baseline{align-items:baseline}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-1{gap:0.25rem}.gap-1\.5{gap:0.375rem}.gap-2{gap:0.5rem}.gap-3{gap:0.75rem}.gap-4{gap:1rem}.gap-x-3{column-gap:0.75rem}.gap-y-0\.5{row-gap:0.125rem}.space-y-1>:not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.25rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.25rem * var(--tw-space-y-reverse))}.space-y-2>:not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.5rem * var(--tw-space-y-reverse))}.space-y-3>:not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.75rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.75rem * var(--tw-space-y-reverse))}.divide-y>:not([hidden]) ~ :not([hidden]){--tw-divide-y-reverse:0;border-top-width:calc(1px * calc(1 - var(--tw-divide-y-reverse)));border-bottom-width:calc(1px * var(--tw-divide-y-reverse))}.divide-slate-100>:not([hidden]) ~ :not([hidden]){--tw-divide-opacity:1;border-color:rgb(241 245 249 / var(--tw-divide-opacity, 1))}.overflow-x-auto{overflow-x:auto}.whitespace-nowrap{white-space:nowrap}.rounded{border-radius:0.25rem}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:0.5rem}.rounded-md{border-radius:0.375rem}.rounded-xl{border-radius:0.75rem}.border{border-width:1px}.border-b{border-bottom-width:1px}.border-t{border-top-width:1px}.border-blue-200{--tw-border-opacity:1;border-color:rgb(191 219 254 / var(--tw-border-opacity, 1))}.border-blue-300{--tw-border-opacity:1;border-color:rgb(147 197 253 / var(--tw-border-opacity, 1))}.border-rose-200{--tw-border-opacity:1;border-color:rgb(254 205 211 / var(--tw-border-opacity, 1))}.border-rose-500{--tw-border-opacity:1;border-color:rgb(244 63 94 / var(--tw-border-opacity, 1))}.border-slate-100{--tw-border-opacity:1;border-color:rgb(241 245 249 / var(--tw-border-opacity, 1))}.border-slate-200{--tw-border-opacity:1;border-color:rgb(226 232 240 / var(--tw-border-opacity, 1))}.border-slate-300{--tw-border-opacity:1;border-color:rgb(203 213 225 / var(--tw-border-opacity, 1))}.border-slate-700{--tw-border-opacity:1;border-color:rgb(51 65 85 / var(--tw-border-opacity, 1))}.border-slate-800{--tw-border-opacity:1;border-color:rgb(30 41 59 / var(--tw-border-opacity, 1))}.bg-blue-100{--tw-bg-opacity:1;background-color:rgb(219 234 254 / var(--tw-bg-opacity, 1))}.bg-blue-50{--tw-bg-opacity:1;background-color:rgb(239 246 255 / var(--tw-bg-opacity, 1))}.bg-blue-600{--tw-bg-opacity:1;background-color:rgb(37 99 235 / var(--tw-bg-opacity, 1))}.bg-emerald-500{--tw-bg-opacity:1;background-color:rgb(16 185 129 / var(--tw-bg-opacity, 1))}.bg-emerald-600{--tw-bg-opacity:1;background-color:rgb(5 150 105 / var(--tw-bg-opacity, 1))}.bg-rose-50{--tw-bg-opacity:1;background-color:rgb(255 241 242 / var(--tw-bg-opacity, 1))}.bg-slate-100{--tw-bg-opacity:1;background-color:rgb(241 245 249 / var(--tw-bg-opacity, 1))}.bg-slate-200{--tw-bg-opacity:1;background-color:rgb(226 232 240 / var(--tw-bg-opacity, 1))}.bg-slate-50{--tw-bg-opacity:1;background-color:rgb(248 250 252 / var(--tw-bg-opacity, 1))}.bg-slate-700{--tw-bg-opacity:1;background-color:rgb(51 65 85 / var(--tw-bg-opacity, 1))}.bg-slate-800{--tw-bg-opacity:1;background-color:rgb(30 41 59 / var(--tw-bg-opacity, 1))}.bg-slate-900{--tw-bg-opacity:1;background-color:rgb(15 23 42 / var(--tw-bg-opacity, 1))}.bg-slate-900\/85{background-color:rgb(15 23 42 / 0.85)}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.p-2{padding:0.5rem}.p-2\.5{padding:0.625rem}.p-3{padding:0.75rem}.px-1{padding-left:0.25rem;padding-right:0.25rem}.px-1\.5{padding-left:0.375rem;padding-right:0.375rem}.px-2{padding-left:0.5rem;padding-right:0.5rem}.px-2\.5{padding-left:0.625rem;padding-right:0.625rem}.px-3{padding-left:0.75rem;padding-right:0.75rem}.px-4{padding-left:1rem;padding-right:1rem}.py-0\.5{padding-top:0.125rem;padding-bottom:0.125rem}.py-1{padding-top:0.25rem;padding-bottom:0.25rem}.py-1\.5{padding-top:0.375rem;padding-bottom:0.375rem}.py-3{padding-top:0.75rem;padding-bottom:0.75rem}.pb-2{padding-bottom:0.5rem}.pr-2{padding-right:0.5rem}.text-left{text-align:left}.text-center{text-align:center}.text-right{text-align:right}.align-middle{vertical-align:middle}.font-mono{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace}.font-sans{font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"}.text-\[10px\]{font-size:10px}.text-\[11px\]{font-size:11px}.text-\[12px\]{font-size:12px}.text-\[9px\]{font-size:9px}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:0.75rem;line-height:1rem}.font-bold{font-weight:700}.font-extrabold{font-weight:800}.font-medium{font-weight:500}.font-normal{font-weight:400}.font-semibold{font-weight:600}.uppercase{text-transform:uppercase}.italic{font-style:italic}.leading-relaxed{line-height:1.625}.leading-tight{line-height:1.25}.tracking-wider{letter-spacing:0.05em}.text-amber-500{--tw-text-opacity:1;color:rgb(245 158 11 / var(--tw-text-opacity, 1))}.text-amber-600{--tw-text-opacity:1;color:rgb(217 119 6 / var(--tw-text-opacity, 1))}.text-amber-700{--tw-text-opacity:1;color:rgb(180 83 9 / var(--tw-text-opacity, 1))}.text-blue-300{--tw-text-opacity:1;color:rgb(147 197 253 / var(--tw-text-opacity, 1))}.text-blue-600{--tw-text-opacity:1;color:rgb(37 99 235 / var(--tw-text-opacity, 1))}.text-blue-700{--tw-text-opacity:1;color:rgb(29 78 216 / var(--tw-text-opacity, 1))}.text-blue-800{--tw-text-opacity:1;color:rgb(30 64 175 / var(--tw-text-opacity, 1))}.text-blue-900{--tw-text-opacity:1;color:rgb(30 58 138 / var(--tw-text-opacity, 1))}.text-cyan-500{--tw-text-opacity:1;color:rgb(6 182 212 / var(--tw-text-opacity, 1))}.text-cyan-600{--tw-text-opacity:1;color:rgb(8 145 178 / var(--tw-text-opacity, 1))}.text-cyan-700{--tw-text-opacity:1;color:rgb(14 116 144 / var(--tw-text-opacity, 1))}.text-emerald-400{--tw-text-opacity:1;color:rgb(52 211 153 / var(--tw-text-opacity, 1))}.text-emerald-500{--tw-text-opacity:1;color:rgb(16 185 129 / var(--tw-text-opacity, 1))}.text-emerald-600{--tw-text-opacity:1;color:rgb(5 150 105 / var(--tw-text-opacity, 1))}.text-emerald-700{--tw-text-opacity:1;color:rgb(4 120 87 / var(--tw-text-opacity, 1))}.text-fuchsia-700{--tw-text-opacity:1;color:rgb(162 28 175 / var(--tw-text-opacity, 1))}.text-indigo-500{--tw-text-opacity:1;color:rgb(99 102 241 / var(--tw-text-opacity, 1))}.text-indigo-600{--tw-text-opacity:1;color:rgb(79 70 229 / var(--tw-text-opacity, 1))}.text-lime-700{--tw-text-opacity:1;color:rgb(77 124 15 / var(--tw-text-opacity, 1))}.text-orange-600{--tw-text-opacity:1;color:rgb(234 88 12 / var(--tw-text-opacity, 1))}.text-purple-500{--tw-text-opacity:1;color:rgb(168 85 247 / var(--tw-text-opacity, 1))}.text-purple-600{--tw-text-opacity:1;color:rgb(147 51 234 / var(--tw-text-opacity, 1))}.text-purple-700{--tw-text-opacity:1;color:rgb(126 34 206 / var(--tw-text-opacity, 1))}.text-rose-600{--tw-text-opacity:1;color:rgb(225 29 72 / var(--tw-text-opacity, 1))}.text-slate-200{--tw-text-opacity:1;color:rgb(226 232 240 / var(--tw-text-opacity, 1))}.text-slate-300{--tw-text-opacity:1;color:rgb(203 213 225 / var(--tw-text-opacity, 1))}.text-slate-400{--tw-text-opacity:1;color:rgb(148 163 184 / var(--tw-text-opacity, 1))}.text-slate-500{--tw-text-opacity:1;color:rgb(100 116 139 / var(--tw-text-opacity, 1))}.text-slate-600{--tw-text-opacity:1;color:rgb(71 85 105 / var(--tw-text-opacity, 1))}.text-slate-700{--tw-text-opacity:1;color:rgb(51 65 85 / var(--tw-text-opacity, 1))}.text-slate-800{--tw-text-opacity:1;color:rgb(30 41 59 / var(--tw-text-opacity, 1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.accent-amber-600{accent-color:#d97706}.accent-blue-600{accent-color:#2563eb}.accent-cyan-600{accent-color:#0891b2}.accent-emerald-600{accent-color:#059669}.accent-fuchsia-600{accent-color:#c026d3}.accent-lime-600{accent-color:#65a30d}.accent-orange-500{accent-color:#f97316}.accent-purple-600{accent-color:#9333ea}.accent-rose-600{accent-color:#e11d48}.accent-slate-600{accent-color:#475569}.shadow-inner{--tw-shadow:inset 0 2px 4px 0 rgb(0 0 0 / 0.05);--tw-shadow-colored:inset 0 2px 4px 0 var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-md{--tw-shadow:0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-sm{--tw-shadow:0 1px 2px 0 rgb(0 0 0 / 0.05);--tw-shadow-colored:0 1px 2px 0 var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.outline{outline-style:solid}.transition{transition-property:color, background-color, border-color, fill, stroke, opacity, box-shadow, transform, filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}@media (hover: hover) and (pointer: fine){.hover\:border-slate-300:hover{--tw-border-opacity:1;border-color:rgb(203 213 225 / var(--tw-border-opacity, 1))}.hover\:bg-blue-600:hover{--tw-bg-opacity:1;background-color:rgb(37 99 235 / var(--tw-bg-opacity, 1))}.hover\:bg-blue-700:hover{--tw-bg-opacity:1;background-color:rgb(29 78 216 / var(--tw-bg-opacity, 1))}.hover\:bg-emerald-700:hover{--tw-bg-opacity:1;background-color:rgb(4 120 87 / var(--tw-bg-opacity, 1))}.hover\:bg-indigo-600:hover{--tw-bg-opacity:1;background-color:rgb(79 70 229 / var(--tw-bg-opacity, 1))}.hover\:bg-rose-600:hover{--tw-bg-opacity:1;background-color:rgb(225 29 72 / var(--tw-bg-opacity, 1))}.hover\:bg-slate-50:hover{--tw-bg-opacity:1;background-color:rgb(248 250 252 / var(--tw-bg-opacity, 1))}.hover\:text-white:hover{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.hover\:underline:hover{-webkit-text-decoration-line:underline;text-decoration-line:underline}}.focus\:outline-none:focus{outline:2px solid transparent;outline-offset:2px}.focus\:ring-1:focus{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000)}.focus\:ring-blue-500:focus{--tw-ring-opacity:1;--tw-ring-color:rgb(59 130 246 / var(--tw-ring-opacity, 1))}.focus\:ring-fuchsia-500:focus{--tw-ring-opacity:1;--tw-ring-color:rgb(217 70 239 / var(--tw-ring-opacity, 1))}.disabled\:bg-slate-100:disabled{--tw-bg-opacity:1;background-color:rgb(241 245 249 / var(--tw-bg-opacity, 1))}.disabled\:text-slate-400:disabled{--tw-text-opacity:1;color:rgb(148 163 184 / var(--tw-text-opacity, 1))}@media (min-width: 640px){.sm\:block{display:block}.sm\:inline{display:inline}.sm\:hidden{display:none}.sm\:grid-cols-4{grid-template-columns:repeat(4, minmax(0, 1fr))}.sm\:gap-4{gap:1rem}.sm\:p-4{padding:1rem}.sm\:px-4{padding-left:1rem;padding-right:1rem}.sm\:py-4{padding-top:1rem;padding-bottom:1rem}}@media (min-width: 768px){.md\:col-span-2{grid-column:span 2 / span 2}.md\:inline{display:inline}.md\:grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}}@media (min-width: 1024px){.lg\:inline-block{display:inline-block}.lg\:inline-flex{display:inline-flex}}
+  </style>
+  <!-- KaTeX for LaTeX Math Rendering (deferred: does not block the first paint) -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
   <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <!-- Google Fonts (Noto Sans KR & Inter) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
 
   <style>
@@ -120,14 +127,101 @@
     }
     #simCanvas { touch-action: none; cursor: crosshair; }
     .katex { font-size: 1.05em; }
+
+    /* ======================= Phones & tablets ======================= */
+    /* The header stays pinned only on desktop; on phones/tablets it scrolls away and frees the screen */
+    @media (min-width: 1024px) and (pointer: fine) {
+      .app-header { position: sticky; top: 0; }
+    }
+
+    /* Canvas height: fixed on desktop (corner-resizable), relative to the screen on smaller devices */
+    #canvasWrap { height: 28rem; min-height: 16rem; }
+    @media (max-width: 1023.98px) {
+      #canvasWrap { height: min(34rem, 52vh); height: min(34rem, 52svh); min-height: 15rem; }
+    }
+    @media (max-width: 639.98px) {
+      #canvasWrap { height: min(28rem, 62vh); height: min(28rem, 62svh); }
+    }
+    @media (max-width: 1023.98px) and (orientation: landscape) and (max-height: 560px) {
+      #canvasWrap { height: 78vh; height: 78svh; min-height: 12rem; }
+    }
+
+    /* Phones: play buttons + speed on one row, the time slider on its own full-width row */
+    @media (max-width: 639.98px) {
+      #time-bar { flex-basis: 100%; order: 1; }
+    }
+
+    /* Single-column order on phones/tablets: canvas first, then the sliders right below it */
+    @media (max-width: 1023.98px) {
+      .layout-grid { gap: 1rem; }
+      #layoutGrid > aside, #layoutGrid > main { display: contents; }
+      #layoutGrid > aside > *, #layoutGrid > main > * { min-width: 0; }
+      #card-canvas { order: 1; }
+      #card-params { order: 2; }
+      #stat-grid { order: 3; }
+      #card-shape { order: 4; }
+      #card-layers { order: 5; }
+      #panel-inspector { order: 6; }
+      #panel-equations { order: 7; }
+      #panel-theory { order: 8; }
+    }
+
+    /* Inspector table on narrow screens: the point name stays visible while the table is scrolled sideways */
+    @media (max-width: 1023.98px) {
+      #panel-inspector th:first-child, #panel-inspector td:first-child {
+        position: sticky; left: 0; z-index: 1; background: #fff; box-shadow: 1px 0 0 #e2e8f0;
+      }
+      #panel-inspector th:first-child { background: #f8fafc; z-index: 11; }
+    }
+
+    /* Long display equations scroll sideways instead of widening the page */
+    .katex-display { overflow-x: auto; overflow-y: hidden; padding: 2px 0; }
+    /* Static theory text is laid out only when scrolled near (faster start on phones) */
+    #panel-theory { content-visibility: auto; contain-intrinsic-size: auto 32rem; }
+
+    /* No double-tap zoom delay on controls; no grey flash / text selection / callout on the canvas */
+    button, a, label, select, input, textarea { touch-action: manipulation; }
+    #simCanvas { -webkit-tap-highlight-color: transparent; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+
+    /* Touch screens */
+    @media (pointer: coarse) {
+      /* iOS zooms the whole page when a focused field's text is smaller than 16px */
+      input:not([type=range]):not([type=checkbox]):not([type=radio]), select, textarea { font-size: 16px !important; }
+      input:not([type=range]):not([type=checkbox]):not([type=radio]), select { min-height: 34px; }
+      /* Taller slider hit area (the thin native track is still drawn in the middle) */
+      input[type=range] { height: 32px; background: transparent !important; }
+      /* Finger-sized buttons */
+      .tap { min-height: 38px; min-width: 38px; }
+      .panel-toggle { width: 34px; height: 34px; font-size: 13px; }
+      .panel-toggle-sm { width: 32px; height: 32px; font-size: 11px; }
+      /* Corner-drag resizing does not work with fingers: these boxes simply grow to fit their content */
+      .resize-y { resize: none; height: auto !important; }
+      .resize-y-canvas { resize: none; }
+      /* Wider grab area for the column splitters (tablets in landscape) */
+      .col-splitter::after { content: ''; position: absolute; top: 0; bottom: 0; left: -6px; right: -6px; }
+      .mouse-only { display: none !important; }
+    }
+    @media not all and (pointer: coarse) {
+      .touch-only { display: none !important; }
+    }
+
+    /* Canvas full-screen view (button in the top-right corner of the canvas) */
+    body.canvas-fs { overflow: hidden; }
+    #card-canvas.is-fs {
+      position: fixed; inset: 0; z-index: 1000;
+      display: flex; flex-direction: column;
+      border: 0; border-radius: 0; padding: 8px 10px;
+    }
+    #card-canvas.is-fs #canvasWrap { flex: 1 1 auto; height: auto !important; min-height: 0 !important; resize: none; }
+    #card-canvas.is-fs .fs-hide { display: none !important; }
   </style>
 </head>
 <body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col">
 
 
   <!-- Header Bar -->
-  <header class="bg-slate-900 text-white shadow-md sticky top-0 z-50">
-    <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-4">
+  <header class="app-header bg-slate-900 text-white shadow-md z-50">
+    <div class="max-w-7xl mx-auto px-3 sm:px-4 py-3 flex flex-wrap items-center justify-between gap-3 sm:gap-4">
       <div class="flex items-center gap-3">
         <div class="p-2 bg-blue-600 rounded-lg text-white">
           <i class="fa-solid me-1 fa-rotate text-xl"></i>
@@ -142,17 +236,17 @@
               Homepage: <a href="https://sites.google.com/view/headlab" target="_blank" rel="noopener" class="text-blue-300 hover:underline">https://sites.google.com/view/headlab</a>)
             </span>
           </div>
-          <p class="text-xs text-slate-400">기준점 병진 + 기준점에 대한 회전으로 분해한 일반 평면운동 · 속도/가속도 벡터 및 영속도 순간중심(ICZV) 실시간 해석</p>
+          <p class="hidden sm:block text-xs text-slate-400">기준점 병진 + 기준점에 대한 회전으로 분해한 일반 평면운동 · 속도/가속도 벡터 및 영속도 순간중심(ICZV) 실시간 해석</p>
         </div>
       </div>
 
       <!-- Motion Presets -->
-      <div class="flex items-center gap-1.5 overflow-x-auto py-1">
+      <div class="flex flex-wrap items-center gap-1.5 py-1">
         <span class="text-xs text-slate-400 mr-1 font-semibold hidden md:inline"><i class="fa-solid fa-bookmark mr-1"></i>프리셋:</span>
-        <button onclick="applyPreset('general')" class="px-2.5 py-1 text-xs bg-slate-800 hover:bg-blue-600 text-slate-200 hover:text-white rounded-md transition font-medium border border-slate-700">일반 평면운동</button>
-        <button onclick="applyPreset('translation')" class="px-2.5 py-1 text-xs bg-slate-800 hover:bg-blue-600 text-slate-200 hover:text-white rounded-md transition font-medium border border-slate-700">순수 병진</button>
-        <button onclick="applyPreset('rotation')" class="px-2.5 py-1 text-xs bg-slate-800 hover:bg-blue-600 text-slate-200 hover:text-white rounded-md transition font-medium border border-slate-700">고정축 회전</button>
-        <button onclick="applyPreset('rolling')" class="px-2.5 py-1 text-xs bg-slate-800 hover:bg-blue-600 text-slate-200 hover:text-white rounded-md transition font-medium border border-slate-700">구름 바퀴</button>
+        <button onclick="applyPreset('general')" class="tap px-2.5 py-1 text-xs bg-slate-800 hover:bg-blue-600 text-slate-200 hover:text-white rounded-md transition font-medium border border-slate-700">일반 평면운동</button>
+        <button onclick="applyPreset('translation')" class="tap px-2.5 py-1 text-xs bg-slate-800 hover:bg-blue-600 text-slate-200 hover:text-white rounded-md transition font-medium border border-slate-700">순수 병진</button>
+        <button onclick="applyPreset('rotation')" class="tap px-2.5 py-1 text-xs bg-slate-800 hover:bg-blue-600 text-slate-200 hover:text-white rounded-md transition font-medium border border-slate-700">고정축 회전</button>
+        <button onclick="applyPreset('rolling')" class="tap px-2.5 py-1 text-xs bg-slate-800 hover:bg-blue-600 text-slate-200 hover:text-white rounded-md transition font-medium border border-slate-700">구름 바퀴</button>
         <span class="w-px h-5 bg-slate-700 mx-1 hidden lg:inline-block"></span>
         <button id="wideToggle" onclick="toggleWideLayout()" title="화면 전체 폭 사용 / 기본 폭" class="hidden lg:inline-flex items-center gap-1 px-2.5 py-1 text-xs bg-slate-800 hover:bg-indigo-600 text-slate-200 hover:text-white rounded-md transition font-medium border border-slate-700">
           <i class="fa-solid fa-left-right"></i> <span id="wideToggleLabel">전체 폭</span>
@@ -160,7 +254,7 @@
         <button onclick="resetLayout()" title="좌우 열 비율과 전체 폭을 기본값으로" class="hidden lg:inline-flex items-center gap-1 px-2.5 py-1 text-xs bg-slate-800 hover:bg-indigo-600 text-slate-200 hover:text-white rounded-md transition font-medium border border-slate-700">
           <i class="fa-solid fa-table-columns"></i> 레이아웃 초기화
         </button>
-        <button id="btn_reset_all" title="모든 매개변수와 시간을 초기 상태로" class="inline-flex items-center gap-1 px-2.5 py-1 text-xs bg-slate-800 hover:bg-rose-600 text-slate-200 hover:text-white rounded-md transition font-medium border border-slate-700">
+        <button id="btn_reset_all" title="모든 매개변수와 시간을 초기 상태로" class="tap inline-flex items-center gap-1 px-2.5 py-1 text-xs bg-slate-800 hover:bg-rose-600 text-slate-200 hover:text-white rounded-md transition font-medium border border-slate-700">
           <i class="fa-solid fa-rotate-left"></i> 전체 초기화
         </button>
       </div>
@@ -168,13 +262,13 @@
   </header>
 
   <!-- Main Grid Layout -->
-  <div id="layoutGrid" class="layout-grid max-w-7xl mx-auto px-4 py-4 w-full flex-grow">
+  <div id="layoutGrid" class="layout-grid max-w-7xl mx-auto px-2 sm:px-4 py-3 sm:py-4 w-full flex-grow">
 
     <!-- Left Controls Panel (Sidebar; width adjustable with the splitter) -->
     <aside class="min-w-0 flex flex-col gap-4">
 
       <!-- Shape & Reference Point -->
-      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4">
+      <div id="card-shape" class="bg-white rounded-xl shadow-sm border border-slate-200 p-3 sm:p-4">
         <h2 class="font-bold text-slate-800 text-sm flex items-center gap-2 mb-3">
           <i class="fa-solid fa-shapes text-blue-600"></i> 강체 형상 및 운동 기준점 (Shape & Reference)
         </h2>
@@ -275,18 +369,18 @@
           <div class="bg-blue-50 border border-blue-200 rounded-lg p-2.5 text-[11px] text-blue-900 leading-relaxed">
             <i class="fa-solid fa-lightbulb mr-1 text-amber-500"></i>
             <b>운동 기준점 $R$의 역할:</b> 아래에서 입력하는 병진 속도 $(v_{R,x0}, v_{R,y0})$와 병진 가속도 $(a_{R,x}, a_{R,y})$는 <b>선택한 기준점 $R$에 직접 부여</b>됩니다.
-            기준점을 바꾸면 같은 입력값이라도 강체 전체의 공간 궤적이 달라집니다. 캔버스를 클릭하면 탐색점을 추가할 수 있습니다.
+            기준점을 바꾸면 같은 입력값이라도 강체 전체의 공간 궤적이 달라집니다. 캔버스를 클릭(터치 화면에서는 탭)하면 탐색점을 추가할 수 있습니다.
           </div>
         </div>
       </div>
 
       <!-- Kinematic Parameters -->
-      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4">
+      <div id="card-params" class="bg-white rounded-xl shadow-sm border border-slate-200 p-3 sm:p-4">
         <div class="flex justify-between items-center mb-3">
           <h2 class="font-bold text-slate-800 text-sm flex items-center gap-2">
             <i class="fa-solid fa-sliders text-emerald-600"></i> 운동 매개변수 (Parameter Study)
           </h2>
-          <button id="btn_preset_pure_rot" class="px-2 py-1 text-xs bg-emerald-600 hover:bg-emerald-700 text-white rounded transition font-medium flex items-center gap-1">
+          <button id="btn_preset_pure_rot" class="tap px-2 py-1 text-xs bg-emerald-600 hover:bg-emerald-700 text-white rounded transition font-medium flex items-center gap-1">
             <i class="fa-solid fa-rotate"></i> 회전전용 리셋
           </button>
         </div>
@@ -362,7 +456,7 @@
       </div>
 
       <!-- Visual Layers -->
-      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4">
+      <div id="card-layers" class="bg-white rounded-xl shadow-sm border border-slate-200 p-3 sm:p-4">
         <h2 class="font-bold text-slate-800 text-sm flex items-center gap-2 mb-3">
           <i class="fa-solid fa-eye text-amber-600"></i> 시각화 벡터 및 요소 (Visual Layers)
         </h2>
@@ -419,64 +513,69 @@
     <main class="min-w-0 flex flex-col gap-4">
 
       <!-- Interactive Rigid Body Canvas Card -->
-      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 relative">
+      <div id="card-canvas" class="bg-white rounded-xl shadow-sm border border-slate-200 p-3 sm:p-4 relative">
         <div class="flex justify-between items-center mb-2 flex-wrap gap-2">
-          <div class="flex items-center gap-2 flex-wrap">
+          <div class="fs-hide flex items-center gap-2 flex-wrap">
             <span class="text-xs font-bold text-slate-700 uppercase tracking-wider bg-slate-100 px-2.5 py-1 rounded-md border border-slate-200 flex items-center gap-1.5">
               <i class="fa-solid fa-drafting-compass text-blue-600"></i> 강체 운동 시각화 (Rigid Body Motion)
             </span>
-            <span class="text-[11px] text-slate-500">
+            <span class="mouse-only text-[11px] text-slate-500">
               <i class="fa-solid fa-hand-pointer mr-1"></i>클릭: 점 추가 · 드래그: 이동 · 휠: 확대/축소
+            </span>
+            <span class="touch-only text-[11px] text-slate-500">
+              <i class="fa-solid fa-hand-pointer mr-1"></i>탭: 점 추가 · 끌기: 이동 · 두 손가락: 확대/축소
             </span>
           </div>
 
           <!-- Camera & Zoom Controls -->
-          <div class="flex items-center gap-1">
-            <label title="재생 중에도 기준점 R이 화면 안에 머물도록 시점을 따라 이동" class="flex items-center gap-1 h-7 text-[11px] font-semibold text-slate-600 bg-slate-50 px-2 rounded-md border border-slate-200 cursor-pointer mr-1">
+          <div class="flex flex-wrap items-center gap-1">
+            <label title="재생 중에도 기준점 R이 화면 안에 머물도록 시점을 따라 이동" class="tap flex items-center gap-1 h-7 text-[11px] font-semibold text-slate-600 bg-slate-50 px-2 rounded-md border border-slate-200 cursor-pointer mr-1">
               <input type="checkbox" id="chk_follow" checked class="accent-blue-600"> 기준점 따라가기
             </label>
-            <button id="btn_zoom_in" title="확대" class="w-7 h-7 text-xs bg-slate-100 hover:bg-blue-600 hover:text-white text-slate-600 rounded-md border border-slate-200 transition"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
-            <button id="btn_zoom_out" title="축소" class="w-7 h-7 text-xs bg-slate-100 hover:bg-blue-600 hover:text-white text-slate-600 rounded-md border border-slate-200 transition"><i class="fa-solid fa-magnifying-glass-minus"></i></button>
-            <button id="btn_reset_view" title="보기 초기화" class="h-7 px-2 text-[11px] font-semibold bg-slate-100 hover:bg-blue-600 hover:text-white text-slate-600 rounded-md border border-slate-200 transition"><i class="fa-solid fa-expand mr-1"></i>초기화</button>
+            <button id="btn_zoom_in" title="확대" class="tap w-7 h-7 text-xs bg-slate-100 hover:bg-blue-600 hover:text-white text-slate-600 rounded-md border border-slate-200 transition"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
+            <button id="btn_zoom_out" title="축소" class="tap w-7 h-7 text-xs bg-slate-100 hover:bg-blue-600 hover:text-white text-slate-600 rounded-md border border-slate-200 transition"><i class="fa-solid fa-magnifying-glass-minus"></i></button>
+            <button id="btn_reset_view" title="보기 초기화" class="tap h-7 px-2 text-[11px] font-semibold bg-slate-100 hover:bg-blue-600 hover:text-white text-slate-600 rounded-md border border-slate-200 transition"><i class="fa-solid fa-expand mr-1"></i>초기화</button>
           </div>
         </div>
 
-        <!-- Main Interactive Canvas -->
-        <div id="canvasWrap" class="resize-y-canvas relative w-full rounded-lg border border-slate-200 bg-slate-900 shadow-inner" style="height: 28rem; min-height: 16rem;">
+        <!-- Main Interactive Canvas (height: see #canvasWrap in the style block) -->
+        <div id="canvasWrap" class="resize-y-canvas relative w-full rounded-lg border border-slate-200 bg-slate-900 shadow-inner">
           <canvas id="simCanvas" class="absolute inset-0 w-full h-full block"></canvas>
           <!-- Time HUD -->
           <div class="pointer-events-none absolute top-2 left-2 bg-slate-900/85 border border-slate-700 px-2.5 py-1 rounded-md flex items-center gap-2 text-[11px] text-slate-300 font-mono z-10">
             <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
             t = <span id="display_time" class="font-bold text-emerald-400">0.00 s</span>
           </div>
+          <!-- Full-screen toggle (top-right corner of the canvas) -->
+          <button id="btn_fullscreen" title="캔버스를 화면 가득 보기 (전체화면)" aria-label="전체화면" class="tap absolute top-2 right-2 z-10 w-8 h-8 inline-flex items-center justify-center rounded-md bg-slate-900/85 border border-slate-700 text-slate-300 hover:bg-blue-600 hover:text-white text-xs transition"><i class="fa-solid fa-up-right-and-down-left-from-center"></i></button>
         </div>
 
         <!-- Playback Controller Bar -->
         <div class="mt-3 flex flex-wrap items-center justify-between gap-3">
           <div class="flex items-center gap-1.5">
-            <button id="btn_step_prev" title="이전 프레임 (-0.02 s)" class="w-8 h-8 text-xs bg-slate-100 hover:bg-blue-600 hover:text-white text-slate-600 rounded-md border border-slate-200 transition">
+            <button id="btn_step_prev" title="이전 프레임 (-0.02 s)" class="tap w-8 h-8 text-xs bg-slate-100 hover:bg-blue-600 hover:text-white text-slate-600 rounded-md border border-slate-200 transition">
               <i class="fa-solid fa-backward-step"></i>
             </button>
-            <button id="btn_play" class="px-4 h-8 rounded-md bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs shadow-sm transition flex items-center gap-1.5">
+            <button id="btn_play" class="tap px-4 h-8 rounded-md bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs shadow-sm transition flex items-center gap-1.5">
               <i id="icon_play" class="fa-solid fa-play"></i>
               <span id="text_play">재생 (Play)</span>
             </button>
-            <button id="btn_step_next" title="다음 프레임 (+0.02 s)" class="w-8 h-8 text-xs bg-slate-100 hover:bg-blue-600 hover:text-white text-slate-600 rounded-md border border-slate-200 transition">
+            <button id="btn_step_next" title="다음 프레임 (+0.02 s)" class="tap w-8 h-8 text-xs bg-slate-100 hover:bg-blue-600 hover:text-white text-slate-600 rounded-md border border-slate-200 transition">
               <i class="fa-solid fa-forward-step"></i>
             </button>
           </div>
 
-          <div class="flex-1 flex items-center gap-2 min-w-[180px] bg-slate-50 px-2.5 py-1.5 rounded-lg border border-slate-200">
-            <span class="text-[11px] font-mono text-slate-500">0 s</span>
-            <input type="range" id="slider_time" min="0" max="10" step="0.02" value="0" class="flex-1 slider-thumb accent-blue-600 bg-slate-200 h-1 rounded cursor-pointer">
-            <span class="text-[11px] font-mono text-slate-500">10 s</span>
+          <div id="time-bar" class="flex-1 flex items-center gap-2 min-w-[180px] bg-slate-50 px-2.5 py-1.5 rounded-lg border border-slate-200">
+            <span class="text-[11px] font-mono text-slate-500 whitespace-nowrap">0 s</span>
+            <input type="range" id="slider_time" min="0" max="10" step="0.02" value="0" class="flex-1 min-w-0 slider-thumb accent-blue-600 bg-slate-200 h-1 rounded cursor-pointer">
+            <span class="text-[11px] font-mono text-slate-500 whitespace-nowrap">10 s</span>
             <input type="number" id="num_time" min="0" max="10" step="0.01" value="0" title="시간 직접 입력 (0 ~ 10 s)" class="w-16 px-1.5 py-0.5 border border-slate-300 rounded text-right text-xs font-mono focus:ring-1 focus:ring-blue-500 focus:outline-none">
             <span class="text-[11px] text-slate-500">s</span>
           </div>
 
           <div class="flex items-center gap-2 bg-slate-50 px-2.5 py-1 rounded-lg border border-slate-200">
-            <label for="select_speed" class="text-[11px] font-semibold text-slate-600">재생 속도:</label>
-            <select id="select_speed" class="bg-white border border-slate-300 rounded px-1.5 py-0.5 text-xs text-slate-700 focus:ring-1 focus:ring-blue-500">
+            <label for="select_speed" class="text-[11px] font-semibold text-slate-600"><span class="sm:hidden" title="재생 속도"><i class="fa-solid fa-gauge-high"></i></span><span class="hidden sm:inline">재생 속도:</span></label>
+            <select id="select_speed" aria-label="재생 속도" class="bg-white border border-slate-300 rounded px-1.5 py-0.5 text-xs text-slate-700 focus:ring-1 focus:ring-blue-500">
               <option value="0.25">0.25×</option>
               <option value="0.5">0.5×</option>
               <option value="1.0" selected>1.0×</option>
@@ -487,7 +586,7 @@
       </div>
 
       <!-- Key Kinematic State Stat Cards -->
-      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 items-start">
+      <div id="stat-grid" class="grid grid-cols-2 sm:grid-cols-4 gap-3 items-start">
         <div id="panel-stat-omega" class="panel bg-white rounded-xl p-3 border border-slate-200 shadow-sm flex flex-col justify-between">
           <div class="flex items-start justify-between gap-1">
             <span class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider"><i class="fa-solid fa-rotate text-emerald-500 mr-1"></i>각속도 (ω)</span>
@@ -534,13 +633,13 @@
       </div>
 
       <!-- Probe Points Real-time Inspector Table -->
-      <div id="panel-inspector" class="panel bg-white rounded-xl shadow-sm border border-slate-200 p-4">
+      <div id="panel-inspector" class="panel bg-white rounded-xl shadow-sm border border-slate-200 p-3 sm:p-4">
         <div class="panel-head flex justify-between items-center mb-2 flex-wrap gap-2 border-b border-slate-100 pb-2">
           <h2 class="font-bold text-slate-800 text-sm flex items-center gap-2">
             <i class="fa-solid fa-table text-blue-600"></i> 탐색점 운동 벡터 및 성분 분석 (Real-time Inspector)
           </h2>
           <div class="flex items-center gap-2">
-            <button id="btn_add_point" class="px-2 py-1 text-xs bg-blue-600 hover:bg-blue-700 text-white rounded transition font-medium flex items-center gap-1">
+            <button id="btn_add_point" class="tap px-2 py-1 text-xs bg-blue-600 hover:bg-blue-700 text-white rounded transition font-medium flex items-center gap-1">
               <i class="fa-solid fa-plus"></i> 점 추가 (좌표 입력)
             </button>
             <button onclick="togglePanel('panel-inspector')" class="panel-toggle" title="최소화 / 펼치기"><i class="fa-solid fa-minus"></i><i class="fa-solid fa-plus"></i></button>
@@ -570,12 +669,12 @@
               </tbody>
             </table>
           </div>
-          <p class="text-[10px] text-slate-400 text-right mt-1"><i class="fa-solid fa-up-down mr-1"></i>오른쪽 아래 모서리를 드래그해 높이 조절</p>
+          <p class="mouse-only text-[10px] text-slate-400 text-right mt-1"><i class="fa-solid fa-up-down mr-1"></i>오른쪽 아래 모서리를 드래그해 높이 조절</p>
         </div>
       </div>
 
       <!-- Real-time Equations for a Selected Point -->
-      <div id="panel-equations" class="panel bg-white rounded-xl shadow-sm border border-slate-200 p-4">
+      <div id="panel-equations" class="panel bg-white rounded-xl shadow-sm border border-slate-200 p-3 sm:p-4">
         <div class="panel-head flex justify-between items-center mb-2 flex-wrap gap-2 border-b border-slate-100 pb-2">
           <h2 class="font-bold text-slate-800 text-sm flex items-center gap-2">
             <i class="fa-solid fa-square-root-variable text-indigo-600"></i> 선택점의 상대운동 수식 대입 (Real-time Equations)
@@ -593,7 +692,7 @@
       </div>
 
       <!-- Theory Card -->
-      <div id="panel-theory" class="panel bg-white rounded-xl shadow-sm border border-slate-200 p-4">
+      <div id="panel-theory" class="panel bg-white rounded-xl shadow-sm border border-slate-200 p-3 sm:p-4">
         <div class="panel-head flex justify-between items-center gap-2 mb-3 border-b border-slate-100 pb-2">
           <h2 class="font-bold text-slate-800 text-sm flex items-center gap-2">
             <i class="fa-solid fa-graduation-cap text-indigo-600"></i> 강체 평면 운동학 핵심 원리 (Key Principles)
@@ -647,7 +746,7 @@
             </div>
 
           </div>
-          <p class="text-[10px] text-slate-400 text-right mt-1"><i class="fa-solid fa-up-down mr-1"></i>오른쪽 아래 모서리를 드래그해 높이 조절</p>
+          <p class="mouse-only text-[10px] text-slate-400 text-right mt-1"><i class="fa-solid fa-up-down mr-1"></i>오른쪽 아래 모서리를 드래그해 높이 조절</p>
         </div>
       </div>
 
@@ -725,7 +824,8 @@
       defaultScale: 230,
       originOffset: { x: 0, y: 0 },
       viewW: 0,
-      viewH: 0
+      viewH: 0,
+      dpr: 0
     };
 
     const SLIDERS = [
@@ -739,6 +839,27 @@
 
     // 1.0 -> "1.0", 1.234 -> "1.234" (at most 3 decimals)
     const fmtNum = v => (Number.isInteger(Math.round(v * 1e6) / 1e5) ? v.toFixed(1) : String(Number(v.toFixed(3))));
+
+    // Per-frame text output: change the existing text node only when the value changes
+    // (no HTML parsing and far less layout work than innerHTML / innerText — matters on phones)
+    function setText(el, txt) {
+      if (!el) return;
+      const node = el.firstChild;
+      if (!node || node.nodeType !== 3 || el.childNodes.length !== 1) {
+        el.textContent = txt;
+        return;
+      }
+      if (node.data !== txt) node.data = txt;
+    }
+
+    // Coalesce redraws from fast input (slider drags, touch moves, wheel) into one per display frame.
+    // While playing, the animation loop redraws every frame anyway.
+    let drawPending = false;
+    function requestDraw() {
+      if (drawPending || state.isPlaying) return;
+      drawPending = true;
+      requestAnimationFrame(() => { drawPending = false; draw(); });
+    }
 
     /* ==========================================================================
        2. SHAPE INITIALIZATION & POINT SELECTORS
@@ -988,7 +1109,7 @@
       const display = document.getElementById('display_time');
       const num = document.getElementById('num_time');
       if (slider) slider.value = state.t;
-      if (display) display.innerText = `${state.t.toFixed(2)} s`;
+      setText(display, `${state.t.toFixed(2)} s`);
       if (num && document.activeElement !== num) num.value = state.t.toFixed(2);
     }
 
@@ -1123,7 +1244,9 @@
     const canvasWrap = document.getElementById('canvasWrap');
 
     function resetViewOffset() {
-      state.scale = state.defaultScale;
+      // Small canvases (phones) start slightly zoomed out so the body and its vectors fit
+      const fit = state.viewW ? Math.min(state.viewW, state.viewH) / 430 : 1;
+      state.scale = Math.round(state.defaultScale * Math.min(1, Math.max(0.75, fit)));
       state.cam = { x: 0, y: 0 };
       state.originOffset = { x: state.viewW * 0.45, y: state.viewH * 0.55 };
       draw();
@@ -1139,7 +1262,11 @@
     function resizeCanvas() {
       const rect = canvasWrap.getBoundingClientRect();
       if (rect.width < 10 || rect.height < 10) return;
-      const dpr = window.devicePixelRatio || 1;
+      // Phones report a pixel ratio of 3 or more; 2 looks the same for line art and needs about half the pixels
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      // Mobile browsers fire resize while the address bar slides in/out; reallocating an unchanged canvas would stutter
+      if (rect.width === state.viewW && rect.height === state.viewH && dpr === state.dpr) return;
+      state.dpr = dpr;
       const first = state.viewW === 0;
       if (!first) {
         // Keep the view centred while the canvas is resized
@@ -1175,7 +1302,7 @@
       state.originOffset.x = px - w.x * state.scale;
       state.originOffset.y = py + w.y * state.scale;
       if (state.follow) syncCam();
-      draw();
+      requestDraw();
     }
 
     /* ---------- Label layout: arrows / points register obstacles, labels are placed last ---------- */
@@ -1223,6 +1350,24 @@
 
     let lastEqRender = 0;
 
+    // Panels scrolled out of view (or covered by the full-screen canvas) are not refreshed every
+    // frame; they catch up as soon as they come back into view. Big saving on phones/tablets.
+    const onScreen = { inspector: true, equations: true, stats: true };
+    const panelVisible = key => onScreen[key] && !document.body.classList.contains('canvas-fs');
+
+    function watchPanelVisibility() {
+      if (!('IntersectionObserver' in window)) return;
+      const io = new IntersectionObserver(entries => {
+        entries.forEach(en => { onScreen[en.target.dataset.vis] = en.isIntersecting; });
+        lastEqRender = 0;
+        requestDraw();
+      }, { rootMargin: '200px 0px' });
+      [['panel-inspector', 'inspector'], ['panel-equations', 'equations'], ['stat-grid', 'stats']].forEach(([id, key]) => {
+        const el = document.getElementById(id);
+        if (el) { el.dataset.vis = key; io.observe(el); }
+      });
+    }
+
     function draw() {
       if (state.viewW === 0) return;
       ctx.clearRect(0, 0, state.viewW, state.viewH);
@@ -1247,15 +1392,18 @@
 
       const legendRect = drawLegend();
       const hudRect = { x: 6, y: 6, w: 132, h: 30 };
-      placeLabels([hudRect, legendRect].filter(Boolean));
+      const fsBtnRect = { x: state.viewW - 48, y: 4, w: 44, h: 44 }; // full-screen button (top-right)
+      placeLabels([hudRect, fsBtnRect, legendRect].filter(Boolean));
 
       updateInspectorTable(kin);
-      updateStats(kin);
+      if (panelVisible('stats')) updateStats(kin);
 
-      const now = performance.now();
-      if (!state.isPlaying || now - lastEqRender > 120) {
-        lastEqRender = now;
-        renderLiveEquations(kin);
+      if (panelVisible('equations')) {
+        const now = performance.now();
+        if (!state.isPlaying || now - lastEqRender > 120) {
+          lastEqRender = now;
+          renderLiveEquations(kin);
+        }
       }
     }
 
@@ -1265,15 +1413,14 @@
       ctx.strokeStyle = '#1e293b';
       ctx.lineWidth = 1;
 
+      // All grid lines in one path / one stroke call
       const gridSize = 0.5 * state.scale;
+      ctx.beginPath();
       const startX = ((state.originOffset.x % gridSize) + gridSize) % gridSize;
-      for (let x = startX; x < W; x += gridSize) {
-        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
-      }
+      for (let x = startX; x < W; x += gridSize) { ctx.moveTo(x, 0); ctx.lineTo(x, H); }
       const startY = ((state.originOffset.y % gridSize) + gridSize) % gridSize;
-      for (let y = startY; y < H; y += gridSize) {
-        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
-      }
+      for (let y = startY; y < H; y += gridSize) { ctx.moveTo(0, y); ctx.lineTo(W, y); }
+      ctx.stroke();
 
       // Axes
       ctx.strokeStyle = '#334155';
@@ -1310,46 +1457,60 @@
     }
 
     // Trajectories are evaluated analytically, so they are visible while paused or scrubbing:
-    // solid = path already travelled (0 → t), faint dashed = whole run (0 → maxT)
-    function drawPaths(kin) {
-      const N = 300;
-      const pts = state.probePoints;
-      const full = pts.map(() => []);
-      const done = pts.map(() => []);
-      for (let i = 0; i <= N; i++) {
-        const t = state.maxT * i / N;
-        const k = evalKinematics(t);
-        pts.forEach((p, j) => {
-          const pk = evalPointKinematics(p.localPos, k);
-          const pix = worldToPixel(pk.pos.x, pk.pos.y);
-          full[j].push(pix);
-          if (t < state.t) done[j].push(pix);
-        });
-      }
-      pts.forEach((p, j) => {
-        const pk = evalPointKinematics(p.localPos, kin);
-        done[j].push(worldToPixel(pk.pos.x, pk.pos.y));
-      });
+    // solid = path already travelled (0 → t), faint dashed = whole run (0 → maxT).
+    // The samples only change with the motion inputs or the points, so they are cached in world
+    // coordinates and just mapped to pixels each frame.
+    const PATH_N = 300;
+    let pathCache = { sig: '', world: [] };
 
-      const stroke = arr => {
+    function pathSignature() {
+      return [state.vx0, state.vy0, state.ax, state.ay, state.omega0, state.alpha, state.theta0, state.maxT,
+        state.selectedRefId, ...state.probePoints.map(p => `${p.id}:${p.localPos.x}:${p.localPos.y}`)].join(',');
+    }
+
+    function drawPaths(kin) {
+      const pts = state.probePoints;
+      const sig = pathSignature();
+      if (sig !== pathCache.sig) {
+        const world = pts.map(() => []);
+        for (let i = 0; i <= PATH_N; i++) {
+          const k = evalKinematics(state.maxT * i / PATH_N);
+          pts.forEach((p, j) => {
+            const pk = evalPointKinematics(p.localPos, k);
+            world[j].push(pk.pos.x, pk.pos.y);
+          });
+        }
+        pathCache = { sig, world };
+      }
+      // Samples with t_i < t belong to the travelled part
+      const nDone = Math.min(PATH_N + 1, Math.max(0, Math.ceil(state.t * PATH_N / state.maxT - 1e-9)));
+      const S = state.scale, ox = state.originOffset.x, oy = state.originOffset.y;
+
+      const stroke = (xy, n, end) => {
         ctx.beginPath();
-        arr.forEach((q, i) => (i ? ctx.lineTo(q.px, q.py) : ctx.moveTo(q.px, q.py)));
+        for (let i = 0; i < n; i++) {
+          const px = ox + xy[2 * i] * S, py = oy - xy[2 * i + 1] * S;
+          if (i) ctx.lineTo(px, py); else ctx.moveTo(px, py);
+        }
+        if (end) ctx.lineTo(end.px, end.py);
         ctx.stroke();
       };
 
       ctx.save();
       ctx.lineJoin = 'round';
       pts.forEach((p, j) => {
+        const xy = pathCache.world[j];
         ctx.strokeStyle = p.color;
         ctx.globalAlpha = 0.4;
         ctx.lineWidth = 1.2;
         ctx.setLineDash([3, 5]);
-        stroke(full[j]);
-        if (done[j].length > 1) {
+        stroke(xy, PATH_N + 1);
+        if (nDone > 0) {
+          const pk = evalPointKinematics(p.localPos, kin);
           ctx.globalAlpha = 0.95;
           ctx.lineWidth = 2;
           ctx.setLineDash([]);
-          stroke(done[j]);
+          stroke(xy, nDone, worldToPixel(pk.pos.x, pk.pos.y));
         }
       });
       ctx.restore();
@@ -1622,24 +1783,32 @@
       queueLabel('순간중심 C (ICZV)', '#c084fc', iczvPix.px, iczvPix.py, -Math.PI / 4, 0, NAME_FONT);
     }
 
-    // Small colour legend at the bottom-left of the canvas; returns its rectangle
+    // Small colour legend at the bottom-left of the canvas; returns its rectangle.
+    // Small canvases (phones) get a compact two-column legend with short names.
     function drawLegend() {
       const items = [];
-      if (state.showVTotal) items.push(['#10b981', 'v (전체 속도)']);
-      if (state.showVComp || state.showVTotal) items.push(['#38bdf8', 'v_R (기준점 속도)']);
-      if (state.showVComp) items.push(['#2dd4bf', 'v_P/R = ω × r']);
-      if (state.showATotal) items.push(['#f43f5e', 'a (전체 가속도)']);
-      if (state.showAComp || state.showATotal) items.push(['#f97316', 'a_R (기준점 가속도)']);
-      if (state.showAComp) items.push(['#eab308', 'a_t = α × r'], ['#ec4899', 'a_n = −ω² r']);
-      if (state.showOmega) items.push(['#a3e635', 'ω (각속도, ↺ 반시계 +)']);
-      if (state.showAlpha) items.push(['#e879f9', 'α (각가속도, ↺ 반시계 +)']);
+      if (state.showVTotal) items.push(['#10b981', 'v (전체 속도)', 'v']);
+      if (state.showVComp || state.showVTotal) items.push(['#38bdf8', 'v_R (기준점 속도)', 'v_R']);
+      if (state.showVComp) items.push(['#2dd4bf', 'v_P/R = ω × r', 'v_P/R']);
+      if (state.showATotal) items.push(['#f43f5e', 'a (전체 가속도)', 'a']);
+      if (state.showAComp || state.showATotal) items.push(['#f97316', 'a_R (기준점 가속도)', 'a_R']);
+      if (state.showAComp) items.push(['#eab308', 'a_t = α × r', 'a_t'], ['#ec4899', 'a_n = −ω² r', 'a_n']);
+      if (state.showOmega) items.push(['#a3e635', 'ω (각속도, ↺ 반시계 +)', 'ω (↺ +)']);
+      if (state.showAlpha) items.push(['#e879f9', 'α (각가속도, ↺ 반시계 +)', 'α (↺ +)']);
       if (items.length === 0) return null;
 
+      const compact = state.viewW < 560 || state.viewH < 380;
+      const textOf = it => (compact ? it[2] : it[1]);
+      const cols = compact && items.length > 3 ? 2 : 1;
+      const rows = Math.ceil(items.length / cols);
+
       ctx.save();
-      ctx.font = "11px Inter, 'Noto Sans KR', sans-serif";
-      const pad = 8, rowH = 16;
-      const w = Math.max(...items.map(i => ctx.measureText(i[1]).width)) + 38;
-      const h = items.length * rowH + pad;
+      ctx.font = compact ? "10px Inter, 'Noto Sans KR', sans-serif" : "11px Inter, 'Noto Sans KR', sans-serif";
+      const pad = compact ? 6 : 8, rowH = compact ? 14 : 16;
+      const sw = compact ? 12 : 16;               // colour swatch length
+      const colW = Math.max(...items.map(i => ctx.measureText(textOf(i)).width)) + sw + 22;
+      const w = cols * colW;
+      const h = rows * rowH + pad;
       const x0 = 8, y0 = state.viewH - h - 8;
       ctx.fillStyle = 'rgba(15, 23, 42, 0.85)';
       ctx.strokeStyle = '#334155';
@@ -1649,12 +1818,13 @@
       ctx.fill();
       ctx.stroke();
       items.forEach((it, i) => {
-        const y = y0 + pad / 2 + i * rowH + rowH / 2;
+        const c = Math.floor(i / rows), r = i % rows;
+        const x = x0 + c * colW, y = y0 + pad / 2 + r * rowH + rowH / 2;
         ctx.strokeStyle = it[0];
         ctx.lineWidth = 3;
-        ctx.beginPath(); ctx.moveTo(x0 + 8, y); ctx.lineTo(x0 + 24, y); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(x + 8, y); ctx.lineTo(x + 8 + sw, y); ctx.stroke();
         ctx.fillStyle = '#cbd5e1';
-        ctx.fillText(it[1], x0 + 30, y + 4);
+        ctx.fillText(textOf(it), x + 14 + sw, y + 4);
       });
       ctx.restore();
       return { x: x0, y: y0, w, h };
@@ -1772,7 +1942,7 @@
        5. UI OUTPUTS: STATS, INSPECTOR TABLE, LIVE EQUATIONS
        ========================================================================== */
     function updateStats(kin) {
-      const set = (id, txt) => { const el = document.getElementById(id); if (el) el.innerText = txt; };
+      const set = (id, txt) => setText(document.getElementById(id), txt);
       set('statOmega', `${kin.omega.toFixed(2)} rad/s`);
       set('statAlpha', `α = ${kin.alpha.toFixed(2)} rad/s² (${kin.omega >= 0 ? '반시계' : '시계'} 회전)`);
       set('statTheta', `${kin.theta.toFixed(3)} rad`);
@@ -1804,7 +1974,7 @@
         const lock = p.isFixed ? 'disabled title="도심(중심) O는 강체 형상에 고정되어 있습니다"' : 'title="Enter 또는 칸을 벗어나면 확정"';
         const inp = axis => `<input type="number" step="0.01" min="-5" max="5" data-pos="${p.id}" data-axis="${axis}" value="${fmtNum(p.localPos[axis])}" ${lock} class="${inputCls}">`;
         const deleteBtnHtml = !p.isFixed
-          ? `<button data-del="${p.id}" class="px-2 py-0.5 rounded bg-rose-50 hover:bg-rose-600 hover:text-white text-rose-600 border border-rose-200 text-[10px] font-sans transition">삭제</button>`
+          ? `<button data-del="${p.id}" class="tap px-2 py-0.5 rounded bg-rose-50 hover:bg-rose-600 hover:text-white text-rose-600 border border-rose-200 text-[10px] font-sans transition">삭제</button>`
           : '<span class="text-slate-400 text-[10px] font-sans">고정</span>';
 
         return `<tr data-row="${p.id}" class="hover:bg-slate-50 transition">
@@ -1816,10 +1986,10 @@
             <div class="flex items-center gap-1 mt-0.5"><span class="text-[10px] text-slate-400 font-sans w-2">y</span>${inp('y')}</div>
           </td>
           <td class="p-2 text-slate-600 whitespace-nowrap" data-f="pos"></td>
-          <td class="p-2 text-emerald-700 font-bold whitespace-nowrap" data-f="v"></td>
-          <td class="p-2 text-cyan-700 text-[11px] whitespace-nowrap leading-tight" data-f="vc"></td>
-          <td class="p-2 text-rose-600 font-bold whitespace-nowrap" data-f="a"></td>
-          <td class="p-2 text-amber-700 text-[11px] whitespace-nowrap leading-tight" data-f="ac"></td>
+          <td class="p-2 text-emerald-700 font-bold whitespace-nowrap"><span data-f="v"></span><span data-f="vxy" class="block text-[10px] text-slate-400 font-normal"></span></td>
+          <td class="p-2 text-cyan-700 text-[11px] whitespace-nowrap leading-tight"><span data-f="vr"></span><span data-f="vrot" class="block"></span></td>
+          <td class="p-2 text-rose-600 font-bold whitespace-nowrap"><span data-f="a"></span><span data-f="axy" class="block text-[10px] text-slate-400 font-normal"></span></td>
+          <td class="p-2 text-amber-700 text-[11px] whitespace-nowrap leading-tight">a<sub>t</sub> <span data-f="at"></span><span class="block">a<sub>n</sub> <span data-f="an"></span></span></td>
           <td class="p-2 text-center">${deleteBtnHtml}</td>
         </tr>`;
       }).join('');
@@ -1840,16 +2010,22 @@
         inspectorSig = sig;
         rebuildInspectorRows();
       }
+      if (!panelVisible('inspector')) return;
 
+      const xy = v => `(${v.x.toFixed(2)}, ${v.y.toFixed(2)})`;
       state.probePoints.forEach(p => {
         const c = inspectorCells[p.id];
         if (!c) return;
         const pk = evalPointKinematics(p.localPos, kin);
-        c.pos.textContent = `(${pk.pos.x.toFixed(2)}, ${pk.pos.y.toFixed(2)})`;
-        c.v.innerHTML = `${pk.v_total.mag.toFixed(2)}<span class="block text-[10px] text-slate-400 font-normal">(${pk.v_total.x.toFixed(2)}, ${pk.v_total.y.toFixed(2)})</span>`;
-        c.vc.innerHTML = `(${pk.v_trans.x.toFixed(2)}, ${pk.v_trans.y.toFixed(2)})<span class="block">+ (${pk.v_rot.x.toFixed(2)}, ${pk.v_rot.y.toFixed(2)})</span>`;
-        c.a.innerHTML = `${pk.a_total.mag.toFixed(2)}<span class="block text-[10px] text-slate-400 font-normal">(${pk.a_total.x.toFixed(2)}, ${pk.a_total.y.toFixed(2)})</span>`;
-        c.ac.innerHTML = `a<sub>t</sub> ${Math.hypot(pk.a_t.x, pk.a_t.y).toFixed(2)}<span class="block">a<sub>n</sub> ${Math.hypot(pk.a_n.x, pk.a_n.y).toFixed(2)}</span>`;
+        setText(c.pos, xy(pk.pos));
+        setText(c.v, pk.v_total.mag.toFixed(2));
+        setText(c.vxy, xy(pk.v_total));
+        setText(c.vr, xy(pk.v_trans));
+        setText(c.vrot, `+ ${xy(pk.v_rot)}`);
+        setText(c.a, pk.a_total.mag.toFixed(2));
+        setText(c.axy, xy(pk.a_total));
+        setText(c.at, Math.hypot(pk.a_t.x, pk.a_t.y).toFixed(2));
+        setText(c.an, Math.hypot(pk.a_n.x, pk.a_n.y).toFixed(2));
       });
     }
 
@@ -2137,6 +2313,38 @@
       } catch (e) { /* ignore */ }
     }
 
+    /* ---------- Canvas full-screen view ----------
+       The canvas card is laid over the whole window by CSS (works everywhere, including iPhone),
+       and real browser full screen is requested where it is allowed (hides the address bar). */
+    const isCanvasFullscreen = () => document.body.classList.contains('canvas-fs');
+
+    function setCanvasFullscreen(on) {
+      if (on === isCanvasFullscreen()) return;
+      document.body.classList.toggle('canvas-fs', on);
+      document.getElementById('card-canvas').classList.toggle('is-fs', on);
+      const btn = document.getElementById('btn_fullscreen');
+      btn.querySelector('i').className = on ? 'fa-solid fa-down-left-and-up-right-to-center' : 'fa-solid fa-up-right-and-down-left-from-center';
+      btn.title = on ? '전체화면 닫기 (Esc)' : '캔버스를 화면 가득 보기 (전체화면)';
+      btn.setAttribute('aria-label', on ? '전체화면 닫기' : '전체화면');
+
+      const de = document.documentElement;
+      const fsEl = document.fullscreenElement || document.webkitFullscreenElement;
+      try {
+        let p = null;
+        if (on && !fsEl) {
+          const req = de.requestFullscreen || de.webkitRequestFullscreen;
+          if (req) p = req.call(de);
+        } else if (!on && fsEl) {
+          const exit = document.exitFullscreen || document.webkitExitFullscreen;
+          if (exit) p = exit.call(document);
+        }
+        if (p && p.catch) p.catch(() => { /* not allowed here: the CSS overlay alone is used */ });
+      } catch (err) { /* ignore */ }
+
+      // Panels under the overlay were not refreshed while it was open
+      if (!on) draw();
+    }
+
     /* ==========================================================================
        7. EVENT LISTENERS & BINDINGS
        ========================================================================== */
@@ -2146,7 +2354,7 @@
 
       document.getElementById('slider_time').addEventListener('input', (e) => {
         setTime(parseFloat(e.target.value));
-        draw();
+        requestDraw();
       });
       document.getElementById('btn_step_prev').addEventListener('click', () => { setTime(state.t - 0.02); draw(); });
       document.getElementById('btn_step_next').addEventListener('click', () => { setTime(state.t + 0.02); draw(); });
@@ -2173,7 +2381,7 @@
         const apply = v => {
           setParams({ [s.prop]: v });
           state.groundY = null; // parameters no longer guarantee rolling without slipping
-          draw();
+          requestDraw();
         };
         document.getElementById(s.id).addEventListener('input', e => apply(parseFloat(e.target.value)));
         const num = document.getElementById(s.num);
@@ -2189,7 +2397,7 @@
       const numTime = document.getElementById('num_time');
       numTime.addEventListener('input', e => {
         const v = parseFloat(e.target.value);
-        if (isFinite(v)) { setTime(v); draw(); }
+        if (isFinite(v)) { setTime(v); requestDraw(); }
       });
       numTime.addEventListener('change', e => { e.target.value = state.t.toFixed(2); });
       numTime.addEventListener('keydown', e => { if (e.key === 'Enter') e.target.blur(); });
@@ -2203,7 +2411,7 @@
         const v = parseFloat(inp.value);
         if (!p || p.isFixed || !isFinite(v)) return;
         p.localPos[inp.dataset.axis] = Math.min(Math.max(v, -5), 5);
-        draw();
+        requestDraw();
       });
       tbodyEl.addEventListener('change', e => {
         const inp = e.target.closest('input[data-pos]');
@@ -2247,17 +2455,33 @@
         draw();
       });
 
-      // Inspector: delete buttons (pointerdown, because rows are rebuilt every frame while playing)
-      document.getElementById('table_probe_body').addEventListener('pointerdown', (e) => {
+      // Inspector: delete buttons. A click (not pointerdown) so that a finger starting a scroll
+      // gesture on a "삭제" button does not delete the point; the button cells are not rebuilt per frame.
+      document.getElementById('table_probe_body').addEventListener('click', (e) => {
         const btn = e.target.closest('[data-del]');
-        if (btn) { e.preventDefault(); deletePoint(btn.dataset.del); }
+        if (btn) deletePoint(btn.dataset.del);
       });
 
-      // Canvas zoom & pan
-      let isPanning = false;
-      let startX = 0, startY = 0;
-      let initialOffsetX = 0, initialOffsetY = 0;
-      let hasDragged = false;
+      // Canvas gestures (mouse, pen and touch through Pointer Events):
+      //   click / tap = add a point · drag (mouse or one finger) = pan · two-finger pinch = zoom + pan · wheel = zoom
+      const pointers = new Map();   // pointerId -> {x, y} in canvas CSS px
+      let gesture = null;           // { x, y, slop, dragged, multi } for the current gesture
+      let pinchPrev = null;         // { d, cx, cy } of the previous two-finger move
+
+      const localXY = e => {
+        const r = canvas.getBoundingClientRect();
+        return { x: e.clientX - r.left, y: e.clientY - r.top };
+      };
+      const panBy = (dx, dy) => {
+        state.originOffset.x += dx;
+        state.originOffset.y += dy;
+        if (state.follow) syncCam();
+        requestDraw();
+      };
+      const pinchState = () => {
+        const [a, b] = [...pointers.values()];
+        return { d: Math.hypot(b.x - a.x, b.y - a.y), cx: (a.x + b.x) / 2, cy: (a.y + b.y) / 2 };
+      };
 
       canvas.addEventListener('wheel', (e) => {
         e.preventDefault();
@@ -2266,44 +2490,76 @@
       }, { passive: false });
 
       canvas.addEventListener('pointerdown', (e) => {
-        isPanning = true;
-        hasDragged = false;
-        startX = e.clientX;
-        startY = e.clientY;
-        initialOffsetX = state.originOffset.x;
-        initialOffsetY = state.originOffset.y;
+        if (e.pointerType === 'mouse' && e.button !== 0) return;
         try { canvas.setPointerCapture(e.pointerId); } catch (err) { /* ignore */ }
-        canvas.style.cursor = 'grabbing';
+        const p = localXY(e);
+        pointers.set(e.pointerId, p);
+        if (pointers.size === 1) {
+          // Fingers wobble: allow a little movement before a tap turns into a drag
+          gesture = { x: p.x, y: p.y, slop: e.pointerType === 'mouse' ? 4 : 10, dragged: false, multi: false };
+          canvas.style.cursor = 'grabbing';
+        } else if (gesture) {
+          gesture.multi = true;   // a second finger: this gesture can no longer be a tap
+          pinchPrev = pointers.size === 2 ? pinchState() : null;
+        }
       });
 
       canvas.addEventListener('pointermove', (e) => {
-        if (!isPanning) return;
-        const dx = e.clientX - startX;
-        const dy = e.clientY - startY;
-        if (Math.hypot(dx, dy) > 4) hasDragged = true;
-        if (!hasDragged) return;
-        state.originOffset.x = initialOffsetX + dx;
-        state.originOffset.y = initialOffsetY + dy;
-        if (state.follow) syncCam();
-        draw();
+        const prev = pointers.get(e.pointerId);
+        if (!prev || !gesture) return;
+        const cur = localXY(e);
+        pointers.set(e.pointerId, cur);
+
+        if (pointers.size >= 2) {
+          // Pinch: move with the finger midpoint, scale with the finger distance
+          const now = pinchState();
+          if (pinchPrev && pinchPrev.d > 0 && now.d > 0) {
+            panBy(now.cx - pinchPrev.cx, now.cy - pinchPrev.cy);
+            zoomAt(now.cx, now.cy, now.d / pinchPrev.d);
+          }
+          pinchPrev = now;
+          return;
+        }
+        if (!gesture.dragged) {
+          if (!gesture.multi && Math.hypot(cur.x - gesture.x, cur.y - gesture.y) <= gesture.slop) return;
+          gesture.dragged = true;
+          // Content follows the pointer exactly from where the drag started
+          if (!gesture.multi) { panBy(cur.x - gesture.x, cur.y - gesture.y); return; }
+        }
+        panBy(cur.x - prev.x, cur.y - prev.y);
       });
 
-      const endPan = (e, allowClick) => {
-        if (!isPanning) return;
-        isPanning = false;
+      const endPointer = (e, allowTap) => {
+        if (!pointers.has(e.pointerId)) return;
+        pointers.delete(e.pointerId);
+        pinchPrev = pointers.size === 2 ? pinchState() : null;
+        if (pointers.size > 0 || !gesture) return;
+        const g = gesture;
+        gesture = null;
         canvas.style.cursor = 'crosshair';
-        if (allowClick && !hasDragged) {
-          const rect = canvas.getBoundingClientRect();
-          addProbePointAtPixel(e.clientX - rect.left, e.clientY - rect.top);
+        if (allowTap && !g.dragged && !g.multi) {
+          const p = localXY(e);
+          addProbePointAtPixel(p.x, p.y);
         }
       };
-      canvas.addEventListener('pointerup', (e) => endPan(e, true));
-      canvas.addEventListener('pointercancel', (e) => endPan(e, false));
+      canvas.addEventListener('pointerup', (e) => endPointer(e, true));
+      canvas.addEventListener('pointercancel', (e) => endPointer(e, false));
+      canvas.addEventListener('lostpointercapture', (e) => endPointer(e, false));
 
       // Zoom buttons (about the canvas centre)
       document.getElementById('btn_zoom_in').addEventListener('click', () => zoomAt(state.viewW / 2, state.viewH / 2, 1.25));
       document.getElementById('btn_zoom_out').addEventListener('click', () => zoomAt(state.viewW / 2, state.viewH / 2, 0.8));
       document.getElementById('btn_reset_view').addEventListener('click', resetViewOffset);
+
+      // Canvas full-screen view
+      document.getElementById('btn_fullscreen').addEventListener('click', () => setCanvasFullscreen(!isCanvasFullscreen()));
+      const onFullscreenChange = () => {
+        // The browser left real full screen (Esc, back gesture): close the overlay too
+        if (!(document.fullscreenElement || document.webkitFullscreenElement)) setCanvasFullscreen(false);
+      };
+      document.addEventListener('fullscreenchange', onFullscreenChange);
+      document.addEventListener('webkitfullscreenchange', onFullscreenChange);
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && isCanvasFullscreen()) setCanvasFullscreen(false); });
 
       // Global reset
       document.getElementById('btn_reset_all').addEventListener('click', () => {
@@ -2346,6 +2602,7 @@
       // Restore layout (column split, full width) and minimized panels
       initColumnSplitter();
       restoreCollapsed();
+      watchPanelVisibility();
       resizeCanvas();
     });
   </script>
