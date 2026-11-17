@@ -341,563 +341,614 @@
     <aside class="min-w-0 flex flex-col gap-4">
 
       <!-- Shape & Reference Point -->
-      <div id="card-shape" data-mode="rigid" class="bg-white rounded-xl shadow-sm border border-slate-200 p-3 sm:p-4">
-        <h2 class="font-bold text-slate-800 text-sm flex items-center gap-2 mb-3">
-          <i class="fa-solid fa-shapes text-blue-600"></i> 강체 형상 및 운동 기준점 (Shape & Reference)
-        </h2>
+      <div id="card-shape" data-mode="rigid" class="panel bg-white rounded-xl shadow-sm border border-slate-200 p-3 sm:p-4">
+        <div class="panel-head flex justify-between items-center gap-2 mb-3 border-b border-slate-100 pb-2">
+          <h2 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+            <i class="fa-solid fa-shapes text-blue-600"></i> 강체 형상 및 운동 기준점 (Shape & Reference)
+          </h2>
+          <button onclick="togglePanel('card-shape')" class="panel-toggle" title="최소화 / 펼치기"><i class="fa-solid fa-minus"></i><i class="fa-solid fa-plus"></i></button>
+        </div>
 
-        <div class="space-y-3 text-xs">
-          <div>
-            <label class="font-medium text-slate-700 block mb-1">강체 모양 (Shape Preset)</label>
-            <select id="select_shape" class="w-full px-2 py-1.5 border border-slate-300 rounded text-xs bg-slate-50 focus:ring-1 focus:ring-blue-500 font-medium">
-              <option value="potato" selected>곡선형 임의 강체 (Smooth Potato)</option>
-              <option value="lbar">L-형 바 (Right-Angle Bar - Ex 5/3)</option>
-              <option value="wheel">원형 바퀴 (Rolling Wheel)</option>
-              <option value="rectangle">직사각형 판 (Rectangular Plate)</option>
-              <option value="custom">사용자 지정 다각형 (Custom Polygon)</option>
-            </select>
-          </div>
+        <div class="panel-body">
+          <div class="space-y-3 text-xs">
+            <div>
+              <label class="font-medium text-slate-700 block mb-1">강체 모양 (Shape Preset)</label>
+              <select id="select_shape" class="w-full px-2 py-1.5 border border-slate-300 rounded text-xs bg-slate-50 focus:ring-1 focus:ring-blue-500 font-medium">
+                <option value="potato" selected>곡선형 임의 강체 (Smooth Potato)</option>
+                <option value="lbar">L-형 바 (Right-Angle Bar - Ex 5/3)</option>
+                <option value="wheel">원형 바퀴 (Rolling Wheel)</option>
+                <option value="rectangle">직사각형 판 (Rectangular Plate)</option>
+                <option value="custom">사용자 지정 다각형 (Custom Polygon)</option>
+              </select>
+            </div>
 
-          <!-- Geometry inputs for the selected shape (unit: m) -->
-          <div id="geom_potato" class="geom-box bg-slate-50 p-2.5 rounded-lg border border-slate-200">
-            <label for="g_potato_R" class="text-slate-600 text-[11px]">대표 크기 R (m) <span class="text-slate-400">— 도심 O에서 가장 먼 경계까지의 거리</span></label>
-            <input type="number" id="g_potato_R" step="0.01" min="0.01" max="5" class="geom-in w-full px-2 py-1 border border-slate-300 rounded bg-white focus:ring-1 focus:ring-blue-500 focus:outline-none">
-          </div>
+            <!-- Geometry inputs for the selected shape (unit: m) -->
+            <div id="geom_potato" class="geom-box bg-slate-50 p-2.5 rounded-lg border border-slate-200">
+              <label for="g_potato_R" class="text-slate-600 text-[11px]">대표 크기 R (m) <span class="text-slate-400">— 도심 O에서 가장 먼 경계까지의 거리</span></label>
+              <input type="number" id="g_potato_R" step="0.01" min="0.01" max="5" class="geom-in w-full px-2 py-1 border border-slate-300 rounded bg-white focus:ring-1 focus:ring-blue-500 focus:outline-none">
+            </div>
 
-          <div id="geom_lbar" class="geom-box hidden bg-slate-50 p-2.5 rounded-lg border border-slate-200 space-y-2">
-            <div class="grid grid-cols-3 gap-2">
-              <div>
-                <label for="g_lbar_L1" class="text-slate-600 text-[11px]">가로 막대 L₁ (m)</label>
-                <input type="number" id="g_lbar_L1" step="0.01" min="0.01" max="5" class="geom-in w-full px-2 py-1 border border-slate-300 rounded bg-white focus:ring-1 focus:ring-blue-500 focus:outline-none">
+            <div id="geom_lbar" class="geom-box hidden bg-slate-50 p-2.5 rounded-lg border border-slate-200 space-y-2">
+              <div class="grid grid-cols-3 gap-2">
+                <div>
+                  <label for="g_lbar_L1" class="text-slate-600 text-[11px]">가로 막대 L₁ (m)</label>
+                  <input type="number" id="g_lbar_L1" step="0.01" min="0.01" max="5" class="geom-in w-full px-2 py-1 border border-slate-300 rounded bg-white focus:ring-1 focus:ring-blue-500 focus:outline-none">
+                </div>
+                <div>
+                  <label for="g_lbar_L2" class="text-slate-600 text-[11px]">세로 막대 L₂ (m)</label>
+                  <input type="number" id="g_lbar_L2" step="0.01" min="0.01" max="5" class="geom-in w-full px-2 py-1 border border-slate-300 rounded bg-white focus:ring-1 focus:ring-blue-500 focus:outline-none">
+                </div>
+                <div>
+                  <label for="g_lbar_w" class="text-slate-600 text-[11px]">막대 두께 w (m)</label>
+                  <input type="number" id="g_lbar_w" step="0.005" min="0.001" max="5" class="geom-in w-full px-2 py-1 border border-slate-300 rounded bg-white focus:ring-1 focus:ring-blue-500 focus:outline-none">
+                </div>
               </div>
-              <div>
-                <label for="g_lbar_L2" class="text-slate-600 text-[11px]">세로 막대 L₂ (m)</label>
-                <input type="number" id="g_lbar_L2" step="0.01" min="0.01" max="5" class="geom-in w-full px-2 py-1 border border-slate-300 rounded bg-white focus:ring-1 focus:ring-blue-500 focus:outline-none">
-              </div>
-              <div>
-                <label for="g_lbar_w" class="text-slate-600 text-[11px]">막대 두께 w (m)</label>
-                <input type="number" id="g_lbar_w" step="0.005" min="0.001" max="5" class="geom-in w-full px-2 py-1 border border-slate-300 rounded bg-white focus:ring-1 focus:ring-blue-500 focus:outline-none">
+              <svg viewBox="0 0 230 112" class="w-full max-w-[260px] mx-auto block" role="img" aria-label="L-형 바 치수: 가로 막대 L1, 세로 막대 L2, 두께 w">
+                <defs>
+                  <marker id="geoAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#475569"/></marker>
+                </defs>
+                <g font-family="Inter, 'Noto Sans KR', sans-serif" font-size="11" fill="#334155">
+                  <polygon points="30,86 160,86 160,14 146,14 146,72 30,72" fill="#c7d2fe" stroke="#6366f1" stroke-width="1.5"/>
+                  <line x1="30" y1="100" x2="160" y2="100" stroke="#475569" stroke-width="1" marker-start="url(#geoAr)" marker-end="url(#geoAr)"/>
+                  <text x="95" y="111" text-anchor="middle" font-style="italic" font-weight="700">L₁</text>
+                  <line x1="176" y1="14" x2="176" y2="86" stroke="#475569" stroke-width="1" marker-start="url(#geoAr)" marker-end="url(#geoAr)"/>
+                  <text x="183" y="54" font-style="italic" font-weight="700">L₂</text>
+                  <line x1="146" y1="6" x2="160" y2="6" stroke="#475569" stroke-width="1"/>
+                  <text x="166" y="10" font-style="italic" font-weight="700">w</text>
+                  <circle cx="153" cy="14" r="3" fill="#f43f5e"/><text x="134" y="12" fill="#e11d48" font-weight="700">A</text>
+                  <circle cx="30" cy="79" r="3" fill="#a855f7"/><text x="16" y="83" fill="#9333ea" font-weight="700">B</text>
+                  <circle cx="118" cy="66" r="3" fill="#0ea5e9"/><text x="106" y="62" fill="#0284c7" font-weight="700">O</text>
+                </g>
+              </svg>
+              <p class="text-[10px] text-slate-500 leading-relaxed">L₁, L₂는 바깥 모서리 기준 길이입니다. O는 L-바의 실제 도심(면적 중심), A·B는 각 막대 끝의 중앙입니다.</p>
+            </div>
+
+            <div id="geom_wheel" class="geom-box hidden bg-slate-50 p-2.5 rounded-lg border border-slate-200 space-y-1">
+              <label for="g_wheel_r" class="text-slate-600 text-[11px]">바퀴 반지름 r (m)</label>
+              <input type="number" id="g_wheel_r" step="0.01" min="0.01" max="5" class="geom-in w-full px-2 py-1 border border-slate-300 rounded bg-white focus:ring-1 focus:ring-blue-500 focus:outline-none">
+              <p class="text-[10px] text-slate-500 leading-relaxed">구름 바퀴 프리셋은 이 반지름으로 $v_O = -\omega r$, $a_O = -\alpha r$ 를 맞춥니다.</p>
+            </div>
+
+            <div id="geom_rectangle" class="geom-box hidden bg-slate-50 p-2.5 rounded-lg border border-slate-200">
+              <div class="grid grid-cols-2 gap-2">
+                <div>
+                  <label for="g_rect_b" class="text-slate-600 text-[11px]">가로 폭 b (m)</label>
+                  <input type="number" id="g_rect_b" step="0.01" min="0.01" max="5" class="geom-in w-full px-2 py-1 border border-slate-300 rounded bg-white focus:ring-1 focus:ring-blue-500 focus:outline-none">
+                </div>
+                <div>
+                  <label for="g_rect_h" class="text-slate-600 text-[11px]">세로 높이 h (m)</label>
+                  <input type="number" id="g_rect_h" step="0.01" min="0.01" max="5" class="geom-in w-full px-2 py-1 border border-slate-300 rounded bg-white focus:ring-1 focus:ring-blue-500 focus:outline-none">
+                </div>
               </div>
             </div>
-            <svg viewBox="0 0 230 112" class="w-full max-w-[260px] mx-auto block" role="img" aria-label="L-형 바 치수: 가로 막대 L1, 세로 막대 L2, 두께 w">
-              <defs>
-                <marker id="geoAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#475569"/></marker>
-              </defs>
-              <g font-family="Inter, 'Noto Sans KR', sans-serif" font-size="11" fill="#334155">
-                <polygon points="30,86 160,86 160,14 146,14 146,72 30,72" fill="#c7d2fe" stroke="#6366f1" stroke-width="1.5"/>
-                <line x1="30" y1="100" x2="160" y2="100" stroke="#475569" stroke-width="1" marker-start="url(#geoAr)" marker-end="url(#geoAr)"/>
-                <text x="95" y="111" text-anchor="middle" font-style="italic" font-weight="700">L₁</text>
-                <line x1="176" y1="14" x2="176" y2="86" stroke="#475569" stroke-width="1" marker-start="url(#geoAr)" marker-end="url(#geoAr)"/>
-                <text x="183" y="54" font-style="italic" font-weight="700">L₂</text>
-                <line x1="146" y1="6" x2="160" y2="6" stroke="#475569" stroke-width="1"/>
-                <text x="166" y="10" font-style="italic" font-weight="700">w</text>
-                <circle cx="153" cy="14" r="3" fill="#f43f5e"/><text x="134" y="12" fill="#e11d48" font-weight="700">A</text>
-                <circle cx="30" cy="79" r="3" fill="#a855f7"/><text x="16" y="83" fill="#9333ea" font-weight="700">B</text>
-                <circle cx="118" cy="66" r="3" fill="#0ea5e9"/><text x="106" y="62" fill="#0284c7" font-weight="700">O</text>
-              </g>
-            </svg>
-            <p class="text-[10px] text-slate-500 leading-relaxed">L₁, L₂는 바깥 모서리 기준 길이입니다. O는 L-바의 실제 도심(면적 중심), A·B는 각 막대 끝의 중앙입니다.</p>
-          </div>
 
-          <div id="geom_wheel" class="geom-box hidden bg-slate-50 p-2.5 rounded-lg border border-slate-200 space-y-1">
-            <label for="g_wheel_r" class="text-slate-600 text-[11px]">바퀴 반지름 r (m)</label>
-            <input type="number" id="g_wheel_r" step="0.01" min="0.01" max="5" class="geom-in w-full px-2 py-1 border border-slate-300 rounded bg-white focus:ring-1 focus:ring-blue-500 focus:outline-none">
-            <p class="text-[10px] text-slate-500 leading-relaxed">구름 바퀴 프리셋은 이 반지름으로 $v_O = -\omega r$, $a_O = -\alpha r$ 를 맞춥니다.</p>
-          </div>
-
-          <div id="geom_rectangle" class="geom-box hidden bg-slate-50 p-2.5 rounded-lg border border-slate-200">
-            <div class="grid grid-cols-2 gap-2">
-              <div>
-                <label for="g_rect_b" class="text-slate-600 text-[11px]">가로 폭 b (m)</label>
-                <input type="number" id="g_rect_b" step="0.01" min="0.01" max="5" class="geom-in w-full px-2 py-1 border border-slate-300 rounded bg-white focus:ring-1 focus:ring-blue-500 focus:outline-none">
-              </div>
-              <div>
-                <label for="g_rect_h" class="text-slate-600 text-[11px]">세로 높이 h (m)</label>
-                <input type="number" id="g_rect_h" step="0.01" min="0.01" max="5" class="geom-in w-full px-2 py-1 border border-slate-300 rounded bg-white focus:ring-1 focus:ring-blue-500 focus:outline-none">
-              </div>
+            <div id="geom_custom" class="geom-box hidden bg-slate-50 p-2.5 rounded-lg border border-slate-200 space-y-1">
+              <label for="g_custom" class="text-slate-600 text-[11px]">꼭짓점 좌표 (m) — 한 줄에 하나씩 <span class="font-mono">x, y</span> (3개 이상)</label>
+              <textarea id="g_custom" rows="5" spellcheck="false" class="geom-in w-full px-2 py-1 border border-slate-300 rounded bg-white font-mono text-[11px] focus:ring-1 focus:ring-blue-500 focus:outline-none"></textarea>
+              <p class="text-[10px] text-slate-500">원점 O = 물체 좌표의 원점 (0, 0), A = 첫 번째 꼭짓점.</p>
             </div>
-          </div>
 
-          <div id="geom_custom" class="geom-box hidden bg-slate-50 p-2.5 rounded-lg border border-slate-200 space-y-1">
-            <label for="g_custom" class="text-slate-600 text-[11px]">꼭짓점 좌표 (m) — 한 줄에 하나씩 <span class="font-mono">x, y</span> (3개 이상)</label>
-            <textarea id="g_custom" rows="5" spellcheck="false" class="geom-in w-full px-2 py-1 border border-slate-300 rounded bg-white font-mono text-[11px] focus:ring-1 focus:ring-blue-500 focus:outline-none"></textarea>
-            <p class="text-[10px] text-slate-500">원점 O = 물체 좌표의 원점 (0, 0), A = 첫 번째 꼭짓점.</p>
-          </div>
+            <p id="geomError" class="hidden text-[11px] text-rose-600 font-medium"><i class="fa-solid fa-triangle-exclamation mr-1"></i><span></span></p>
 
-          <p id="geomError" class="hidden text-[11px] text-rose-600 font-medium"><i class="fa-solid fa-triangle-exclamation mr-1"></i><span></span></p>
+            <!-- Geometry summary -->
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-2.5 flex justify-between items-center gap-2 text-xs text-blue-900 font-medium">
+              <span>면적 <b class="font-bold">A</b>: <span id="geomArea">-</span></span>
+              <span>외곽 크기: <span id="geomExtent">-</span></span>
+            </div>
 
-          <!-- Geometry summary -->
-          <div class="bg-blue-50 border border-blue-200 rounded-lg p-2.5 flex justify-between items-center gap-2 text-xs text-blue-900 font-medium">
-            <span>면적 <b class="font-bold">A</b>: <span id="geomArea">-</span></span>
-            <span>외곽 크기: <span id="geomExtent">-</span></span>
-          </div>
+            <div>
+              <label class="font-medium text-slate-700 block mb-1">운동 기준점 R (Kinematic Reference)</label>
+              <select id="select_ref_point" class="w-full px-2 py-1.5 border border-blue-300 rounded text-xs bg-blue-50 text-blue-900 focus:ring-1 focus:ring-blue-500 font-semibold">
+                <!-- Dynamically populated with all available probe points -->
+              </select>
+            </div>
 
-          <div>
-            <label class="font-medium text-slate-700 block mb-1">운동 기준점 R (Kinematic Reference)</label>
-            <select id="select_ref_point" class="w-full px-2 py-1.5 border border-blue-300 rounded text-xs bg-blue-50 text-blue-900 focus:ring-1 focus:ring-blue-500 font-semibold">
-              <!-- Dynamically populated with all available probe points -->
-            </select>
-          </div>
-
-          <div class="bg-blue-50 border border-blue-200 rounded-lg p-2.5 text-[11px] text-blue-900 leading-relaxed">
-            <i class="fa-solid fa-lightbulb mr-1 text-amber-500"></i>
-            <b>운동 기준점 $R$의 역할:</b> 아래에서 입력하는 병진 속도 $(v_{R,x0}, v_{R,y0})$와 병진 가속도 $(a_{R,x}, a_{R,y})$는 <b>선택한 기준점 $R$에 직접 부여</b>됩니다.
-            기준점을 바꾸면 같은 입력값이라도 강체 전체의 공간 궤적이 달라집니다. 캔버스를 클릭(터치 화면에서는 탭)하면 탐색점을 추가할 수 있습니다.
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-2.5 text-[11px] text-blue-900 leading-relaxed">
+              <i class="fa-solid fa-lightbulb mr-1 text-amber-500"></i>
+              <b>운동 기준점 $R$의 역할:</b> 아래에서 입력하는 병진 속도 $(v_{R,x0}, v_{R,y0})$와 병진 가속도 $(a_{R,x}, a_{R,y})$는 <b>선택한 기준점 $R$에 직접 부여</b>됩니다.
+              기준점을 바꾸면 같은 입력값이라도 강체 전체의 공간 궤적이 달라집니다. 캔버스를 클릭(터치 화면에서는 탭)하면 탐색점을 추가할 수 있습니다.
+            </div>
           </div>
         </div>
       </div>
 
       <!-- Kinematic Parameters -->
-      <div id="card-params" data-mode="rigid" class="bg-white rounded-xl shadow-sm border border-slate-200 p-3 sm:p-4">
-        <div class="flex justify-between items-center mb-3">
+      <div id="card-params" data-mode="rigid" class="panel bg-white rounded-xl shadow-sm border border-slate-200 p-3 sm:p-4">
+        <div class="panel-head flex justify-between items-center gap-2 mb-3 border-b border-slate-100 pb-2">
           <h2 class="font-bold text-slate-800 text-sm flex items-center gap-2">
             <i class="fa-solid fa-sliders text-emerald-600"></i> 운동 매개변수 (Parameter Study)
           </h2>
-          <button id="btn_preset_pure_rot" class="tap px-2 py-1 text-xs bg-emerald-600 hover:bg-emerald-700 text-white rounded transition font-medium flex items-center gap-1">
-            <i class="fa-solid fa-rotate"></i> 회전전용 리셋
-          </button>
+          <div class="flex items-center gap-2">
+            <button id="btn_preset_pure_rot" class="tap px-2 py-1 text-xs bg-emerald-600 hover:bg-emerald-700 text-white rounded transition font-medium flex items-center gap-1">
+              <i class="fa-solid fa-rotate"></i> 회전전용 리셋
+            </button>
+            <button onclick="togglePanel('card-params')" class="panel-toggle" title="최소화 / 펼치기"><i class="fa-solid fa-minus"></i><i class="fa-solid fa-plus"></i></button>
+          </div>
         </div>
 
-        <div class="space-y-3 text-xs">
-          <div>
-            <div class="flex justify-between items-center gap-2 mb-1">
-              <label for="num_vx0" class="font-medium text-slate-700">기준점 병진 속도 $v_{R,x0}$</label>
-              <div class="flex items-center gap-1 shrink-0">
-                <input type="number" id="num_vx0" step="0.01" value="0.0" title="직접 입력 (Enter로 확정)" class="w-20 px-1.5 py-0.5 border border-slate-300 rounded text-right text-xs font-semibold text-cyan-700 focus:ring-1 focus:ring-blue-500 focus:outline-none">
-                <span class="text-[11px] text-slate-500 w-11">m/s</span>
+        <div class="panel-body">
+          <div class="space-y-3 text-xs">
+            <div>
+              <div class="flex justify-between items-center gap-2 mb-1">
+                <label for="num_vx0" class="font-medium text-slate-700">기준점 병진 속도 $v_{R,x0}$</label>
+                <div class="flex items-center gap-1 shrink-0">
+                  <input type="number" id="num_vx0" step="0.01" value="0.0" title="직접 입력 (Enter로 확정)" class="w-20 px-1.5 py-0.5 border border-slate-300 rounded text-right text-xs font-semibold text-cyan-700 focus:ring-1 focus:ring-blue-500 focus:outline-none">
+                  <span class="text-[11px] text-slate-500 w-11">m/s</span>
+                </div>
               </div>
+              <input type="range" id="slider_vx0" min="-5" max="5" step="0.1" value="0.0" class="w-full accent-cyan-600 bg-slate-200 h-1.5 rounded-lg cursor-pointer">
             </div>
-            <input type="range" id="slider_vx0" min="-5" max="5" step="0.1" value="0.0" class="w-full accent-cyan-600 bg-slate-200 h-1.5 rounded-lg cursor-pointer">
-          </div>
 
-          <div>
-            <div class="flex justify-between items-center gap-2 mb-1">
-              <label for="num_vy0" class="font-medium text-slate-700">기준점 병진 속도 $v_{R,y0}$</label>
-              <div class="flex items-center gap-1 shrink-0">
-                <input type="number" id="num_vy0" step="0.01" value="0.0" title="직접 입력 (Enter로 확정)" class="w-20 px-1.5 py-0.5 border border-slate-300 rounded text-right text-xs font-semibold text-cyan-700 focus:ring-1 focus:ring-blue-500 focus:outline-none">
-                <span class="text-[11px] text-slate-500 w-11">m/s</span>
+            <div>
+              <div class="flex justify-between items-center gap-2 mb-1">
+                <label for="num_vy0" class="font-medium text-slate-700">기준점 병진 속도 $v_{R,y0}$</label>
+                <div class="flex items-center gap-1 shrink-0">
+                  <input type="number" id="num_vy0" step="0.01" value="0.0" title="직접 입력 (Enter로 확정)" class="w-20 px-1.5 py-0.5 border border-slate-300 rounded text-right text-xs font-semibold text-cyan-700 focus:ring-1 focus:ring-blue-500 focus:outline-none">
+                  <span class="text-[11px] text-slate-500 w-11">m/s</span>
+                </div>
               </div>
+              <input type="range" id="slider_vy0" min="-5" max="5" step="0.1" value="0.0" class="w-full accent-cyan-600 bg-slate-200 h-1.5 rounded-lg cursor-pointer">
             </div>
-            <input type="range" id="slider_vy0" min="-5" max="5" step="0.1" value="0.0" class="w-full accent-cyan-600 bg-slate-200 h-1.5 rounded-lg cursor-pointer">
-          </div>
 
-          <div>
-            <div class="flex justify-between items-center gap-2 mb-1">
-              <label for="num_ax" class="font-medium text-slate-700">기준점 병진 가속도 $a_{R,x}$</label>
-              <div class="flex items-center gap-1 shrink-0">
-                <input type="number" id="num_ax" step="0.01" value="0.0" title="직접 입력 (Enter로 확정)" class="w-20 px-1.5 py-0.5 border border-slate-300 rounded text-right text-xs font-semibold text-orange-600 focus:ring-1 focus:ring-blue-500 focus:outline-none">
-                <span class="text-[11px] text-slate-500 w-11">m/s²</span>
+            <div>
+              <div class="flex justify-between items-center gap-2 mb-1">
+                <label for="num_ax" class="font-medium text-slate-700">기준점 병진 가속도 $a_{R,x}$</label>
+                <div class="flex items-center gap-1 shrink-0">
+                  <input type="number" id="num_ax" step="0.01" value="0.0" title="직접 입력 (Enter로 확정)" class="w-20 px-1.5 py-0.5 border border-slate-300 rounded text-right text-xs font-semibold text-orange-600 focus:ring-1 focus:ring-blue-500 focus:outline-none">
+                  <span class="text-[11px] text-slate-500 w-11">m/s²</span>
+                </div>
               </div>
+              <input type="range" id="slider_ax" min="-3" max="3" step="0.1" value="0.0" class="w-full accent-orange-500 bg-slate-200 h-1.5 rounded-lg cursor-pointer">
             </div>
-            <input type="range" id="slider_ax" min="-3" max="3" step="0.1" value="0.0" class="w-full accent-orange-500 bg-slate-200 h-1.5 rounded-lg cursor-pointer">
-          </div>
 
-          <div>
-            <div class="flex justify-between items-center gap-2 mb-1">
-              <label for="num_ay" class="font-medium text-slate-700">기준점 병진 가속도 $a_{R,y}$</label>
-              <div class="flex items-center gap-1 shrink-0">
-                <input type="number" id="num_ay" step="0.01" value="0.0" title="직접 입력 (Enter로 확정)" class="w-20 px-1.5 py-0.5 border border-slate-300 rounded text-right text-xs font-semibold text-orange-600 focus:ring-1 focus:ring-blue-500 focus:outline-none">
-                <span class="text-[11px] text-slate-500 w-11">m/s²</span>
+            <div>
+              <div class="flex justify-between items-center gap-2 mb-1">
+                <label for="num_ay" class="font-medium text-slate-700">기준점 병진 가속도 $a_{R,y}$</label>
+                <div class="flex items-center gap-1 shrink-0">
+                  <input type="number" id="num_ay" step="0.01" value="0.0" title="직접 입력 (Enter로 확정)" class="w-20 px-1.5 py-0.5 border border-slate-300 rounded text-right text-xs font-semibold text-orange-600 focus:ring-1 focus:ring-blue-500 focus:outline-none">
+                  <span class="text-[11px] text-slate-500 w-11">m/s²</span>
+                </div>
               </div>
+              <input type="range" id="slider_ay" min="-3" max="3" step="0.1" value="0.0" class="w-full accent-orange-500 bg-slate-200 h-1.5 rounded-lg cursor-pointer">
             </div>
-            <input type="range" id="slider_ay" min="-3" max="3" step="0.1" value="0.0" class="w-full accent-orange-500 bg-slate-200 h-1.5 rounded-lg cursor-pointer">
-          </div>
 
-          <div>
-            <div class="flex justify-between items-center gap-2 mb-1">
-              <label for="num_omega0" class="font-medium text-slate-700">강체 초기 각속도 $\omega_0$ (반시계 +)</label>
-              <div class="flex items-center gap-1 shrink-0">
-                <input type="number" id="num_omega0" step="0.01" value="0.0" title="직접 입력 (Enter로 확정)" class="w-20 px-1.5 py-0.5 border border-slate-300 rounded text-right text-xs font-semibold text-emerald-600 focus:ring-1 focus:ring-blue-500 focus:outline-none">
-                <span class="text-[11px] text-slate-500 w-11">rad/s</span>
+            <div>
+              <div class="flex justify-between items-center gap-2 mb-1">
+                <label for="num_omega0" class="font-medium text-slate-700">강체 초기 각속도 $\omega_0$ (반시계 +)</label>
+                <div class="flex items-center gap-1 shrink-0">
+                  <input type="number" id="num_omega0" step="0.01" value="0.0" title="직접 입력 (Enter로 확정)" class="w-20 px-1.5 py-0.5 border border-slate-300 rounded text-right text-xs font-semibold text-emerald-600 focus:ring-1 focus:ring-blue-500 focus:outline-none">
+                  <span class="text-[11px] text-slate-500 w-11">rad/s</span>
+                </div>
               </div>
+              <input type="range" id="slider_omega0" min="-10" max="10" step="0.2" value="0.0" class="w-full accent-emerald-600 bg-slate-200 h-1.5 rounded-lg cursor-pointer">
             </div>
-            <input type="range" id="slider_omega0" min="-10" max="10" step="0.2" value="0.0" class="w-full accent-emerald-600 bg-slate-200 h-1.5 rounded-lg cursor-pointer">
-          </div>
 
-          <div>
-            <div class="flex justify-between items-center gap-2 mb-1">
-              <label for="num_alpha" class="font-medium text-slate-700">강체 각가속도 $\alpha$ (반시계 +)</label>
-              <div class="flex items-center gap-1 shrink-0">
-                <input type="number" id="num_alpha" step="0.01" value="0.0" title="직접 입력 (Enter로 확정)" class="w-20 px-1.5 py-0.5 border border-slate-300 rounded text-right text-xs font-semibold text-purple-600 focus:ring-1 focus:ring-blue-500 focus:outline-none">
-                <span class="text-[11px] text-slate-500 w-11">rad/s²</span>
+            <div>
+              <div class="flex justify-between items-center gap-2 mb-1">
+                <label for="num_alpha" class="font-medium text-slate-700">강체 각가속도 $\alpha$ (반시계 +)</label>
+                <div class="flex items-center gap-1 shrink-0">
+                  <input type="number" id="num_alpha" step="0.01" value="0.0" title="직접 입력 (Enter로 확정)" class="w-20 px-1.5 py-0.5 border border-slate-300 rounded text-right text-xs font-semibold text-purple-600 focus:ring-1 focus:ring-blue-500 focus:outline-none">
+                  <span class="text-[11px] text-slate-500 w-11">rad/s²</span>
+                </div>
               </div>
+              <input type="range" id="slider_alpha" min="-5" max="5" step="0.1" value="0.0" class="w-full accent-purple-600 bg-slate-200 h-1.5 rounded-lg cursor-pointer">
             </div>
-            <input type="range" id="slider_alpha" min="-5" max="5" step="0.1" value="0.0" class="w-full accent-purple-600 bg-slate-200 h-1.5 rounded-lg cursor-pointer">
+            <p class="text-[10px] text-slate-400 leading-relaxed"><i class="fa-solid fa-keyboard mr-1"></i>숫자 칸에 직접 입력하면 슬라이더 범위를 넘는 값도 쓸 수 있습니다 (속도·가속도 ±20, ω ±50, α ±20).</p>
           </div>
-          <p class="text-[10px] text-slate-400 leading-relaxed"><i class="fa-solid fa-keyboard mr-1"></i>숫자 칸에 직접 입력하면 슬라이더 범위를 넘는 값도 쓸 수 있습니다 (속도·가속도 ±20, ω ±50, α ±20).</p>
         </div>
       </div>
 
       <!-- Visual Layers -->
-      <div id="card-layers" data-mode="rigid" class="bg-white rounded-xl shadow-sm border border-slate-200 p-3 sm:p-4">
-        <h2 class="font-bold text-slate-800 text-sm flex items-center gap-2 mb-3">
-          <i class="fa-solid fa-eye text-amber-600"></i> 시각화 벡터 및 요소 (Visual Layers)
-        </h2>
-
-        <div class="grid grid-cols-2 gap-2 text-xs">
-          <label class="flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-slate-200 cursor-pointer hover:border-slate-300">
-            <input type="checkbox" id="chk_vtotal" checked class="accent-emerald-600">
-            <span class="text-emerald-700 font-semibold">전체 속도 $\mathbf{v}$</span>
-          </label>
-          <label class="flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-slate-200 cursor-pointer hover:border-slate-300">
-            <input type="checkbox" id="chk_vcomp" checked class="accent-cyan-600">
-            <span class="text-cyan-700">속도 성분 $\mathbf{v}_R,\ \mathbf{v}_{P/R}$</span>
-          </label>
-          <label class="flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-slate-200 cursor-pointer hover:border-slate-300">
-            <input type="checkbox" id="chk_atotal" checked class="accent-rose-600">
-            <span class="text-rose-600 font-semibold">전체 가속도 $\mathbf{a}$</span>
-          </label>
-          <label class="flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-slate-200 cursor-pointer hover:border-slate-300">
-            <input type="checkbox" id="chk_acomp" checked class="accent-amber-600">
-            <span class="text-amber-700">가속도 성분 $\mathbf{a}_t,\ \mathbf{a}_n$</span>
-          </label>
-          <label class="flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-slate-200 cursor-pointer hover:border-slate-300">
-            <input type="checkbox" id="chk_omega" checked class="accent-lime-600">
-            <span class="text-lime-700 font-semibold">각속도 $\omega$ (↺ +)</span>
-          </label>
-          <label class="flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-slate-200 cursor-pointer hover:border-slate-300">
-            <input type="checkbox" id="chk_alpha" checked class="accent-fuchsia-600">
-            <span class="text-fuchsia-700 font-semibold">각가속도 $\alpha$ (↺ +)</span>
-          </label>
-          <label class="flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-slate-200 cursor-pointer hover:border-slate-300">
-            <input type="checkbox" id="chk_iczv" checked class="accent-purple-600">
-            <span class="text-purple-700 font-semibold">영속도 순간중심 C</span>
-          </label>
-          <label class="flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-slate-200 cursor-pointer hover:border-slate-300">
-            <input type="checkbox" id="chk_paths" checked class="accent-slate-600">
-            <span class="text-slate-700">점 이동 궤적 (Trace)</span>
-          </label>
+      <div id="card-layers" data-mode="rigid" class="panel bg-white rounded-xl shadow-sm border border-slate-200 p-3 sm:p-4">
+        <div class="panel-head flex justify-between items-center gap-2 mb-3 border-b border-slate-100 pb-2">
+          <h2 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+            <i class="fa-solid fa-eye text-amber-600"></i> 시각화 벡터 및 요소 (Visual Layers)
+          </h2>
+          <button onclick="togglePanel('card-layers')" class="panel-toggle" title="최소화 / 펼치기"><i class="fa-solid fa-minus"></i><i class="fa-solid fa-plus"></i></button>
         </div>
-        <p class="text-[10px] text-slate-500 mt-2 leading-relaxed">
-          ω, α는 기준점 R 둘레의 곡선 화살표로 표시합니다 (↺ 반시계 = +, ↻ 시계 = −, 호의 길이 ∝ 크기).
-          궤적: 실선 = 지나온 경로 (0 → t), 옅은 점선 = 전체 경로 (0 → 10 s).
-        </p>
+
+        <div class="panel-body">
+          <div class="grid grid-cols-2 gap-2 text-xs">
+            <label class="flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-slate-200 cursor-pointer hover:border-slate-300">
+              <input type="checkbox" id="chk_vtotal" checked class="accent-emerald-600">
+              <span class="text-emerald-700 font-semibold">전체 속도 $\mathbf{v}$</span>
+            </label>
+            <label class="flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-slate-200 cursor-pointer hover:border-slate-300">
+              <input type="checkbox" id="chk_vcomp" checked class="accent-cyan-600">
+              <span class="text-cyan-700">속도 성분 $\mathbf{v}_R,\ \mathbf{v}_{P/R}$</span>
+            </label>
+            <label class="flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-slate-200 cursor-pointer hover:border-slate-300">
+              <input type="checkbox" id="chk_atotal" checked class="accent-rose-600">
+              <span class="text-rose-600 font-semibold">전체 가속도 $\mathbf{a}$</span>
+            </label>
+            <label class="flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-slate-200 cursor-pointer hover:border-slate-300">
+              <input type="checkbox" id="chk_acomp" checked class="accent-amber-600">
+              <span class="text-amber-700">가속도 성분 $\mathbf{a}_t,\ \mathbf{a}_n$</span>
+            </label>
+            <label class="flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-slate-200 cursor-pointer hover:border-slate-300">
+              <input type="checkbox" id="chk_omega" checked class="accent-lime-600">
+              <span class="text-lime-700 font-semibold">각속도 $\omega$ (↺ +)</span>
+            </label>
+            <label class="flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-slate-200 cursor-pointer hover:border-slate-300">
+              <input type="checkbox" id="chk_alpha" checked class="accent-fuchsia-600">
+              <span class="text-fuchsia-700 font-semibold">각가속도 $\alpha$ (↺ +)</span>
+            </label>
+            <label class="flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-slate-200 cursor-pointer hover:border-slate-300">
+              <input type="checkbox" id="chk_iczv" checked class="accent-purple-600">
+              <span class="text-purple-700 font-semibold">영속도 순간중심 C</span>
+            </label>
+            <label class="flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-slate-200 cursor-pointer hover:border-slate-300">
+              <input type="checkbox" id="chk_paths" checked class="accent-slate-600">
+              <span class="text-slate-700">점 이동 궤적 (Trace)</span>
+            </label>
+          </div>
+          <p class="text-[10px] text-slate-500 mt-2 leading-relaxed">
+            ω, α는 기준점 R 둘레의 곡선 화살표로 표시합니다 (↺ 반시계 = +, ↻ 시계 = −, 호의 길이 ∝ 크기).
+            궤적: 실선 = 지나온 경로 (0 → t), 옅은 점선 = 전체 경로 (0 → 10 s).
+          </p>
+        </div>
       </div>
 
 
       <!-- ======================= ② Linkage tab: setup ======================= -->
-      <div id="card-link-setup" data-mode="link" class="mode-off bg-white rounded-xl shadow-sm border border-slate-200 p-3 sm:p-4">
-        <h2 class="font-bold text-slate-800 text-sm flex items-center gap-2 mb-3">
-          <i class="fa-solid fa-gears text-blue-600"></i> 링크 기구 설정 (Linkage Setup)
-        </h2>
-        <div class="space-y-3 text-xs">
-          <div>
-            <label for="lk_type" class="font-medium text-slate-700 block mb-1">기구 종류</label>
-            <select id="lk_type" class="w-full px-2 py-1.5 border border-slate-300 rounded text-xs bg-slate-50 focus:ring-1 focus:ring-blue-500 font-medium">
-              <option value="slider">크랭크-슬라이더 (Slider-Crank)</option>
-              <option value="fourbar">4절 링크 (Four-Bar Linkage)</option>
-            </select>
-          </div>
-          <div class="grid grid-cols-2 gap-2">
-            <div>
-              <label for="lk_unitL" class="in-lbl">입력 길이 단위</label>
-              <select id="lk_unitL" class="in-sel"><option value="m">m</option><option value="mm">mm</option><option value="in">in</option><option value="ft">ft</option></select>
-            </div>
-            <div>
-              <label for="lk_unitOut" class="in-lbl">결과 표시 단위</label>
-              <select id="lk_unitOut" class="in-sel"><option value="m">m · m/s · m/s²</option><option value="mm">mm · mm/s · mm/s²</option><option value="in">in · in/s · in/s²</option><option value="ft">ft · ft/s · ft/s²</option></select>
-            </div>
-          </div>
+      <div id="card-link-setup" data-mode="link" class="panel mode-off bg-white rounded-xl shadow-sm border border-slate-200 p-3 sm:p-4">
+        <div class="panel-head flex justify-between items-center gap-2 mb-3 border-b border-slate-100 pb-2">
+          <h2 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+            <i class="fa-solid fa-gears text-blue-600"></i> 링크 기구 설정 (Linkage Setup)
+          </h2>
+          <button onclick="togglePanel('card-link-setup')" class="panel-toggle" title="최소화 / 펼치기"><i class="fa-solid fa-minus"></i><i class="fa-solid fa-plus"></i></button>
+        </div>
 
-          <div id="lk_box_slider" class="bg-slate-50 p-2.5 rounded-lg border border-slate-200 space-y-2">
+        <div class="panel-body">
+          <div class="space-y-3 text-xs">
+            <div>
+              <label for="lk_type" class="font-medium text-slate-700 block mb-1">기구 종류</label>
+              <select id="lk_type" class="w-full px-2 py-1.5 border border-slate-300 rounded text-xs bg-slate-50 focus:ring-1 focus:ring-blue-500 font-medium">
+                <option value="slider">크랭크-슬라이더 (Slider-Crank)</option>
+                <option value="fourbar">4절 링크 (Four-Bar Linkage)</option>
+              </select>
+            </div>
             <div class="grid grid-cols-2 gap-2">
-              <div><label for="lk_sc_r" class="in-lbl">크랭크 OB 길이 r</label><input type="number" id="lk_sc_r" step="any" class="in-num"></div>
-              <div><label for="lk_sc_l" class="in-lbl">커넥팅 로드 AB 길이 l</label><input type="number" id="lk_sc_l" step="any" class="in-num"></div>
-              <div><label for="lk_sc_bg" class="in-lbl">로드 위의 점 G: B에서 거리</label><input type="number" id="lk_sc_bg" step="any" class="in-num"></div>
-              <div><label for="lk_sc_e" class="in-lbl">실린더 축 오프셋 e (y)</label><input type="number" id="lk_sc_e" step="any" class="in-num"></div>
+              <div>
+                <label for="lk_unitL" class="in-lbl">입력 길이 단위</label>
+                <select id="lk_unitL" class="in-sel"><option value="m">m</option><option value="mm">mm</option><option value="in">in</option><option value="ft">ft</option></select>
+              </div>
+              <div>
+                <label for="lk_unitOut" class="in-lbl">결과 표시 단위</label>
+                <select id="lk_unitOut" class="in-sel"><option value="m">m · m/s · m/s²</option><option value="mm">mm · mm/s · mm/s²</option><option value="in">in · in/s · in/s²</option><option value="ft">ft · ft/s · ft/s²</option></select>
+              </div>
             </div>
-            <div>
-              <label for="lk_sc_side" class="in-lbl">피스톤(슬라이더) A의 위치</label>
-              <select id="lk_sc_side" class="in-sel"><option value="-1">크랭크 축 O의 왼쪽 (교재 그림)</option><option value="1">크랭크 축 O의 오른쪽</option></select>
-            </div>
-            <p class="text-[10px] text-slate-500 leading-relaxed">O = 크랭크 회전축(원점), B = 크랭크 핀, A = 피스톤 핀(수평선 y = e 위에서만 움직임), G = 커넥팅 로드 위의 점.</p>
-          </div>
 
-          <div id="lk_box_fourbar" class="sub-off bg-slate-50 p-2.5 rounded-lg border border-slate-200 space-y-2">
-            <p class="text-[10px] text-slate-500 leading-relaxed">
-              구동 링크 <b class="lk-n" data-ln="drv"></b>가 고정점 <b class="lk-n" data-ln="P1"></b>을 중심으로 돌고, 커플러 <b class="lk-n" data-ln="cpl"></b>를 거쳐 출력 링크 <b class="lk-n" data-ln="out"></b>(고정점 <b class="lk-n" data-ln="P2"></b>)를 움직입니다.
-            </p>
-            <div class="grid grid-cols-2 gap-2">
-              <div><label for="lk_fb_p1x" class="in-lbl">구동 고정점 <span class="lk-n" data-ln="P1"></span> : x</label><input type="number" id="lk_fb_p1x" step="any" class="in-num"></div>
-              <div><label for="lk_fb_p1y" class="in-lbl">구동 고정점 <span class="lk-n" data-ln="P1"></span> : y</label><input type="number" id="lk_fb_p1y" step="any" class="in-num"></div>
-              <div><label for="lk_fb_p2x" class="in-lbl">출력 고정점 <span class="lk-n" data-ln="P2"></span> : x</label><input type="number" id="lk_fb_p2x" step="any" class="in-num"></div>
-              <div><label for="lk_fb_p2y" class="in-lbl">출력 고정점 <span class="lk-n" data-ln="P2"></span> : y</label><input type="number" id="lk_fb_p2y" step="any" class="in-num"></div>
-              <div><label for="lk_fb_L1" class="in-lbl">구동 링크 <span class="lk-n" data-ln="drv"></span> 길이</label><input type="number" id="lk_fb_L1" step="any" class="in-num"></div>
-              <div><label for="lk_fb_L2" class="in-lbl">커플러 <span class="lk-n" data-ln="cpl"></span> 길이</label><input type="number" id="lk_fb_L2" step="any" class="in-num"></div>
-              <div><label for="lk_fb_L3" class="in-lbl">출력 링크 <span class="lk-n" data-ln="out"></span> 길이</label><input type="number" id="lk_fb_L3" step="any" class="in-num"></div>
-              <div><label for="lk_fb_branch" class="in-lbl">조립 형태 (두 해 중 하나)</label><select id="lk_fb_branch" class="in-sel"><option value="1">형태 1</option><option value="-1">형태 2</option></select></div>
-              <div><label for="lk_fb_u" class="in-lbl">커플러 점 <span class="lk-n" data-ln="Q"></span> : <span class="lk-n" data-ln="J1"></span>→<span class="lk-n" data-ln="J2"></span> 방향 거리</label><input type="number" id="lk_fb_u" step="any" class="in-num"></div>
-              <div><label for="lk_fb_w" class="in-lbl">커플러 점 <span class="lk-n" data-ln="Q"></span> : 수직 오프셋</label><input type="number" id="lk_fb_w" step="any" class="in-num"></div>
+            <div id="lk_box_slider" class="bg-slate-50 p-2.5 rounded-lg border border-slate-200 space-y-2">
+              <div class="grid grid-cols-2 gap-2">
+                <div><label for="lk_sc_r" class="in-lbl">크랭크 OB 길이 r</label><input type="number" id="lk_sc_r" step="any" class="in-num"></div>
+                <div><label for="lk_sc_l" class="in-lbl">커넥팅 로드 AB 길이 l</label><input type="number" id="lk_sc_l" step="any" class="in-num"></div>
+                <div><label for="lk_sc_bg" class="in-lbl">로드 위의 점 G: B에서 거리</label><input type="number" id="lk_sc_bg" step="any" class="in-num"></div>
+                <div><label for="lk_sc_e" class="in-lbl">실린더 축 오프셋 e (y)</label><input type="number" id="lk_sc_e" step="any" class="in-num"></div>
+              </div>
+              <div>
+                <label for="lk_sc_side" class="in-lbl">피스톤(슬라이더) A의 위치</label>
+                <select id="lk_sc_side" class="in-sel"><option value="-1">크랭크 축 O의 왼쪽 (교재 그림)</option><option value="1">크랭크 축 O의 오른쪽</option></select>
+              </div>
+              <p class="text-[10px] text-slate-500 leading-relaxed">O = 크랭크 회전축(원점), B = 크랭크 핀, A = 피스톤 핀(수평선 y = e 위에서만 움직임), G = 커넥팅 로드 위의 점.</p>
             </div>
-            <p id="lk_grashof" class="text-[10px] text-slate-600 leading-relaxed"></p>
-          </div>
 
-          <p id="lk_err" class="hidden text-[11px] text-rose-600 font-medium"><i class="fa-solid fa-triangle-exclamation mr-1"></i><span></span></p>
-          <div id="lk_note" class="bg-blue-50 border border-blue-200 rounded-lg p-2.5 text-[11px] text-blue-900 leading-relaxed"></div>
+            <div id="lk_box_fourbar" class="sub-off bg-slate-50 p-2.5 rounded-lg border border-slate-200 space-y-2">
+              <p class="text-[10px] text-slate-500 leading-relaxed">
+                구동 링크 <b class="lk-n" data-ln="drv"></b>가 고정점 <b class="lk-n" data-ln="P1"></b>을 중심으로 돌고, 커플러 <b class="lk-n" data-ln="cpl"></b>를 거쳐 출력 링크 <b class="lk-n" data-ln="out"></b>(고정점 <b class="lk-n" data-ln="P2"></b>)를 움직입니다.
+              </p>
+              <div class="grid grid-cols-2 gap-2">
+                <div><label for="lk_fb_p1x" class="in-lbl">구동 고정점 <span class="lk-n" data-ln="P1"></span> : x</label><input type="number" id="lk_fb_p1x" step="any" class="in-num"></div>
+                <div><label for="lk_fb_p1y" class="in-lbl">구동 고정점 <span class="lk-n" data-ln="P1"></span> : y</label><input type="number" id="lk_fb_p1y" step="any" class="in-num"></div>
+                <div><label for="lk_fb_p2x" class="in-lbl">출력 고정점 <span class="lk-n" data-ln="P2"></span> : x</label><input type="number" id="lk_fb_p2x" step="any" class="in-num"></div>
+                <div><label for="lk_fb_p2y" class="in-lbl">출력 고정점 <span class="lk-n" data-ln="P2"></span> : y</label><input type="number" id="lk_fb_p2y" step="any" class="in-num"></div>
+                <div><label for="lk_fb_L1" class="in-lbl">구동 링크 <span class="lk-n" data-ln="drv"></span> 길이</label><input type="number" id="lk_fb_L1" step="any" class="in-num"></div>
+                <div><label for="lk_fb_L2" class="in-lbl">커플러 <span class="lk-n" data-ln="cpl"></span> 길이</label><input type="number" id="lk_fb_L2" step="any" class="in-num"></div>
+                <div><label for="lk_fb_L3" class="in-lbl">출력 링크 <span class="lk-n" data-ln="out"></span> 길이</label><input type="number" id="lk_fb_L3" step="any" class="in-num"></div>
+                <div><label for="lk_fb_branch" class="in-lbl">조립 형태 (두 해 중 하나)</label><select id="lk_fb_branch" class="in-sel"><option value="1">형태 1</option><option value="-1">형태 2</option></select></div>
+                <div><label for="lk_fb_u" class="in-lbl">커플러 점 <span class="lk-n" data-ln="Q"></span> : <span class="lk-n" data-ln="J1"></span>→<span class="lk-n" data-ln="J2"></span> 방향 거리</label><input type="number" id="lk_fb_u" step="any" class="in-num"></div>
+                <div><label for="lk_fb_w" class="in-lbl">커플러 점 <span class="lk-n" data-ln="Q"></span> : 수직 오프셋</label><input type="number" id="lk_fb_w" step="any" class="in-num"></div>
+              </div>
+              <p id="lk_grashof" class="text-[10px] text-slate-600 leading-relaxed"></p>
+            </div>
+
+            <p id="lk_err" class="hidden text-[11px] text-rose-600 font-medium"><i class="fa-solid fa-triangle-exclamation mr-1"></i><span></span></p>
+            <div id="lk_note" class="bg-blue-50 border border-blue-200 rounded-lg p-2.5 text-[11px] text-blue-900 leading-relaxed"></div>
+          </div>
         </div>
       </div>
 
       <!-- ======================= ② Linkage tab: driver input ======================= -->
-      <div id="card-link-params" data-mode="link" class="mode-off bg-white rounded-xl shadow-sm border border-slate-200 p-3 sm:p-4">
-        <div class="flex justify-between items-center gap-2 mb-3">
+      <div id="card-link-params" data-mode="link" class="panel mode-off bg-white rounded-xl shadow-sm border border-slate-200 p-3 sm:p-4">
+        <div class="panel-head flex justify-between items-center gap-2 mb-3 border-b border-slate-100 pb-2">
           <h2 class="font-bold text-slate-800 text-sm flex items-center gap-2">
             <i class="fa-solid fa-sliders text-emerald-600"></i> 구동 링크 입력 (Driver Input)
           </h2>
-          <button type="button" id="lk_zero" title="구동 링크의 ω, α를 0으로 (자세 θ는 그대로)" class="tap px-2 py-1 text-xs bg-emerald-600 hover:bg-emerald-700 text-white rounded transition font-medium flex items-center gap-1">
-            <i class="fa-solid fa-rotate-left"></i> ω·α = 0
-          </button>
+          <div class="flex items-center gap-2">
+            <button type="button" id="lk_zero" title="구동 링크의 ω, α를 0으로 (자세 θ는 그대로)" class="tap px-2 py-1 text-xs bg-emerald-600 hover:bg-emerald-700 text-white rounded transition font-medium flex items-center gap-1">
+              <i class="fa-solid fa-rotate-left"></i> ω·α = 0
+            </button>
+            <button onclick="togglePanel('card-link-params')" class="panel-toggle" title="최소화 / 펼치기"><i class="fa-solid fa-minus"></i><i class="fa-solid fa-plus"></i></button>
+          </div>
         </div>
-        <div class="space-y-3 text-xs">
-          <p class="text-[11px] text-slate-500 leading-relaxed">구동 링크 <b class="lk-n" data-ln="drv"></b>의 자세 <b>θ</b> (x축 기준, 반시계 +)는 그림 아래의 <b>재생 막대</b>로 바꿉니다. 재생하면 θ가 ω의 방향으로 돌아가며 각 자세에서의 순간 해석을 보여줍니다.</p>
-          <div>
-            <div class="flex justify-between items-center gap-2 mb-1">
-              <label for="lk_num_w" class="font-medium text-slate-700">구동 각속도 $\omega$ (반시계 +)</label>
-              <div class="flex items-center gap-1 shrink-0">
-                <input type="number" id="lk_num_w" step="0.01" title="직접 입력 (Enter로 확정)" class="w-20 px-1.5 py-0.5 border border-slate-300 rounded text-right text-xs font-semibold text-emerald-600 focus:ring-1 focus:ring-blue-500 focus:outline-none">
-                <span class="text-[11px] text-slate-500 w-11">rad/s</span>
+
+        <div class="panel-body">
+          <div class="space-y-3 text-xs">
+            <p class="text-[11px] text-slate-500 leading-relaxed">구동 링크 <b class="lk-n" data-ln="drv"></b>의 자세 <b>θ</b> (x축 기준, 반시계 +)는 그림 아래의 <b>재생 막대</b>로 바꿉니다. 재생하면 θ가 ω의 방향으로 돌아가며 각 자세에서의 순간 해석을 보여줍니다.</p>
+            <div>
+              <div class="flex justify-between items-center gap-2 mb-1">
+                <label for="lk_num_w" class="font-medium text-slate-700">구동 각속도 $\omega$ (반시계 +)</label>
+                <div class="flex items-center gap-1 shrink-0">
+                  <input type="number" id="lk_num_w" step="0.01" title="직접 입력 (Enter로 확정)" class="w-20 px-1.5 py-0.5 border border-slate-300 rounded text-right text-xs font-semibold text-emerald-600 focus:ring-1 focus:ring-blue-500 focus:outline-none">
+                  <span class="text-[11px] text-slate-500 w-11">rad/s</span>
+                </div>
               </div>
+              <input type="range" id="lk_sl_w" min="-30" max="30" step="0.5" value="0" class="w-full accent-emerald-600 bg-slate-200 h-1.5 rounded-lg cursor-pointer">
+              <p id="lk_rpm" class="text-[10px] text-slate-400 mt-0.5"></p>
             </div>
-            <input type="range" id="lk_sl_w" min="-30" max="30" step="0.5" value="0" class="w-full accent-emerald-600 bg-slate-200 h-1.5 rounded-lg cursor-pointer">
-            <p id="lk_rpm" class="text-[10px] text-slate-400 mt-0.5"></p>
-          </div>
-          <div>
-            <div class="flex justify-between items-center gap-2 mb-1">
-              <label for="lk_num_a" class="font-medium text-slate-700">구동 각가속도 $\alpha$ (반시계 +)</label>
-              <div class="flex items-center gap-1 shrink-0">
-                <input type="number" id="lk_num_a" step="0.01" title="직접 입력 (Enter로 확정)" class="w-20 px-1.5 py-0.5 border border-slate-300 rounded text-right text-xs font-semibold text-purple-600 focus:ring-1 focus:ring-blue-500 focus:outline-none">
-                <span class="text-[11px] text-slate-500 w-11">rad/s²</span>
+            <div>
+              <div class="flex justify-between items-center gap-2 mb-1">
+                <label for="lk_num_a" class="font-medium text-slate-700">구동 각가속도 $\alpha$ (반시계 +)</label>
+                <div class="flex items-center gap-1 shrink-0">
+                  <input type="number" id="lk_num_a" step="0.01" title="직접 입력 (Enter로 확정)" class="w-20 px-1.5 py-0.5 border border-slate-300 rounded text-right text-xs font-semibold text-purple-600 focus:ring-1 focus:ring-blue-500 focus:outline-none">
+                  <span class="text-[11px] text-slate-500 w-11">rad/s²</span>
+                </div>
               </div>
+              <input type="range" id="lk_sl_a" min="-100" max="100" step="1" value="0" class="w-full accent-purple-600 bg-slate-200 h-1.5 rounded-lg cursor-pointer">
             </div>
-            <input type="range" id="lk_sl_a" min="-100" max="100" step="1" value="0" class="w-full accent-purple-600 bg-slate-200 h-1.5 rounded-lg cursor-pointer">
+            <p class="text-[10px] text-slate-400 leading-relaxed"><i class="fa-solid fa-keyboard mr-1"></i>숫자 칸에는 슬라이더 범위를 넘는 값도 입력할 수 있습니다 (예: 1500 rev/min = 157.08 rad/s).</p>
           </div>
-          <p class="text-[10px] text-slate-400 leading-relaxed"><i class="fa-solid fa-keyboard mr-1"></i>숫자 칸에는 슬라이더 범위를 넘는 값도 입력할 수 있습니다 (예: 1500 rev/min = 157.08 rad/s).</p>
         </div>
       </div>
 
       <!-- ======================= ② Linkage tab: layers ======================= -->
-      <div id="card-link-layers" data-mode="link" class="mode-off bg-white rounded-xl shadow-sm border border-slate-200 p-3 sm:p-4">
-        <h2 class="font-bold text-slate-800 text-sm flex items-center gap-2 mb-3">
-          <i class="fa-solid fa-eye text-amber-600"></i> 시각화 요소 (Visual Layers)
-        </h2>
-        <div class="grid grid-cols-2 gap-2 text-xs">
-          <label class="flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-slate-200 cursor-pointer hover:border-slate-300">
-            <input type="checkbox" id="lk_show_v" checked class="accent-emerald-600"><span class="text-emerald-700 font-semibold">속도 $\mathbf{v}$</span>
-          </label>
-          <label class="flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-slate-200 cursor-pointer hover:border-slate-300">
-            <input type="checkbox" id="lk_show_a" checked class="accent-rose-600"><span class="text-rose-600 font-semibold">가속도 $\mathbf{a}$</span>
-          </label>
-          <label class="flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-slate-200 cursor-pointer hover:border-slate-300">
-            <input type="checkbox" id="lk_show_vpoly" checked class="accent-cyan-600"><span class="text-cyan-700">속도 다각형 $\mathbf{v}_B + \mathbf{v}_{A/B}$</span>
-          </label>
-          <label class="flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-slate-200 cursor-pointer hover:border-slate-300">
-            <input type="checkbox" id="lk_show_apoly" class="accent-amber-600"><span class="text-amber-700">가속도 다각형 $\mathbf{a}_B + (\mathbf{a}_{A/B})_n + (\mathbf{a}_{A/B})_t$</span>
-          </label>
-          <label class="flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-slate-200 cursor-pointer hover:border-slate-300">
-            <input type="checkbox" id="lk_show_spin" checked class="accent-lime-600"><span class="text-lime-700 font-semibold">링크의 $\omega$, $\alpha$ (↺ +)</span>
-          </label>
-          <label class="flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-slate-200 cursor-pointer hover:border-slate-300">
-            <input type="checkbox" id="lk_show_iczv" checked class="accent-purple-600"><span class="text-purple-700 font-semibold">커플러의 순간중심</span>
-          </label>
-          <label class="flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-slate-200 cursor-pointer hover:border-slate-300">
-            <input type="checkbox" id="lk_show_path" checked class="accent-slate-600"><span class="text-slate-700">점의 궤적 (커플러 곡선)</span>
-          </label>
-          <label class="flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-slate-200 cursor-pointer hover:border-slate-300">
-            <input type="checkbox" id="lk_show_q" checked class="accent-amber-600"><span class="text-amber-700">커플러 위의 점 <span class="lk-n" data-ln="Q"></span></span>
-          </label>
+      <div id="card-link-layers" data-mode="link" class="panel mode-off bg-white rounded-xl shadow-sm border border-slate-200 p-3 sm:p-4">
+        <div class="panel-head flex justify-between items-center gap-2 mb-3 border-b border-slate-100 pb-2">
+          <h2 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+            <i class="fa-solid fa-eye text-amber-600"></i> 시각화 요소 (Visual Layers)
+          </h2>
+          <button onclick="togglePanel('card-link-layers')" class="panel-toggle" title="최소화 / 펼치기"><i class="fa-solid fa-minus"></i><i class="fa-solid fa-plus"></i></button>
         </div>
-        <div class="mt-3 text-xs">
-          <div class="flex justify-between items-center mb-1">
-            <label for="lk_vecmul" class="font-medium text-slate-700">벡터 길이 배율</label>
-            <span id="lk_vecmul_val" class="text-[11px] font-mono text-slate-500">×1.00</span>
+
+        <div class="panel-body">
+          <div class="grid grid-cols-2 gap-2 text-xs">
+            <label class="flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-slate-200 cursor-pointer hover:border-slate-300">
+              <input type="checkbox" id="lk_show_v" checked class="accent-emerald-600"><span class="text-emerald-700 font-semibold">속도 $\mathbf{v}$</span>
+            </label>
+            <label class="flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-slate-200 cursor-pointer hover:border-slate-300">
+              <input type="checkbox" id="lk_show_a" checked class="accent-rose-600"><span class="text-rose-600 font-semibold">가속도 $\mathbf{a}$</span>
+            </label>
+            <label class="flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-slate-200 cursor-pointer hover:border-slate-300">
+              <input type="checkbox" id="lk_show_vpoly" checked class="accent-cyan-600"><span class="text-cyan-700">속도 다각형 $\mathbf{v}_B + \mathbf{v}_{A/B}$</span>
+            </label>
+            <label class="flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-slate-200 cursor-pointer hover:border-slate-300">
+              <input type="checkbox" id="lk_show_apoly" class="accent-amber-600"><span class="text-amber-700">가속도 다각형 $\mathbf{a}_B + (\mathbf{a}_{A/B})_n + (\mathbf{a}_{A/B})_t$</span>
+            </label>
+            <label class="flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-slate-200 cursor-pointer hover:border-slate-300">
+              <input type="checkbox" id="lk_show_spin" checked class="accent-lime-600"><span class="text-lime-700 font-semibold">링크의 $\omega$, $\alpha$ (↺ +)</span>
+            </label>
+            <label class="flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-slate-200 cursor-pointer hover:border-slate-300">
+              <input type="checkbox" id="lk_show_iczv" checked class="accent-purple-600"><span class="text-purple-700 font-semibold">커플러의 순간중심</span>
+            </label>
+            <label class="flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-slate-200 cursor-pointer hover:border-slate-300">
+              <input type="checkbox" id="lk_show_path" checked class="accent-slate-600"><span class="text-slate-700">점의 궤적 (커플러 곡선)</span>
+            </label>
+            <label class="flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-slate-200 cursor-pointer hover:border-slate-300">
+              <input type="checkbox" id="lk_show_q" checked class="accent-amber-600"><span class="text-amber-700">커플러 위의 점 <span class="lk-n" data-ln="Q"></span></span>
+            </label>
           </div>
-          <input type="range" id="lk_vecmul" min="-2" max="2" step="0.05" value="0" class="w-full accent-slate-600 bg-slate-200 h-1.5 rounded-lg cursor-pointer">
+          <div class="mt-3 text-xs">
+            <div class="flex justify-between items-center mb-1">
+              <label for="lk_vecmul" class="font-medium text-slate-700">벡터 길이 배율</label>
+              <span id="lk_vecmul_val" class="text-[11px] font-mono text-slate-500">×1.00</span>
+            </div>
+            <input type="range" id="lk_vecmul" min="-2" max="2" step="0.05" value="0" class="w-full accent-slate-600 bg-slate-200 h-1.5 rounded-lg cursor-pointer">
+          </div>
+          <p class="text-[10px] text-slate-500 mt-2 leading-relaxed">
+            벡터 길이는 구동 링크 끝점의 속도·가속도를 기준으로 자동 축척합니다. 어떤 벡터가 화면을 벗어나면 같은 종류(속도 또는 가속도)를 모두 같은 비율로 줄여 그리고 범례에 그 비율을 표시합니다 (다각형은 닫힌 채 유지).
+          </p>
         </div>
-        <p class="text-[10px] text-slate-500 mt-2 leading-relaxed">
-          벡터 길이는 구동 링크 끝점의 속도·가속도를 기준으로 자동 축척합니다. 어떤 벡터가 화면을 벗어나면 같은 종류(속도 또는 가속도)를 모두 같은 비율로 줄여 그리고 범례에 그 비율을 표시합니다 (다각형은 닫힌 채 유지).
-        </p>
       </div>
 
       <!-- ======================= ③ Rotating axes tab: setup ======================= -->
-      <div id="card-rot-setup" data-mode="rot" class="mode-off bg-white rounded-xl shadow-sm border border-slate-200 p-3 sm:p-4">
-        <h2 class="font-bold text-slate-800 text-sm flex items-center gap-2 mb-3">
-          <i class="fa-solid fa-arrows-spin text-blue-600"></i> 회전 좌표계 설정 (Rotating Axes Setup)
-        </h2>
-        <div class="space-y-3 text-xs">
-          <div>
-            <label for="rt_scen" class="font-medium text-slate-700 block mb-1">상황</label>
-            <select id="rt_scen" class="w-full px-2 py-1.5 border border-slate-300 rounded text-xs bg-slate-50 focus:ring-1 focus:ring-blue-500 font-medium">
-              <option value="slot">회전 원판의 슬롯을 따라 움직이는 점 (경로 지정)</option>
-              <option value="pin">회전 팔의 슬롯 + 링크로 구속된 핀 (예제 5/17·5/18)</option>
-              <option value="obs">회전하는 관측자가 본 운동 (예제 5/19)</option>
-            </select>
-          </div>
-          <div class="grid grid-cols-2 gap-2">
-            <div>
-              <label for="rt_unitL" class="in-lbl">입력 길이 단위</label>
-              <select id="rt_unitL" class="in-sel"><option value="m">m</option><option value="mm">mm</option><option value="in">in</option><option value="ft">ft</option></select>
-            </div>
-            <div>
-              <label for="rt_unitOut" class="in-lbl">결과 표시 단위</label>
-              <select id="rt_unitOut" class="in-sel"><option value="m">m · m/s · m/s²</option><option value="mm">mm · mm/s · mm/s²</option><option value="in">in · in/s · in/s²</option><option value="ft">ft · ft/s · ft/s²</option></select>
-            </div>
-          </div>
+      <div id="card-rot-setup" data-mode="rot" class="panel mode-off bg-white rounded-xl shadow-sm border border-slate-200 p-3 sm:p-4">
+        <div class="panel-head flex justify-between items-center gap-2 mb-3 border-b border-slate-100 pb-2">
+          <h2 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+            <i class="fa-solid fa-arrows-spin text-blue-600"></i> 회전 좌표계 설정 (Rotating Axes Setup)
+          </h2>
+          <button onclick="togglePanel('card-rot-setup')" class="panel-toggle" title="최소화 / 펼치기"><i class="fa-solid fa-minus"></i><i class="fa-solid fa-plus"></i></button>
+        </div>
 
-          <div id="rt_box_slot" class="bg-slate-50 p-2.5 rounded-lg border border-slate-200 space-y-2">
+        <div class="panel-body">
+          <div class="space-y-3 text-xs">
+            <div>
+              <label for="rt_scen" class="font-medium text-slate-700 block mb-1">상황</label>
+              <select id="rt_scen" class="w-full px-2 py-1.5 border border-slate-300 rounded text-xs bg-slate-50 focus:ring-1 focus:ring-blue-500 font-medium">
+                <option value="slot">회전 원판의 슬롯을 따라 움직이는 점 (경로 지정)</option>
+                <option value="pin">회전 팔의 슬롯 + 링크로 구속된 핀 (예제 5/17·5/18)</option>
+                <option value="obs">회전하는 관측자가 본 운동 (예제 5/19)</option>
+              </select>
+            </div>
             <div class="grid grid-cols-2 gap-2">
-              <div><label for="rt_sl_R" class="in-lbl">원판 반지름 R</label><input type="number" id="rt_sl_R" step="any" class="in-num"></div>
               <div>
-                <label for="rt_sl_path" class="in-lbl">경로(슬롯) 모양</label>
-                <select id="rt_sl_path" class="in-sel"><option value="line">직선 슬롯</option><option value="arc">원호 슬롯 (곡선)</option></select>
+                <label for="rt_unitL" class="in-lbl">입력 길이 단위</label>
+                <select id="rt_unitL" class="in-sel"><option value="m">m</option><option value="mm">mm</option><option value="in">in</option><option value="ft">ft</option></select>
+              </div>
+              <div>
+                <label for="rt_unitOut" class="in-lbl">결과 표시 단위</label>
+                <select id="rt_unitOut" class="in-sel"><option value="m">m · m/s · m/s²</option><option value="mm">mm · mm/s · mm/s²</option><option value="in">in · in/s · in/s²</option><option value="ft">ft · ft/s · ft/s²</option></select>
               </div>
             </div>
-            <div id="rt_box_line" class="grid grid-cols-3 gap-2">
-              <div><label for="rt_sl_x0" class="in-lbl">기준점 x₀</label><input type="number" id="rt_sl_x0" step="any" class="in-num"></div>
-              <div><label for="rt_sl_y0" class="in-lbl">기준점 y₀</label><input type="number" id="rt_sl_y0" step="any" class="in-num"></div>
-              <div><label for="rt_sl_phi" class="in-lbl">방향각 φ (°)</label><input type="number" id="rt_sl_phi" step="any" class="in-num"></div>
-            </div>
-            <div id="rt_box_arc" class="sub-off grid grid-cols-2 gap-2">
-              <div><label for="rt_sl_xc" class="in-lbl">원호 중심 x<sub>c</sub></label><input type="number" id="rt_sl_xc" step="any" class="in-num"></div>
-              <div><label for="rt_sl_yc" class="in-lbl">원호 중심 y<sub>c</sub></label><input type="number" id="rt_sl_yc" step="any" class="in-num"></div>
-              <div><label for="rt_sl_rho" class="in-lbl">원호 반지름 ρ</label><input type="number" id="rt_sl_rho" step="any" class="in-num"></div>
-              <div><label for="rt_sl_psi0" class="in-lbl">r = 0 인 곳의 각 ψ₀ (°)</label><input type="number" id="rt_sl_psi0" step="any" class="in-num"></div>
-            </div>
-            <p class="text-[10px] text-slate-500 leading-relaxed">경로는 원판에 고정되어 함께 돕니다. 좌표·각도는 <b>회전 좌표계 x-y</b> 기준(원점 B = 원판 중심)이고, r은 경로를 따라 잰 거리입니다 (직선: 기준점에서 방향각 φ 쪽이 +, 원호: 반시계 방향이 +).</p>
-          </div>
 
-          <div id="rt_box_pin" class="sub-off bg-slate-50 p-2.5 rounded-lg border border-slate-200 space-y-2">
-            <div class="grid grid-cols-2 gap-2">
-              <div><label for="rt_pn_xC" class="in-lbl">고정점 C : x (O 기준)</label><input type="number" id="rt_pn_xC" step="any" class="in-num"></div>
-              <div><label for="rt_pn_yC" class="in-lbl">고정점 C : y (O 기준)</label><input type="number" id="rt_pn_yC" step="any" class="in-num"></div>
-              <div><label for="rt_pn_L" class="in-lbl">링크 CA 길이</label><input type="number" id="rt_pn_L" step="any" class="in-num"></div>
-              <div><label for="rt_pn_arm" class="in-lbl">슬롯 팔 OD 길이</label><input type="number" id="rt_pn_arm" step="any" class="in-num"></div>
-            </div>
-            <div>
-              <label for="rt_pn_near" class="in-lbl">핀 A의 위치 (원과 슬롯의 두 교점 중)</label>
-              <select id="rt_pn_near" class="in-sel"><option value="1">O에 가까운 교점 (교재 그림)</option><option value="0">O에서 먼 교점</option></select>
-            </div>
-            <p class="text-[10px] text-slate-500 leading-relaxed">팔 OD가 고정점 O를 중심으로 회전하고, 핀 A는 OD의 슬롯 안을 미끄러지면서 C를 중심으로 도는 링크 CA에 연결되어 있습니다. 회전 좌표계는 팔 OD에 붙어 있고 x축이 슬롯 방향(O → D)입니다. v<sub>rel</sub>, a<sub>rel</sub>과 ω<sub>CA</sub>, α<sub>CA</sub>는 구속 조건에서 계산됩니다.</p>
-          </div>
-
-          <div id="rt_box_obs" class="sub-off bg-slate-50 p-2.5 rounded-lg border border-slate-200 space-y-2">
-            <div class="grid grid-cols-2 gap-2">
-              <div><label for="rt_ob_rho" class="in-lbl">B의 원 궤도 반지름 ρ</label><input type="number" id="rt_ob_rho" step="any" class="in-num"></div>
-              <div>
-                <label for="rt_ob_dir" class="in-lbl">B의 원 궤도</label>
-                <select id="rt_ob_dir" class="in-sel"><option value="1">중심이 위 (반시계 회전)</option><option value="-1">중심이 아래 (시계 회전)</option></select>
+            <div id="rt_box_slot" class="bg-slate-50 p-2.5 rounded-lg border border-slate-200 space-y-2">
+              <div class="grid grid-cols-2 gap-2">
+                <div><label for="rt_sl_R" class="in-lbl">원판 반지름 R</label><input type="number" id="rt_sl_R" step="any" class="in-num"></div>
+                <div>
+                  <label for="rt_sl_path" class="in-lbl">경로(슬롯) 모양</label>
+                  <select id="rt_sl_path" class="in-sel"><option value="line">직선 슬롯</option><option value="arc">원호 슬롯 (곡선)</option></select>
+                </div>
               </div>
-              <div><label for="rt_ob_xA" class="in-lbl">A의 처음 위치 x<sub>A</sub> (B 기준)</label><input type="number" id="rt_ob_xA" step="any" class="in-num"></div>
-              <div><label for="rt_ob_yA" class="in-lbl">A의 처음 위치 y<sub>A</sub> (B 기준)</label><input type="number" id="rt_ob_yA" step="any" class="in-num"></div>
-              <div><label for="rt_ob_T" class="in-lbl">재생 시간 T (s)</label><input type="number" id="rt_ob_T" step="any" class="in-num"></div>
+              <div id="rt_box_line" class="grid grid-cols-3 gap-2">
+                <div><label for="rt_sl_x0" class="in-lbl">기준점 x₀</label><input type="number" id="rt_sl_x0" step="any" class="in-num"></div>
+                <div><label for="rt_sl_y0" class="in-lbl">기준점 y₀</label><input type="number" id="rt_sl_y0" step="any" class="in-num"></div>
+                <div><label for="rt_sl_phi" class="in-lbl">방향각 φ (°)</label><input type="number" id="rt_sl_phi" step="any" class="in-num"></div>
+              </div>
+              <div id="rt_box_arc" class="sub-off grid grid-cols-2 gap-2">
+                <div><label for="rt_sl_xc" class="in-lbl">원호 중심 x<sub>c</sub></label><input type="number" id="rt_sl_xc" step="any" class="in-num"></div>
+                <div><label for="rt_sl_yc" class="in-lbl">원호 중심 y<sub>c</sub></label><input type="number" id="rt_sl_yc" step="any" class="in-num"></div>
+                <div><label for="rt_sl_rho" class="in-lbl">원호 반지름 ρ</label><input type="number" id="rt_sl_rho" step="any" class="in-num"></div>
+                <div><label for="rt_sl_psi0" class="in-lbl">r = 0 인 곳의 각 ψ₀ (°)</label><input type="number" id="rt_sl_psi0" step="any" class="in-num"></div>
+              </div>
+              <p class="text-[10px] text-slate-500 leading-relaxed">경로는 원판에 고정되어 함께 돕니다. 좌표·각도는 <b>회전 좌표계 x-y</b> 기준(원점 B = 원판 중심)이고, r은 경로를 따라 잰 거리입니다 (직선: 기준점에서 방향각 φ 쪽이 +, 원호: 반시계 방향이 +).</p>
             </div>
-            <p class="text-[10px] text-slate-500 leading-relaxed">관측자 B(비행기)는 원 궤도를 일정한 속력으로 돌고, 회전 좌표계 x-y는 B에 고정되어 x축이 진행 방향을 향합니다 (ω = v<sub>B</sub>/ρ). A는 고정 좌표계에서 등속 직선 운동을 합니다. t = 0에서 B는 원점에서 +X 방향으로 움직입니다.</p>
-          </div>
 
-          <p id="rt_err" class="hidden text-[11px] text-rose-600 font-medium"><i class="fa-solid fa-triangle-exclamation mr-1"></i><span></span></p>
-          <div id="rt_note" class="bg-blue-50 border border-blue-200 rounded-lg p-2.5 text-[11px] text-blue-900 leading-relaxed"></div>
+            <div id="rt_box_pin" class="sub-off bg-slate-50 p-2.5 rounded-lg border border-slate-200 space-y-2">
+              <div class="grid grid-cols-2 gap-2">
+                <div><label for="rt_pn_xC" class="in-lbl">고정점 C : x (O 기준)</label><input type="number" id="rt_pn_xC" step="any" class="in-num"></div>
+                <div><label for="rt_pn_yC" class="in-lbl">고정점 C : y (O 기준)</label><input type="number" id="rt_pn_yC" step="any" class="in-num"></div>
+                <div><label for="rt_pn_L" class="in-lbl">링크 CA 길이</label><input type="number" id="rt_pn_L" step="any" class="in-num"></div>
+                <div><label for="rt_pn_arm" class="in-lbl">슬롯 팔 OD 길이</label><input type="number" id="rt_pn_arm" step="any" class="in-num"></div>
+              </div>
+              <div>
+                <label for="rt_pn_near" class="in-lbl">핀 A의 위치 (원과 슬롯의 두 교점 중)</label>
+                <select id="rt_pn_near" class="in-sel"><option value="1">O에 가까운 교점 (교재 그림)</option><option value="0">O에서 먼 교점</option></select>
+              </div>
+              <p class="text-[10px] text-slate-500 leading-relaxed">팔 OD가 고정점 O를 중심으로 회전하고, 핀 A는 OD의 슬롯 안을 미끄러지면서 C를 중심으로 도는 링크 CA에 연결되어 있습니다. 회전 좌표계는 팔 OD에 붙어 있고 x축이 슬롯 방향(O → D)입니다. v<sub>rel</sub>, a<sub>rel</sub>과 ω<sub>CA</sub>, α<sub>CA</sub>는 구속 조건에서 계산됩니다.</p>
+            </div>
+
+            <div id="rt_box_obs" class="sub-off bg-slate-50 p-2.5 rounded-lg border border-slate-200 space-y-2">
+              <div class="grid grid-cols-2 gap-2">
+                <div><label for="rt_ob_rho" class="in-lbl">B의 원 궤도 반지름 ρ</label><input type="number" id="rt_ob_rho" step="any" class="in-num"></div>
+                <div>
+                  <label for="rt_ob_dir" class="in-lbl">B의 원 궤도</label>
+                  <select id="rt_ob_dir" class="in-sel"><option value="1">중심이 위 (반시계 회전)</option><option value="-1">중심이 아래 (시계 회전)</option></select>
+                </div>
+                <div><label for="rt_ob_xA" class="in-lbl">A의 처음 위치 x<sub>A</sub> (B 기준)</label><input type="number" id="rt_ob_xA" step="any" class="in-num"></div>
+                <div><label for="rt_ob_yA" class="in-lbl">A의 처음 위치 y<sub>A</sub> (B 기준)</label><input type="number" id="rt_ob_yA" step="any" class="in-num"></div>
+                <div><label for="rt_ob_T" class="in-lbl">재생 시간 T (s)</label><input type="number" id="rt_ob_T" step="any" class="in-num"></div>
+              </div>
+              <p class="text-[10px] text-slate-500 leading-relaxed">관측자 B(비행기)는 원 궤도를 일정한 속력으로 돌고, 회전 좌표계 x-y는 B에 고정되어 x축이 진행 방향을 향합니다 (ω = v<sub>B</sub>/ρ). A는 고정 좌표계에서 등속 직선 운동을 합니다. t = 0에서 B는 원점에서 +X 방향으로 움직입니다.</p>
+            </div>
+
+            <p id="rt_err" class="hidden text-[11px] text-rose-600 font-medium"><i class="fa-solid fa-triangle-exclamation mr-1"></i><span></span></p>
+            <div id="rt_note" class="bg-blue-50 border border-blue-200 rounded-lg p-2.5 text-[11px] text-blue-900 leading-relaxed"></div>
+          </div>
         </div>
       </div>
 
       <!-- ======================= ③ Rotating axes tab: motion input ======================= -->
-      <div id="card-rot-params" data-mode="rot" class="mode-off bg-white rounded-xl shadow-sm border border-slate-200 p-3 sm:p-4">
-        <div class="flex justify-between items-center gap-2 mb-3">
+      <div id="card-rot-params" data-mode="rot" class="panel mode-off bg-white rounded-xl shadow-sm border border-slate-200 p-3 sm:p-4">
+        <div class="panel-head flex justify-between items-center gap-2 mb-3 border-b border-slate-100 pb-2">
           <h2 class="font-bold text-slate-800 text-sm flex items-center gap-2">
             <i class="fa-solid fa-sliders text-emerald-600"></i> 운동 입력 (Motion Input)
           </h2>
-          <button type="button" id="rt_zero" title="회전 좌표계(판)의 ω₀, ω̇를 0으로: 회전하지 않을 때와 비교" class="tap px-2 py-1 text-xs bg-emerald-600 hover:bg-emerald-700 text-white rounded transition font-medium flex items-center gap-1">
-            <i class="fa-solid fa-pause"></i> 회전 끄기
-          </button>
+          <div class="flex items-center gap-2">
+            <button type="button" id="rt_zero" title="회전 좌표계(판)의 ω₀, ω̇를 0으로: 회전하지 않을 때와 비교" class="tap px-2 py-1 text-xs bg-emerald-600 hover:bg-emerald-700 text-white rounded transition font-medium flex items-center gap-1">
+              <i class="fa-solid fa-pause"></i> 회전 끄기
+            </button>
+            <button onclick="togglePanel('card-rot-params')" class="panel-toggle" title="최소화 / 펼치기"><i class="fa-solid fa-minus"></i><i class="fa-solid fa-plus"></i></button>
+          </div>
         </div>
-        <div class="space-y-3 text-xs">
-          <div id="rt_frame_inputs" class="space-y-3">
-            <div class="grid grid-cols-2 gap-2">
-              <div><label for="rt_th0" class="in-lbl">처음 각도 θ₀ (°, x축의 방향)</label><input type="number" id="rt_th0" step="any" class="in-num"></div>
-              <div class="text-[10px] text-slate-500 leading-relaxed self-end">θ(t) = θ₀ + ω₀t + ½ω̇t²</div>
-            </div>
-            <div>
-              <div class="flex justify-between items-center gap-2 mb-1">
-                <label for="rt_num_w" class="font-medium text-slate-700">좌표계 각속도 $\omega_0$ (반시계 +)</label>
-                <div class="flex items-center gap-1 shrink-0">
-                  <input type="number" id="rt_num_w" step="0.01" title="직접 입력 (Enter로 확정)" class="w-20 px-1.5 py-0.5 border border-slate-300 rounded text-right text-xs font-semibold text-emerald-600 focus:ring-1 focus:ring-blue-500 focus:outline-none">
-                  <span class="text-[11px] text-slate-500 w-11">rad/s</span>
-                </div>
+
+        <div class="panel-body">
+          <div class="space-y-3 text-xs">
+            <div id="rt_frame_inputs" class="space-y-3">
+              <div class="grid grid-cols-2 gap-2">
+                <div><label for="rt_th0" class="in-lbl">처음 각도 θ₀ (°, x축의 방향)</label><input type="number" id="rt_th0" step="any" class="in-num"></div>
+                <div class="text-[10px] text-slate-500 leading-relaxed self-end">θ(t) = θ₀ + ω₀t + ½ω̇t²</div>
               </div>
-              <input type="range" id="rt_sl_w" min="-10" max="10" step="0.1" value="0" class="w-full accent-emerald-600 bg-slate-200 h-1.5 rounded-lg cursor-pointer">
-            </div>
-            <div>
-              <div class="flex justify-between items-center gap-2 mb-1">
-                <label for="rt_num_a" class="font-medium text-slate-700">좌표계 각가속도 $\dot\omega$ (반시계 +)</label>
-                <div class="flex items-center gap-1 shrink-0">
-                  <input type="number" id="rt_num_a" step="0.01" title="직접 입력 (Enter로 확정)" class="w-20 px-1.5 py-0.5 border border-slate-300 rounded text-right text-xs font-semibold text-purple-600 focus:ring-1 focus:ring-blue-500 focus:outline-none">
-                  <span class="text-[11px] text-slate-500 w-11">rad/s²</span>
+              <div>
+                <div class="flex justify-between items-center gap-2 mb-1">
+                  <label for="rt_num_w" class="font-medium text-slate-700">좌표계 각속도 $\omega_0$ (반시계 +)</label>
+                  <div class="flex items-center gap-1 shrink-0">
+                    <input type="number" id="rt_num_w" step="0.01" title="직접 입력 (Enter로 확정)" class="w-20 px-1.5 py-0.5 border border-slate-300 rounded text-right text-xs font-semibold text-emerald-600 focus:ring-1 focus:ring-blue-500 focus:outline-none">
+                    <span class="text-[11px] text-slate-500 w-11">rad/s</span>
+                  </div>
                 </div>
+                <input type="range" id="rt_sl_w" min="-10" max="10" step="0.1" value="0" class="w-full accent-emerald-600 bg-slate-200 h-1.5 rounded-lg cursor-pointer">
               </div>
-              <input type="range" id="rt_sl_a" min="-20" max="20" step="0.5" value="0" class="w-full accent-purple-600 bg-slate-200 h-1.5 rounded-lg cursor-pointer">
+              <div>
+                <div class="flex justify-between items-center gap-2 mb-1">
+                  <label for="rt_num_a" class="font-medium text-slate-700">좌표계 각가속도 $\dot\omega$ (반시계 +)</label>
+                  <div class="flex items-center gap-1 shrink-0">
+                    <input type="number" id="rt_num_a" step="0.01" title="직접 입력 (Enter로 확정)" class="w-20 px-1.5 py-0.5 border border-slate-300 rounded text-right text-xs font-semibold text-purple-600 focus:ring-1 focus:ring-blue-500 focus:outline-none">
+                    <span class="text-[11px] text-slate-500 w-11">rad/s²</span>
+                  </div>
+                </div>
+                <input type="range" id="rt_sl_a" min="-20" max="20" step="0.5" value="0" class="w-full accent-purple-600 bg-slate-200 h-1.5 rounded-lg cursor-pointer">
+              </div>
             </div>
-          </div>
-          <div id="rt_slider_inputs" class="bg-slate-50 p-2.5 rounded-lg border border-slate-200 space-y-2">
-            <p class="font-medium text-slate-700">경로를 따른 점 A의 운동 <span class="text-[10px] text-slate-500 font-normal">r(t) = r₀ + ṙ₀t + ½r̈t²</span></p>
-            <div class="grid grid-cols-3 gap-2">
-              <div><label for="rt_s0" class="in-lbl">r₀ (처음 위치)</label><input type="number" id="rt_s0" step="any" class="in-num"></div>
-              <div><label for="rt_sd0" class="in-lbl">ṙ₀ (= v<sub>rel</sub>)</label><input type="number" id="rt_sd0" step="any" class="in-num"></div>
-              <div><label for="rt_sdd" class="in-lbl">r̈ (= (a<sub>rel</sub>)<sub>t</sub>)</label><input type="number" id="rt_sdd" step="any" class="in-num"></div>
+            <div id="rt_slider_inputs" class="bg-slate-50 p-2.5 rounded-lg border border-slate-200 space-y-2">
+              <p class="font-medium text-slate-700">경로를 따른 점 A의 운동 <span class="text-[10px] text-slate-500 font-normal">r(t) = r₀ + ṙ₀t + ½r̈t²</span></p>
+              <div class="grid grid-cols-3 gap-2">
+                <div><label for="rt_s0" class="in-lbl">r₀ (처음 위치)</label><input type="number" id="rt_s0" step="any" class="in-num"></div>
+                <div><label for="rt_sd0" class="in-lbl">ṙ₀ (= v<sub>rel</sub>)</label><input type="number" id="rt_sd0" step="any" class="in-num"></div>
+                <div><label for="rt_sdd" class="in-lbl">r̈ (= (a<sub>rel</sub>)<sub>t</sub>)</label><input type="number" id="rt_sdd" step="any" class="in-num"></div>
+              </div>
             </div>
-          </div>
-          <div id="rt_obs_inputs" class="sub-off bg-slate-50 p-2.5 rounded-lg border border-slate-200 space-y-2">
-            <div class="grid grid-cols-3 gap-2">
-              <div><label for="rt_ob_vB" class="in-lbl">B의 속력 v<sub>B</sub></label><input type="number" id="rt_ob_vB" step="any" class="in-num"></div>
-              <div><label for="rt_ob_vAx" class="in-lbl">A의 속도 v<sub>A,X</sub></label><input type="number" id="rt_ob_vAx" step="any" class="in-num"></div>
-              <div><label for="rt_ob_vAy" class="in-lbl">A의 속도 v<sub>A,Y</sub></label><input type="number" id="rt_ob_vAy" step="any" class="in-num"></div>
+            <div id="rt_obs_inputs" class="sub-off bg-slate-50 p-2.5 rounded-lg border border-slate-200 space-y-2">
+              <div class="grid grid-cols-3 gap-2">
+                <div><label for="rt_ob_vB" class="in-lbl">B의 속력 v<sub>B</sub></label><input type="number" id="rt_ob_vB" step="any" class="in-num"></div>
+                <div><label for="rt_ob_vAx" class="in-lbl">A의 속도 v<sub>A,X</sub></label><input type="number" id="rt_ob_vAx" step="any" class="in-num"></div>
+                <div><label for="rt_ob_vAy" class="in-lbl">A의 속도 v<sub>A,Y</sub></label><input type="number" id="rt_ob_vAy" step="any" class="in-num"></div>
+              </div>
+              <p class="text-[10px] text-slate-500 leading-relaxed">속도의 길이 단위는 입력 길이 단위/s 입니다. ω = v<sub>B</sub>/ρ (B의 속력이 일정하므로 ω̇ = 0).</p>
             </div>
-            <p class="text-[10px] text-slate-500 leading-relaxed">속도의 길이 단위는 입력 길이 단위/s 입니다. ω = v<sub>B</sub>/ρ (B의 속력이 일정하므로 ω̇ = 0).</p>
+            <p id="rt_window" class="text-[10px] text-slate-500 leading-relaxed"></p>
           </div>
-          <p id="rt_window" class="text-[10px] text-slate-500 leading-relaxed"></p>
         </div>
       </div>
 
       <!-- ======================= ③ Rotating axes tab: layers ======================= -->
-      <div id="card-rot-layers" data-mode="rot" class="mode-off bg-white rounded-xl shadow-sm border border-slate-200 p-3 sm:p-4">
-        <h2 class="font-bold text-slate-800 text-sm flex items-center gap-2 mb-3">
-          <i class="fa-solid fa-eye text-amber-600"></i> 시각화 요소 (Visual Layers)
-        </h2>
-        <div class="grid grid-cols-2 gap-2 text-xs">
-          <label class="flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-slate-200 cursor-pointer hover:border-slate-300">
-            <input type="checkbox" id="rt_show_vterms" checked class="accent-cyan-600"><span class="text-cyan-700">속도 항 $\boldsymbol\omega\times\mathbf r,\ \mathbf v_{\rm rel}$</span>
-          </label>
-          <label class="flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-slate-200 cursor-pointer hover:border-slate-300">
-            <input type="checkbox" id="rt_show_vA" checked class="accent-emerald-600"><span class="text-emerald-700 font-semibold">절대 속도 $\mathbf v_A$</span>
-          </label>
-          <label class="flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-slate-200 cursor-pointer hover:border-slate-300">
-            <input type="checkbox" id="rt_show_aterms" checked class="accent-amber-600"><span class="text-amber-700">가속도 항 (코리올리 포함)</span>
-          </label>
-          <label class="flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-slate-200 cursor-pointer hover:border-slate-300">
-            <input type="checkbox" id="rt_show_aA" checked class="accent-rose-600"><span class="text-rose-600 font-semibold">절대 가속도 $\mathbf a_A$</span>
-          </label>
-          <label class="flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-slate-200 cursor-pointer hover:border-slate-300">
-            <input type="checkbox" id="rt_show_poly" class="accent-slate-600"><span class="text-slate-700">항을 머리-꼬리로 이어 그리기 (다각형)</span>
-          </label>
-          <label class="flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-slate-200 cursor-pointer hover:border-slate-300">
-            <input type="checkbox" id="rt_show_axes" checked class="accent-slate-600"><span class="text-slate-700">회전 좌표축 x-y</span>
-          </label>
-          <label class="flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-slate-200 cursor-pointer hover:border-slate-300">
-            <input type="checkbox" id="rt_show_abs" checked class="accent-slate-600"><span class="text-slate-700">A의 절대 경로 (고정 좌표계)</span>
-          </label>
-          <label class="flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-slate-200 cursor-pointer hover:border-slate-300">
-            <input type="checkbox" id="rt_show_rel" checked class="accent-violet-600"><span class="text-violet-700">A의 상대 경로 (B에서 본 경로)</span>
-          </label>
-          <label class="flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-slate-200 cursor-pointer hover:border-slate-300">
-            <input type="checkbox" id="rt_show_spin" checked class="accent-lime-600"><span class="text-lime-700 font-semibold">$\omega$, $\dot\omega$ (↺ +)</span>
-          </label>
+      <div id="card-rot-layers" data-mode="rot" class="panel mode-off bg-white rounded-xl shadow-sm border border-slate-200 p-3 sm:p-4">
+        <div class="panel-head flex justify-between items-center gap-2 mb-3 border-b border-slate-100 pb-2">
+          <h2 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+            <i class="fa-solid fa-eye text-amber-600"></i> 시각화 요소 (Visual Layers)
+          </h2>
+          <button onclick="togglePanel('card-rot-layers')" class="panel-toggle" title="최소화 / 펼치기"><i class="fa-solid fa-minus"></i><i class="fa-solid fa-plus"></i></button>
         </div>
-        <div class="mt-3 text-xs">
-          <div class="flex justify-between items-center mb-1">
-            <label for="rt_vecmul" class="font-medium text-slate-700">벡터 길이 배율</label>
-            <span id="rt_vecmul_val" class="text-[11px] font-mono text-slate-500">×1.00</span>
+
+        <div class="panel-body">
+          <div class="grid grid-cols-2 gap-2 text-xs">
+            <label class="flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-slate-200 cursor-pointer hover:border-slate-300">
+              <input type="checkbox" id="rt_show_vterms" checked class="accent-cyan-600"><span class="text-cyan-700">속도 항 $\boldsymbol\omega\times\mathbf r,\ \mathbf v_{\rm rel}$</span>
+            </label>
+            <label class="flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-slate-200 cursor-pointer hover:border-slate-300">
+              <input type="checkbox" id="rt_show_vA" checked class="accent-emerald-600"><span class="text-emerald-700 font-semibold">절대 속도 $\mathbf v_A$</span>
+            </label>
+            <label class="flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-slate-200 cursor-pointer hover:border-slate-300">
+              <input type="checkbox" id="rt_show_aterms" checked class="accent-amber-600"><span class="text-amber-700">가속도 항 (코리올리 포함)</span>
+            </label>
+            <label class="flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-slate-200 cursor-pointer hover:border-slate-300">
+              <input type="checkbox" id="rt_show_aA" checked class="accent-rose-600"><span class="text-rose-600 font-semibold">절대 가속도 $\mathbf a_A$</span>
+            </label>
+            <label class="flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-slate-200 cursor-pointer hover:border-slate-300">
+              <input type="checkbox" id="rt_show_poly" class="accent-slate-600"><span class="text-slate-700">항을 머리-꼬리로 이어 그리기 (다각형)</span>
+            </label>
+            <label class="flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-slate-200 cursor-pointer hover:border-slate-300">
+              <input type="checkbox" id="rt_show_axes" checked class="accent-slate-600"><span class="text-slate-700">회전 좌표축 x-y</span>
+            </label>
+            <label class="flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-slate-200 cursor-pointer hover:border-slate-300">
+              <input type="checkbox" id="rt_show_abs" checked class="accent-slate-600"><span class="text-slate-700">A의 절대 경로 (고정 좌표계)</span>
+            </label>
+            <label class="flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-slate-200 cursor-pointer hover:border-slate-300">
+              <input type="checkbox" id="rt_show_rel" checked class="accent-violet-600"><span class="text-violet-700">A의 상대 경로 (B에서 본 경로)</span>
+            </label>
+            <label class="flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-slate-200 cursor-pointer hover:border-slate-300">
+              <input type="checkbox" id="rt_show_spin" checked class="accent-lime-600"><span class="text-lime-700 font-semibold">$\omega$, $\dot\omega$ (↺ +)</span>
+            </label>
           </div>
-          <input type="range" id="rt_vecmul" min="-2" max="2" step="0.05" value="0" class="w-full accent-slate-600 bg-slate-200 h-1.5 rounded-lg cursor-pointer">
+          <div class="mt-3 text-xs">
+            <div class="flex justify-between items-center mb-1">
+              <label for="rt_vecmul" class="font-medium text-slate-700">벡터 길이 배율</label>
+              <span id="rt_vecmul_val" class="text-[11px] font-mono text-slate-500">×1.00</span>
+            </div>
+            <input type="range" id="rt_vecmul" min="-2" max="2" step="0.05" value="0" class="w-full accent-slate-600 bg-slate-200 h-1.5 rounded-lg cursor-pointer">
+          </div>
+          <p class="text-[10px] text-slate-500 mt-2 leading-relaxed">
+            속도 항은 A에서, 가속도 항도 A에서 그립니다 (다각형을 켜면 머리-꼬리로 이어져 합이 $\mathbf v_A$, $\mathbf a_A$의 끝에 닫힙니다). 궤적: 실선 = 지나온 경로, 옅은 점선 = 재생 구간 전체.
+          </p>
         </div>
-        <p class="text-[10px] text-slate-500 mt-2 leading-relaxed">
-          속도 항은 A에서, 가속도 항도 A에서 그립니다 (다각형을 켜면 머리-꼬리로 이어져 합이 $\mathbf v_A$, $\mathbf a_A$의 끝에 닫힙니다). 궤적: 실선 = 지나온 경로, 옅은 점선 = 재생 구간 전체.
-        </p>
       </div>
 
     </aside>
