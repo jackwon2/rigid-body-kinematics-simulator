@@ -15,7 +15,7 @@ headless Chrome/Edge; the generated CSS is written into the <style id="tailwind-
 Requirements: Python 3, Playwright (pip install playwright), Google Chrome or Microsoft Edge
 (or `python -m playwright install chromium`), and an internet connection.
 
-Usage:  python tools/build_tailwind_css.py
+Usage:  python tools/build_tailwind_css.py [file.html]     (default: index.html)
 """
 import json
 import pathlib
@@ -25,7 +25,7 @@ import sys
 from playwright.sync_api import sync_playwright
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-HTML = ROOT / "index.html"
+HTML = ROOT / (sys.argv[1] if len(sys.argv) > 1 else "index.html")
 TAILWIND_URL = "https://cdn.tailwindcss.com/3.4.17"
 # hoverOnlyWhenSupported: hover colours apply only with a real mouse, so buttons do not stay
 # "stuck" in their hover colour after a tap on touch screens.
@@ -92,7 +92,7 @@ def main():
     html = HTML.read_text(encoding="utf-8")
     m = BLOCK.search(html)
     if not m:
-        sys.exit('index.html has no <style id="tailwind-css"> block')
+        sys.exit(f'{HTML.name} has no <style id="tailwind-css"> block')
     # Scan everything except the previous output (its selectors would keep stale classes alive)
     scanned = html[: m.start(2)] + html[m.end(2):]
     css = minify(compile_css(class_candidates(scanned)))
