@@ -322,13 +322,41 @@
     /* Single-column order on phones/tablets for the CH06 tabs */
     @media (max-width: 1023.98px) {
       #card-kn-forces { order: 2; }
-      #panel-kf-res, #panel-kw-res, #panel-ki-res { order: 3; }
+      #panel-kf-fbd, #panel-kf-mom, #panel-kf-res, #panel-kw-res, #panel-ki-res { order: 3; }
       #card-kn-body { order: 4; }
       #card-kn-layers { order: 5; }
       #panel-kf-eq, #panel-kw-eq, #panel-ki-eq { order: 7; }
       #panel-kf-theory, #panel-kw-theory, #panel-ki-theory { order: 8; }
     }
     #panel-kf-theory, #panel-kw-theory, #panel-ki-theory { content-visibility: auto; contain-intrinsic-size: auto 30rem; }
+
+    /* ======================= CH06 ①: free-body diagram = kinetic diagram, moments about a point P ======================= */
+    .fbd-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; margin-bottom: 8px; }
+    .fbd-lbl { font-size: 11px; font-weight: 700; color: #475569; white-space: nowrap; }
+    .fbd-chips { display: flex; flex-wrap: wrap; gap: 4px; }
+    .fbd-chip { display: inline-flex; align-items: baseline; gap: 4px; height: 26px; line-height: 24px; padding: 0 9px; border-radius: 13px; font-size: 12px; font-weight: 700; border: 1px solid #cbd5e1; background: #fff; color: #334155; white-space: nowrap; transition: background 0.15s, color 0.15s, border-color 0.15s; }
+    .fbd-chip small { font-size: 10px; font-weight: 500; color: #64748b; }
+    .fbd-chip:hover { border-color: #2563eb; }
+    .fbd-chip[aria-pressed="true"] { background: #0f172a; border-color: #0f172a; color: #fef08a; }
+    .fbd-chip[aria-pressed="true"] small { color: #cbd5e1; }
+    .fbd-chk { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 600; color: #475569; cursor: pointer; white-space: nowrap; }
+    .fbd-wrap { position: relative; height: 300px; border-radius: 8px; border: 1px solid #1e293b; background: #0f172a; overflow: hidden; }
+    .fbd-wrap canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; cursor: crosshair; touch-action: pan-y; }
+    .fbd-pt { display: inline-flex; align-items: center; gap: 4px; padding: 2px 9px; border-radius: 12px; background: #0f172a; color: #fef08a; font-size: 11px; font-weight: 700; white-space: nowrap; }
+    .fbd-note { background: #eff6ff; border: 1px solid #bfdbfe; color: #1e3a8a; border-radius: 8px; padding: 7px 10px; font-size: 11px; line-height: 1.7; margin-top: 8px; }
+    .fbd-note b { color: #1e293b; }
+    .fbd-note .ok { color: #15803d; font-weight: 700; }
+    .fbd-note .no { color: #be123c; font-weight: 700; }
+    .fbd-h3 { font-size: 12px; font-weight: 700; color: #334155; margin: 14px 0 4px; }
+    .fbd-cmp tbody tr { cursor: pointer; }
+    .fbd-cmp tbody tr:hover td { background: #f1f5f9; }
+    .fbd-cmp tbody tr.sel td { background: #fefce8; }
+    .fbd-cmp td.ok { color: #15803d; font-weight: 700; font-family: Inter, 'Noto Sans KR', sans-serif; }
+    .fbd-cmp td.no { color: #be123c; font-weight: 700; font-family: Inter, 'Noto Sans KR', sans-serif; }
+    .res-table td.drop { color: #94a3b8; }
+    @media (pointer: coarse) {
+      .fbd-chip { height: 34px; line-height: 32px; padding: 0 12px; border-radius: 17px; }
+    }
   </style>
 </head>
 <body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col">
@@ -1663,6 +1691,77 @@
         </div>
       </div>
 
+      <!-- ======================= CH06 ① free-body diagram = kinetic diagram ======================= -->
+      <div id="panel-kf-fbd" data-mode="kf" class="mode-off panel bg-white rounded-xl shadow-sm border border-slate-200 p-3 sm:p-4">
+        <div class="panel-head flex justify-between items-center mb-2 flex-wrap gap-2 border-b border-slate-100 pb-2">
+          <h2 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+            <i class="fa-solid fa-scale-balanced text-indigo-600"></i> 자유물체도 = 운동 선도 (Free-Body Diagram = Kinetic Diagram)
+          </h2>
+          <button onclick="togglePanel('panel-kf-fbd')" class="panel-toggle" title="최소화 / 펼치기"><i class="fa-solid fa-minus"></i><i class="fa-solid fa-plus"></i></button>
+        </div>
+        <div class="panel-body">
+          <p class="text-[11px] text-slate-500 mb-2 leading-relaxed">
+            왼쪽은 떼어 낸 강체에 작용하는 <b class="text-amber-700">모든 힘 (외력 + 반력)</b>, 오른쪽은 그 힘들의 효과인 <b class="text-purple-700">$m\bar{\mathbf a}$ (G를 지나는 벡터)와 우력 $\bar I\alpha$</b>입니다.
+            두 그림은 같은 힘의 계이므로 $\sum\mathbf F = m\bar{\mathbf a}$이고, <b>어느 점 P에 대해 모멘트를 잡아도</b> 왼쪽의 $\sum M_P$ = 오른쪽의 모멘트입니다.
+          </p>
+          <div class="fbd-bar">
+            <span class="fbd-lbl"><i class="fa-solid fa-crosshairs mr-1"></i>모멘트 기준점 P</span>
+            <div id="kf_fbd_pts" class="fbd-chips" role="group" aria-label="모멘트 기준점 P"></div>
+          </div>
+          <div class="fbd-bar">
+            <span class="fbd-lbl">운동 선도</span>
+            <span class="kn-seg" role="group" aria-label="운동 선도 표현">
+              <button type="button" id="kf_kd_G" aria-pressed="true" class="kn-seg-btn" title="m ā를 G에, 우력 Īα를 그립니다: ΣM_P = Īα + ρ̄ × mā">G 기준: mā, Īα</button>
+              <button type="button" id="kf_kd_P" aria-pressed="false" class="kn-seg-btn" title="ā = a_P + α×ρ̄ − ω²ρ̄ 로 나누어 그립니다: ΣM_P = I_P α + ρ̄ × m a_P">P 기준: I<sub>P</sub>α로 분해</button>
+            </span>
+            <label class="fbd-chk"><input type="checkbox" id="kf_fbd_arm" checked class="accent-slate-600"> 모멘트 팔 d</label>
+          </div>
+          <div id="kf_fbd_wrap" class="fbd-wrap">
+            <canvas id="kf_fbd_cv" role="img" aria-label="자유물체도와 운동 선도"></canvas>
+          </div>
+          <p class="text-[10px] text-slate-500 mt-2 leading-relaxed">
+            그림을 클릭(탭)하면 그 점이 기준점 P가 됩니다 (강체에 붙은 점으로 보고, 끌어서 옮길 수 있습니다). 힘과 $m\bar{\mathbf a}$는 두 그림에서 같은 축척입니다.
+            점선은 P에서 각 힘의 작용선까지의 수직 거리(모멘트 팔 d)이며, 작용선이 P를 지나는 힘은 P에 대한 모멘트 식에서 빠집니다.
+            <b>P 기준</b>으로 바꾸면 $m\bar{\mathbf a} = m\mathbf a_P + m\boldsymbol\alpha\times\bar{\boldsymbol\rho} - m\omega^2\bar{\boldsymbol\rho}$ ($\bar{\boldsymbol\rho}$ = P에서 G까지)로 나누어 그립니다: 가운데 항의 모멘트 $m\bar\rho^2\alpha$가 $\bar I\alpha$와 합쳐져 $I_P\alpha$가 되고, 마지막 항은 P를 지나 모멘트가 0입니다.
+          </p>
+        </div>
+      </div>
+
+      <!-- ======================= CH06 ① moment equation about the chosen point P ======================= -->
+      <div id="panel-kf-mom" data-mode="kf" class="mode-off panel bg-white rounded-xl shadow-sm border border-slate-200 p-3 sm:p-4">
+        <div class="panel-head flex justify-between items-center mb-2 flex-wrap gap-2 border-b border-slate-100 pb-2">
+          <h2 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+            <i class="fa-solid fa-crosshairs text-rose-600"></i> 기준점 P에 대한 운동 방정식 (Moment Equation about P)
+          </h2>
+          <div class="flex items-center gap-2 text-xs">
+            <span id="kf_mom_pt" class="fbd-pt"></span>
+            <button onclick="togglePanel('panel-kf-mom')" class="panel-toggle" title="최소화 / 펼치기"><i class="fa-solid fa-minus"></i><i class="fa-solid fa-plus"></i></button>
+          </div>
+        </div>
+        <div class="panel-body">
+          <p class="text-[11px] text-slate-500 mb-2 leading-relaxed">현재 순간의 값을 대입했습니다. $\bar{\boldsymbol\rho} = \mathbf r_{G/P}$ (P에서 G까지의 위치 벡터), $\mathbf a_P$ = 강체 위의 점 P의 가속도, 모멘트·각가속도는 반시계 +. 단위: N, m, kg, s. 기준점은 위 그림의 버튼이나 아래 비교표의 행을 눌러 바꿉니다.</p>
+          <div id="kf_mom_eq" class="bg-slate-50 p-3 rounded-lg border border-slate-200 overflow-x-auto text-slate-800 min-h-[120px]"></div>
+          <div id="kf_mom_note" class="fbd-note"></div>
+          <div class="overflow-x-auto mt-3">
+            <table class="res-table">
+              <thead><tr><th>하중</th><th>r (P → 작용점) [m]</th><th>F (x, y) [N]</th><th>팔 d [m]</th><th>M<sub>P</sub> = r × F [N·m]</th><th>비고</th></tr></thead>
+              <tbody id="kf_mom_tb"></tbody>
+            </table>
+          </div>
+          <h3 class="fbd-h3"><i class="fa-solid fa-arrows-rotate text-indigo-600 mr-1"></i>기준점을 바꾸면 무엇이 달라질까? (행을 누르면 그 점이 P가 됩니다)</h3>
+          <div class="overflow-x-auto">
+            <table class="res-table fbd-cmp">
+              <thead><tr><th>기준점 P</th><th>|ρ̄| [m]</th><th>I<sub>P</sub> = Ī + m|ρ̄|² [kg·m²]</th><th>ΣM<sub>P</sub> (FBD) [N·m]</th><th>Īα + ρ̄ × mā [N·m]</th><th>I<sub>P</sub>α [N·m]</th><th>ρ̄ × m a<sub>P</sub> [N·m]</th><th>ΣM<sub>P</sub> = I<sub>P</sub>α ?</th></tr></thead>
+              <tbody id="kf_cmp_tb"></tbody>
+            </table>
+          </div>
+          <p class="text-[10px] text-slate-400 mt-2 leading-relaxed">
+            ΣM<sub>P</sub>의 값과 I<sub>P</sub>는 기준점마다 다르지만, 자유물체도의 ΣM<sub>P</sub>는 언제나 운동 선도의 Īα + ρ̄ × mā와 같습니다 (넷째·다섯째 열).
+            ΣM<sub>P</sub> = I<sub>P</sub>α 라는 간단한 꼴은 ρ̄ × m a<sub>P</sub> = 0일 때만, 즉 P = G이거나 a<sub>P</sub> = 0 (고정축 O)이거나 a<sub>P</sub>가 ρ̄와 나란할 때 (구르는 바퀴의 접촉점 C)만 맞습니다.
+          </p>
+        </div>
+      </div>
+
       <!-- ======================= CH06 ① force · mass · acceleration: results ======================= -->
       <div id="panel-kf-res" data-mode="kf" class="mode-off panel bg-white rounded-xl shadow-sm border border-slate-200 p-3 sm:p-4">
         <div class="panel-head flex justify-between items-center mb-2 flex-wrap gap-2 border-b border-slate-100 pb-2">
@@ -1725,8 +1824,9 @@
             </div>
             <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
               <h3 class="font-bold text-slate-700 mb-1.5 flex items-center gap-1.5 text-[12px]"><i class="fa-solid fa-equals text-cyan-600"></i> ② 자유물체도 = 운동 선도</h3>
-              <p class="text-slate-600 leading-relaxed">자유물체도(FBD)의 모든 외력은 운동 선도(kinetic diagram)의 $m\bar{\mathbf a}$ (G를 지나는 벡터)와 우력 $\bar I\alpha$를 합한 것과 같습니다. 그래서 G가 아닌 임의의 점 P에 대한 모멘트 식도 쓸 수 있습니다 ($\bar{\boldsymbol\rho}$ = P에서 G까지의 위치 벡터).</p>
-              <div class="py-1">$$\sum M_P = \bar I\alpha + \bar{\boldsymbol\rho}\times m\bar{\mathbf a}$$</div>
+              <p class="text-slate-600 leading-relaxed">자유물체도(FBD)의 모든 외력은 운동 선도(kinetic diagram)의 $m\bar{\mathbf a}$ (G를 지나는 벡터)와 우력 $\bar I\alpha$를 합한 것과 같습니다. 그래서 G가 아닌 임의의 점 P에 대한 모멘트 식도 쓸 수 있습니다 ($\bar{\boldsymbol\rho}$ = P에서 G까지의 위치 벡터, $d$ = P에서 $m\bar{\mathbf a}$의 작용선까지의 거리).
+                $\bar{\mathbf a} = \mathbf a_P + \boldsymbol\alpha\times\bar{\boldsymbol\rho} - \omega^2\bar{\boldsymbol\rho}$를 넣고 평행축 정리를 쓰면 둘째 꼴이 됩니다. $\sum M_P = I_P\alpha$는 $\bar{\boldsymbol\rho}\times m\mathbf a_P = 0$일 때만 맞습니다: P = G, $\mathbf a_P = 0$ (고정축 O), $\mathbf a_P \parallel \bar{\boldsymbol\rho}$ (구르는 바퀴의 접촉점 C). 순간중심은 속도만 0이므로 일반적으로는 맞지 않습니다.</p>
+              <div class="py-1">$$\begin{gathered}\sum M_P = \bar I\alpha + \bar{\boldsymbol\rho}\times m\bar{\mathbf a} = \bar I\alpha + m\bar a d\\ \sum M_P = I_P\alpha + \bar{\boldsymbol\rho}\times m\mathbf a_P,\qquad I_P = \bar I + m\bar\rho^2\end{gathered}$$</div>
             </div>
             <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
               <h3 class="font-bold text-slate-700 mb-1.5 flex items-center gap-1.5 text-[12px]"><i class="fa-solid fa-arrows-left-right text-emerald-600"></i> ③ 병진 (6/3절)</h3>
@@ -2428,7 +2528,8 @@
        4. CANVAS RENDERING & VIEW ENGINE
        ========================================================================== */
     const canvas = document.getElementById('simCanvas');
-    const ctx = canvas.getContext('2d');
+    // let, not const: the CH06 ① free-body-diagram canvas borrows the drawing helpers by swapping ctx for a moment
+    let ctx = canvas.getContext('2d');
     const canvasWrap = document.getElementById('canvasWrap');
 
     function resetViewOffset() {
@@ -2558,7 +2659,7 @@
       }, { rootMargin: '200px 0px' });
       [['panel-inspector', 'inspector'], ['panel-equations', 'equations'], ['stat-grid', 'stats'],
        ['panel-link-results', 'linkres'], ['panel-link-eq', 'linkeq'], ['panel-rot-results', 'rotres'], ['panel-rot-eq', 'roteq'],
-       ['panel-kf-res', 'kfres'], ['panel-kf-eq', 'kfeq'], ['panel-kw-res', 'kwres'], ['panel-kw-eq', 'kweq'], ['panel-ki-res', 'kires'], ['panel-ki-eq', 'kieq']].forEach(([id, key]) => {
+       ['panel-kf-fbd', 'kffbd'], ['panel-kf-mom', 'kfmom'], ['panel-kf-res', 'kfres'], ['panel-kf-eq', 'kfeq'], ['panel-kw-res', 'kwres'], ['panel-kw-eq', 'kweq'], ['panel-ki-res', 'kires'], ['panel-ki-eq', 'kieq']].forEach(([id, key]) => {
         const el = document.getElementById(id);
         if (el) { el.dataset.vis = key; io.observe(el); }
       });
@@ -5694,6 +5795,7 @@
       sc: { kF: 0.02, kv: 0.3, ka: 0.15 }, kFeff: 0.02,
       traj: null, dirty: true, drag: null, cur: null, hit: null, hover: '',
       series: null, seriesTr: null, eqPt: '',
+      fbd: { pt: 'G', custom: null, kd: 'G', arm: true },   // ① FBD panel: moment centre P, kinetic-diagram form, moment arms
       note: '', preset: 'kn_default'
     };
 
@@ -6599,8 +6701,8 @@
     const KN_NOTE_DEFAULT = '<b>기본 상태</b> — 매끄러운 수평면 위에 놓인 직사각형 판(m = 10 kg)을 위에서 내려다본 모습입니다 (중력 없음). 오른쪽 끝 가까이에 힘 F1 = 20 N이 +y 방향으로 작용합니다. ' +
       '<b>강체를 누른 채 끌면</b> 그 점에 새 힘이 생기고, 화살표 끝 <b>○</b>를 끌면 크기·방향이, 작용점 <b>●</b>을 끌면 위치가 바뀝니다. t = 0에서 ā = ΣF/m, α = ΣM<sub>G</sub>/Ī 를 확인한 다음 재생해 보세요.';
     const KN_P_STRIKE = { shape: 'bar', dims: { L: 1.2 }, m: 4, cons: 'free', T: 3, follow: true, els: [{ type: 'force', p: [0.6, 0], F: [0, 12] }] };
-    const KN_P_PEND = { shape: 'bar', dims: { L: 1.0 }, m: 3, cons: 'pin', pinKey: 'L', gravity: true, T: 4, follow: false, els: [] };
-    const KN_P_ROLL = { shape: 'disk', dims: { r: 0.25 }, m: 8, cons: 'roll', gravity: true, mus: 0.25, muk: 0.2, T: 3, follow: true, els: [{ type: 'force', p: [0, 0], F: [30, 0] }] };
+    const KN_P_PEND = { shape: 'bar', dims: { L: 1.0 }, m: 3, cons: 'pin', pinKey: 'L', gravity: true, T: 4, follow: false, fbdPt: 'O', els: [] };
+    const KN_P_ROLL = { shape: 'disk', dims: { r: 0.25 }, m: 8, cons: 'roll', gravity: true, mus: 0.25, muk: 0.2, T: 3, follow: true, fbdPt: 'C', els: [{ type: 'force', p: [0, 0], F: [30, 0] }] };
     const KN_PRESETS = {
       kn_default: { shape: 'rect', dims: { b: 0.8, h: 0.5 }, m: 10, cons: 'free', T: 5, follow: true, els: [{ type: 'force', p: [0.4, 0.1], F: [0, 20] }], note: KN_NOTE_DEFAULT },
       kn_strike: { ...KN_P_STRIKE, show: { zacc: true },
@@ -6628,14 +6730,14 @@
         note: '<b>구름 바퀴의 운동량</b> — 마찰력도 외력이므로 선운동량을 바꿉니다: G₂ − G₁ = ∫(P + F) dt. G에 대한 각운동량 H<sub>G</sub> = Īω의 변화는 마찰력의 모멘트 rF (P는 G를 지나므로 모멘트 0)의 충격량과 같습니다. 표에서 각 힘의 충격량을 비교하세요.' },
       // Sample Problem 6/4: m = 7.5 kg, k_O = 295 mm, r̄ = 250 mm. A slender bar with the same m, I_O and r̄
       // (k̄² = k_O² − r̄² → L = √(12 k̄²) = 542.5 mm) has the same rotational motion. Opens at θ = −60° (book: 60° below the horizontal).
-      kn_sp64: { shape: 'bar', dims: { L: 0.54249 }, m: 7.5, cons: 'pin', pin: [-0.25, 0], gravity: true, T: 2, follow: false, tAtThetaDeg: -60, els: [],
+      kn_sp64: { shape: 'bar', dims: { L: 0.54249 }, m: 7.5, cons: 'pin', pin: [-0.25, 0], gravity: true, T: 2, follow: false, tAtThetaDeg: -60, fbdPt: 'O', els: [],
         note: '<b>교재 예제 6/4</b> — 질량 7.5 kg, 피벗 O에 대한 회전 반경 k<sub>O</sub> = 295 mm, r̄ = OG = 250 mm인 진자를 θ = 0 (수평)에서 가만히 놓을 때, θ = 60°에서 베어링이 받는 힘을 구합니다. ' +
           '회전 운동에는 m, I<sub>O</sub> = mk<sub>O</sub>², r̄만 필요하므로 같은 값을 갖는 가는 막대 (L = 542.5 mm, k̄ = 156.6 mm)로 계산합니다. 시간을 <b>θ = −60° (교재의 60°) 순간</b>에 맞춰 두었습니다.<br>' +
           '교재 해답: ω² = 48.8 (rad/s)², α = 14.1 rad/s², O<sub>n</sub> = 155.2 N, O<sub>t</sub> = 10.37 N, <b>O = 155.6 N</b> (표의 R<sub>O</sub>). 타격 중심 q = k<sub>O</sub>²/r̄ = 348 mm.' },
       kn_sp64_energy: { shape: 'bar', dims: { L: 0.54249 }, m: 7.5, cons: 'pin', pin: [-0.25, 0], gravity: true, T: 2, follow: false, tAtThetaDeg: -60, els: [],
         note: '<b>교재 예제 6/4 — 에너지로 ω 구하기</b> — 핀 반력은 일을 하지 않으므로 운동에너지는 중력이 한 일과 같습니다: ½I<sub>O</sub>ω² = mg r̄ sin θ. ' +
           'θ = 60°에서 ω² = 2(7.5)(9.81)(0.25) sin 60° / (7.5 × 0.295²) = 48.8 (rad/s)² → ω = 6.99 rad/s (교재 해답과 같음). 시간을 <b>θ = −60° (교재의 60°) 순간</b>에 맞춰 두었습니다. 같은 진자를 가는 막대 (L = 542.5 mm)로 바꾸어 계산합니다 (m, I<sub>O</sub>, r̄가 같음).' },
-      kn_crate: { shape: 'rect', dims: { b: 0.6, h: 1.0 }, m: 20, cons: 'rail', gravity: true, T: 3, follow: true,
+      kn_crate: { shape: 'rect', dims: { b: 0.6, h: 1.0 }, m: 20, cons: 'rail', gravity: true, T: 3, follow: true, fbdPt: 'A',
         els: [{ type: 'force', p: [-0.3, 0.4], F: [60, 0] }],
         note: '<b>병진: 바닥 위의 상자 밀기</b> — 매끄러운 바닥 위의 상자 (0.6 m × 1.0 m, m = 20 kg)를 뒤쪽 위 (G에서 0.4 m 위)에서 P = 60 N으로 밉니다. 병진이므로 α = 0 → ā = P/m = 3 m/s². ΣM<sub>G</sub> = 0이 되도록 바닥이 앞쪽 모서리를 더 세게 받칩니다: N<sub>A</sub> (뒤) = 58.1 N, N<sub>B</sub> (앞) = 138.1 N. ' +
           'P를 147 N보다 크게 하면 N<sub>A</sub> &lt; 0 → 상자가 앞으로 넘어지기(전도) 시작합니다. (교재 예제 6/1에서 트럭의 앞뒤 바퀴 반력을 구하는 방법과 같습니다.)' },
@@ -6673,6 +6775,7 @@
         else kn.els.push(knMakeForce({ x: e.p[0], y: e.p[1] }, { x: e.F[0], y: e.F[1] }, e.frame || 'fixed', e.t ? e.t[0] : 0, e.t ? e.t[1] : null));
       });
       kn.probes = []; kn.nextP = 1;
+      kn.fbd.pt = p.fbdPt || 'G'; kn.fbd.custom = null;
       kn.show = { ...KN_SHOW_DEFAULT, ...(p.show || {}) };
       kn.follow = p.follow !== false;
       kn.speed = p.speed || 1;
@@ -6949,6 +7052,7 @@
         const now = performance.now();
         if (!state.isPlaying || now - kfEqLast > 150) { kfEqLast = now; renderKfEquations(st); }
       }
+      updateKfFbd(st);
     }
 
     const texSum = vals => (vals.length ? vals.map((v, i) => (i === 0 ? tq(v) : (v < 0 ? ` - ${tq(-v)}` : ` + ${tq(v)}`))).join('') : '0');
@@ -7030,6 +7134,583 @@
         \\end{aligned}`]);
       }
       renderEqSections(box, secs, `kf|${kn.cons}|${st.mode}|${!!q}`);
+    }
+
+    /* ---------- ① Free-body diagram = kinetic diagram, and the moment equation about a chosen point P ----------
+       Left: every load on the isolated body (applied loads acting now + reactions; for the rectangle on the
+       floor the reaction is drawn as N_A, N_B at its corners). Right: m ā through G and the couple Ī α, or the
+       same resultant split about P: m a_P + m α×ρ̄ − m ω²ρ̄ at G (ρ̄ = r_G/P), whose moment about P is
+       I_P α + ρ̄ × m a_P with I_P = Ī + m ρ̄² (parallel-axis theorem).
+       P is a point of the body (or of its extension): G, the pin O, the contact point C, the corners A / B,
+       load points, probes, the point of zero acceleration Z, the instantaneous centre IC, or a clicked point. */
+    const FBD_COL = { P: '#fef08a', ma: '#c084fc', Ia: '#e879f9', maP: '#f472b6', mra: '#fb923c', mrw: '#94a3b8', rho: '#e2e8f0', t1: '#fcd34d', t2: '#d8b4fe' };
+    const fbdCv = document.getElementById('kf_fbd_cv');
+    const fbdCtx = fbdCv ? fbdCv.getContext('2d') : null;
+    let fbdGeom = null;                                   // last drawing (halves and their view) for clicks on the diagrams
+    let kfMomSig = '', kfMomCells = {}, kfMomLast = 0, kfChipSig = '';
+    const kfTexName = key => `${key[0]}_{${key.slice(1)}}`;                  // F1 → F_{1}, S2 → S_{2}
+    const kfSubHtml = s => s.replace(/_(\w+)$/, '<sub>$1</sub>');               // R_O → R<sub>O</sub>
+    const kfParen = v => (v < 0 ? `(${tq(v)})` : tq(v));
+
+    // Loads of the free-body diagram: { key, name, tex, kind, F, at (world), Mz, color, reac, dir (known direction of
+    // the line of action, null = not known beforehand), push (drawn pushing on the body) }
+    function knFbdLoads(st) {
+      const D = st.D, out = [];
+      D.loads.forEach(L => {
+        if (L.kind === 'couple') {
+          if (L.on && Math.abs(L.Mz) > 1e-12) out.push({ key: 'M', name: 'M', tex: 'M', kind: 'couple', F: ZERO, at: L.at, Mz: L.Mz, color: KN_COL.F, dir: null });
+          return;
+        }
+        if (L.kind === 'force' && !L.on) return;
+        const grav = L.kind === 'gravity';
+        out.push({ key: L.key, name: grav ? 'W' : L.key, tex: grav ? 'W' : kfTexName(L.key), kind: L.kind, F: L.F, at: L.at, Mz: 0,
+          color: L.kind === 'spring' ? KN_COL.S : grav ? KN_COL.W : KN_COL.F, dir: Vec.len(L.F) > 1e-12 ? Vec.unit(L.F) : null });
+      });
+      const feet = knFeet(st), UP = { x: 0, y: 1 };
+      D.reac.forEach(r => {
+        const base = { reac: true, kind: r.kind, F: r.F, at: r.at, Mz: r.Mz, color: KN_COL.R, dir: null };
+        if (kn.cons === 'rail' && feet) {   // the floor reaction N and the couple C are carried by the two corners
+          if (r.key === 'N') {
+            [['NA', 'N_A', feet.A, feet.NA], ['NB', 'N_B', feet.B, feet.NB]].forEach(([k, nm, pb, Nv]) =>
+              out.push({ ...base, key: k, name: nm, tex: nm, F: { x: 0, y: Nv }, at: knPointKin(st, pb).pos, dir: UP, push: true }));
+          }
+          return;
+        }
+        if (r.key === 'R') out.push({ ...base, key: 'R', name: 'R_O', tex: 'R_O' });
+        else if (r.key === 'N') out.push({ ...base, key: 'N', name: 'N', tex: 'N', dir: UP, push: kn.cons === 'roll' });
+        else if (r.key === 'Ff') out.push({ ...base, key: 'Ff', name: 'F_f', tex: 'F_f', dir: { x: 1, y: 0 } });
+        else if (r.key === 'C') out.push({ ...base, key: 'C', name: 'C', tex: 'C' });
+      });
+      return out;
+    }
+
+    function knFbdDefaultCustom() {
+      const kp = knKeyPoints();
+      const k = ['TL', 'T', 'Rq'].map(c => kp.find(q => q[0] === c)).find(Boolean) || kp[kp.length - 1];
+      return { x: r3(k[2]), y: r3(k[3]) };
+    }
+
+    // Candidate moment centres: { key, name, tex, label, p (body coordinates; null when the point does not exist now) }
+    function knFbdPoints(st) {
+      const P = st.P, s = st.s, D = st.D, th = s[2], w = s[5], al = D.al;
+      const out = [{ key: 'G', name: 'G', tex: 'G', label: '질량중심', p: ZERO }];
+      if (kn.cons === 'pin') out.push({ key: 'O', name: 'O', tex: 'O', label: '핀', p: { x: kn.pin.x, y: kn.pin.y } });
+      if (kn.cons === 'roll') out.push({ key: 'C', name: 'C', tex: 'C', label: '접촉점', p: Vec.rot({ x: 0, y: -P.r }, -th) });
+      const feet = knFeet(st);
+      if (feet) out.push({ key: 'A', name: 'A', tex: 'A', label: '왼쪽 모서리', p: feet.A }, { key: 'B', name: 'B', tex: 'B', label: '오른쪽 모서리', p: feet.B });
+      kn.els.forEach(e => out.push({ key: `el:${e.id}`, name: e.id, tex: `\\text{${e.id}}`, label: '작용점', p: e.p }));
+      kn.probes.forEach(pr => out.push({ key: `pr:${pr.id}`, name: pr.id, tex: `\\text{${pr.id}}`, label: '관찰점', p: pr.p }));
+      const far = 50 * P.R;
+      if (kn.cons === 'free' || kn.cons === 'roll') {   // with a pin both points are O; in translation they do not exist
+        const det = w * w * w * w + al * al;
+        let z = null;
+        if (det > 1e-12) {
+          const q = { x: (D.ax * w * w - al * D.ay) / det, y: (w * w * D.ay + al * D.ax) / det };
+          if (Vec.len(q) < far) z = Vec.rot(q, -th);
+        }
+        out.push({ key: 'Z', name: 'Z', tex: 'Z', label: '가속도 0인 점', p: z });
+      }
+      if (kn.cons === 'free') {   // rolling without slip: the instantaneous centre is C
+        let c = null;
+        if (Math.abs(w) > 1e-9) {
+          const q = { x: -s[4] / w, y: s[3] / w };
+          if (Vec.len(q) < far) c = Vec.rot(q, -th);
+        }
+        out.push({ key: 'IC', name: 'IC', tex: '\\text{IC}', label: '순간중심 (v = 0)', p: c });
+      }
+      out.push({ key: 'custom', name: 'P', tex: 'P', label: '직접 지정', p: kn.fbd.custom || knFbdDefaultCustom() });
+      return out;
+    }
+
+    // Moments about the body point q: ΣM_P of the free-body diagram and the moment of the kinetic diagram,
+    // Īα + ρ̄ × mā = I_P α + ρ̄ × m a_P
+    function knMomentAbout(st, q, loads) {
+      const P = st.P, m = P.m, D = st.D, al = D.al, aG = { x: D.ax, y: D.ay };
+      const k = knPointKin(st, q.p), Pw = k.pos, rho = Vec.mul(k.r, -1);
+      const tol = 1e-7 * P.R;
+      const terms = loads.map(L => {
+        const r = Vec.sub(L.at, Pw), isC = L.kind === 'couple' || L.kind === 'rcouple';
+        const Fm = Vec.len(L.F), M = Vec.cross(r, L.F) + L.Mz;
+        const d = isC || Fm < 1e-12 ? 0 : Math.abs(Vec.cross(r, L.F)) / Fm;
+        // A load drops out of the moment equation when its line of action passes through P
+        // (the pin reaction, whose direction is not known beforehand, only when P is the pin itself)
+        const drop = !isC && (L.dir ? Math.abs(Vec.cross(r, L.dir)) < tol : Vec.len(r) < tol);
+        return { L, r, M, d, drop, isC };
+      });
+      const rho2 = Vec.dot(rho, rho), IP = P.IG + m * rho2, aLen = Vec.len(aG);
+      const IGal = P.IG * al, rxma = m * Vec.cross(rho, aG);
+      return {
+        q, Pw, rho, rhoL: Math.sqrt(rho2), aP: k.a, terms,
+        SMP: terms.reduce((acc, t) => acc + t.M, 0),
+        SF: loads.reduce((acc, L) => Vec.add(acc, L.F), ZERO),
+        IGal, rxma, KD: IGal + rxma, dma: aLen > 1e-12 ? Math.abs(Vec.cross(rho, aG)) / aLen : 0,
+        IP, IPal: IP * al, rxmaP: m * Vec.cross(rho, k.a)
+      };
+    }
+
+    // Does ΣM_P = I_P α hold here (ρ̄ × m a_P = 0)? 'G' (P = G), 'a0' (a_P = 0), 'par' (a_P ∥ ρ̄) or '' (no)
+    function knIpCase(A, st) {
+      const P = st.P, D = st.D, w = st.s[5];
+      const aRef = Math.max(Math.hypot(D.ax, D.ay), P.R * Math.abs(D.al), P.R * w * w, 1e-9);
+      if (A.rhoL < 1e-7 * P.R) return 'G';
+      if (Vec.len(A.aP) < 1e-6 * aRef) return 'a0';
+      if (Math.abs(A.rxmaP) < 1e-6 * P.m * aRef * Math.max(A.rhoL, P.R)) return 'par';
+      return '';
+    }
+
+    function kfFbdAnalysis(st) {
+      const loads = knFbdLoads(st), pts = knFbdPoints(st);
+      let sel = pts.find(q => q.key === kn.fbd.pt && q.p);
+      const missing = !sel;
+      if (!sel) sel = pts[0];
+      return { loads, pts, sel, missing, A: knMomentAbout(st, sel, loads) };
+    }
+
+    /* Drawing: the two diagrams borrow the main-canvas helpers (arrows, curls, label layout) by pointing ctx
+       and the view (state.viewW/H, scale, originOffset) at one half of the diagram canvas for a moment. */
+    function fbdBox(lines, corner) {
+      ctx.save();
+      const fonts = lines.map(l => (l[2] ? "bold 11.5px Inter, 'Noto Sans KR', sans-serif" : "11px Inter, 'Noto Sans KR', sans-serif"));
+      let w = 0;
+      lines.forEach((l, i) => { ctx.font = fonts[i]; w = Math.max(w, ctx.measureText(l[0]).width); });
+      w += 14;
+      const lh = 15, h = lines.length * lh + 8, x = 6, y = corner === 'bl' ? state.viewH - h - 6 : 6;
+      ctx.fillStyle = 'rgba(15, 23, 42, 0.88)'; ctx.strokeStyle = '#334155'; ctx.lineWidth = 1;
+      ctx.beginPath();
+      if (ctx.roundRect) ctx.roundRect(x, y, w, h, 6); else ctx.rect(x, y, w, h);
+      ctx.fill(); ctx.stroke();
+      ctx.textBaseline = 'middle';
+      lines.forEach((l, i) => { ctx.font = fonts[i]; ctx.fillStyle = l[1]; ctx.fillText(l[0], x + 7, y + 4 + lh * i + lh / 2 + 0.5); });
+      ctx.restore();
+      return { x, y, w, h };
+    }
+
+    // Force arrow at the world point `at` (tail there, or head there when it pushes on the body), with a dark
+    // outline so that it stays visible over the body; very short arrows are drawn 14 px long
+    function fbdArrow(at, vec, k, color, width, head, label, prio, push, dashed) {
+      let v = vec;
+      const Lpx = Vec.len(vec) * k * state.scale;
+      if (Lpx > 1e-9 && Lpx < 14) v = Vec.mul(vec, 14 / Lpx);
+      const a = worldToPixel(at.x, at.y), dx = v.x * k * state.scale, dy = -v.y * k * state.scale;
+      const from = push ? { px: a.px - dx, py: a.py - dy } : a, to = push ? a : { px: a.px + dx, py: a.py + dy };
+      ctx.save();
+      ctx.globalAlpha = 0.8;
+      drawArrow(ctx, from.px, from.py, to.px, to.py, '#0f172a', width + 3.5, head + 3, '', 9);
+      ctx.restore();
+      if (dashed) { ctx.save(); ctx.setLineDash([6, 4]); }
+      drawArrow(ctx, from.px, from.py, to.px, to.py, color, width, head, push ? '' : label, prio);
+      if (dashed) ctx.restore();
+      // a pushing reaction is labelled at its free end (its head sits on the body among other labels)
+      if (push && label) queueLabel(label, color, from.px, from.py, Math.atan2(from.py - to.py, from.px - to.px), prio);
+    }
+
+    // Moment arm: perpendicular from P to the line of action through `at` (unit direction dir)
+    function fbdArm(Pw, at, dir, color, label) {
+      const foot = Vec.add(at, Vec.mul(dir, Vec.dot(Vec.sub(Pw, at), dir)));
+      const a = worldToPixel(at.x, at.y), f = worldToPixel(foot.x, foot.y), p = worldToPixel(Pw.x, Pw.y);
+      const L = Math.hypot(p.px - f.px, p.py - f.py);
+      if (L < 4) return;
+      const ux = (p.px - f.px) / L, uy = (p.py - f.py) / L;     // foot → P
+      const dl = { x: dir.x, y: -dir.y };                        // line direction in pixels
+      const sg = (a.px - f.px) * dl.x + (a.py - f.py) * dl.y >= 0 ? 1 : -1;
+      ctx.save();
+      ctx.strokeStyle = color; ctx.lineCap = 'round';
+      ctx.setLineDash([3, 4]); ctx.globalAlpha = 0.5; ctx.lineWidth = 1.2;
+      ctx.beginPath(); ctx.moveTo(a.px, a.py); ctx.lineTo(f.px - sg * dl.x * 10, f.py - sg * dl.y * 10); ctx.stroke();   // line of action, extended
+      ctx.setLineDash([5, 3]); ctx.globalAlpha = 0.95; ctx.lineWidth = 1.6;
+      ctx.beginPath(); ctx.moveTo(p.px, p.py); ctx.lineTo(f.px, f.py); ctx.stroke();                                     // arm d
+      if (L > 14) {
+        const q = 6;
+        ctx.setLineDash([]); ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        ctx.moveTo(f.px + ux * q, f.py + uy * q);
+        ctx.lineTo(f.px + ux * q + sg * dl.x * q, f.py + uy * q + sg * dl.y * q);
+        ctx.lineTo(f.px + sg * dl.x * q, f.py + sg * dl.y * q);
+        ctx.stroke();
+      }
+      ctx.restore();
+      if (label) queueLabel(label, color, (p.px + f.px) / 2, (p.py + f.py) / 2, Math.atan2(-sg * dl.y, -sg * dl.x), 2);
+    }
+
+    // Moment centre P (kept inside the half, with a pointer, when it lies outside the drawing)
+    function fbdMarkP(Pw, name) {
+      const W = state.viewW, H = state.viewH, mg = 16, P0 = worldToPixel(Pw.x, Pw.y);
+      let p = P0, out = false;
+      if (P0.px < mg || P0.px > W - mg || P0.py < mg || P0.py > H - mg) {
+        out = true;
+        const cx = W / 2, cy = H / 2, dx = P0.px - cx, dy = P0.py - cy;
+        const t = Math.min((W / 2 - mg) / Math.max(Math.abs(dx), 1e-9), (H / 2 - mg) / Math.max(Math.abs(dy), 1e-9));
+        p = { px: cx + dx * t, py: cy + dy * t };
+      }
+      ctx.save();
+      ctx.lineCap = 'round';
+      [['#0f172a', 4.5], [FBD_COL.P, 2]].forEach(([c, lw]) => {
+        ctx.strokeStyle = c; ctx.lineWidth = lw;
+        ctx.beginPath(); ctx.arc(p.px, p.py, 7, 0, TAU); ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(p.px - 13, p.py); ctx.lineTo(p.px - 3, p.py); ctx.moveTo(p.px + 3, p.py); ctx.lineTo(p.px + 13, p.py);
+        ctx.moveTo(p.px, p.py - 13); ctx.lineTo(p.px, p.py - 3); ctx.moveTo(p.px, p.py + 3); ctx.lineTo(p.px, p.py + 13);
+        ctx.stroke();
+      });
+      if (out) {
+        const a = Math.atan2(P0.py - p.py, P0.px - p.px);
+        ctx.fillStyle = FBD_COL.P;
+        ctx.beginPath();
+        ctx.moveTo(p.px + 15 * Math.cos(a), p.py + 15 * Math.sin(a));
+        ctx.lineTo(p.px + 9 * Math.cos(a + 0.5), p.py + 9 * Math.sin(a + 0.5));
+        ctx.lineTo(p.px + 9 * Math.cos(a - 0.5), p.py + 9 * Math.sin(a - 0.5));
+        ctx.closePath(); ctx.fill();
+      }
+      ctx.restore();
+      overlay.dots.push({ x: p.px, y: p.py, r: 13 });
+      queueLabel(out ? `P = ${name} (그림 밖)` : `P = ${name}`, FBD_COL.P, p.px, p.py, -Math.PI * 0.3, 0, NAME_FONT);
+    }
+
+    // Left half: the free-body diagram
+    function drawFbdHalf(st, F, kF) {
+      const A = F.A, s = st.s, G = { x: s[0], y: s[1] }, Gp = worldToPixel(G.x, G.y), sel = A.q.key;
+      drawKnBody(st);
+      if (kn.cons === 'pin') {
+        const Op = worldToPixel(0, 0);
+        drawJoint(Op, '#e2e8f0', 4);
+        if (sel !== 'O') queueLabel('O', '#cbd5e1', Op.px, Op.py, Math.PI * 0.75, 0, NAME_FONT);
+      }
+      if (kn.cons === 'roll' && st.D.Cpt && sel !== 'C') { const c = worldToPixel(st.D.Cpt.x, st.D.Cpt.y); queueLabel('C', '#e2e8f0', c.px, c.py, Math.PI * 0.75, 0, NAME_FONT); }
+      const feet = knFeet(st);
+      if (feet) [['A', feet.A, Math.PI * 0.75], ['B', feet.B, Math.PI * 0.25]].forEach(([nm, pb, dir]) => {
+        if (sel === nm) return;
+        const q = knPointKin(st, pb).pos, c = worldToPixel(q.x, q.y);
+        queueLabel(nm, '#e2e8f0', c.px, c.py, dir, 0, NAME_FONT);
+      });
+      if (kn.fbd.arm) A.terms.forEach(t => {
+        if (t.isC || t.drop || Vec.len(t.L.F) < 1e-12) return;
+        fbdArm(A.Pw, t.L.at, Vec.unit(t.L.F), t.L.color, `d = ${fq(t.d)} m`);
+      });
+      F.loads.forEach(L => {
+        if (L.kind === 'couple' || L.kind === 'rcouple' || Vec.len(L.F) < 1e-12) return;
+        const at = worldToPixel(L.at.x, L.at.y);
+        fbdArrow(L.at, L.F, kF, L.color, 2.8, 11, `${L.name} = ${fq(Vec.len(L.F))} N`, 1, L.push);
+        ctx.save(); ctx.beginPath(); ctx.arc(at.px, at.py, 3.5, 0, TAU); ctx.fillStyle = L.color; ctx.fill(); ctx.restore();
+      });
+      const base = Vec.len(A.SF) > 1e-9 ? Math.atan2(A.SF.y, -A.SF.x) : Math.PI * 0.75;
+      let rad = 30;
+      F.loads.forEach(L => {
+        if ((L.kind !== 'couple' && L.kind !== 'rcouple') || Math.abs(L.Mz) < 1e-12) return;
+        drawSpinArrow(Gp.px, Gp.py, rad, Math.sign(L.Mz) * 5, L.color, `${L.name} = ${fq(L.Mz)} N·m${spinSym(L.Mz)}${L.reac ? ' (구속 우력)' : ''}`, base);
+        rad += 14;
+      });
+      fbdMarkP(A.Pw, A.q.name);
+      drawCG(Gp);
+      if (sel !== 'G') queueLabel('G', '#ffffff', Gp.px, Gp.py, -Math.PI * 0.8, 0, NAME_FONT);
+      return [
+        fbdBox([['자유물체도 (FBD)', FBD_COL.t1, true], ['떼어 낸 강체 + 모든 외력과 반력', '#94a3b8']], 'tl'),
+        fbdBox([[`ΣF = (${fq(A.SF.x)}, ${fq(A.SF.y)}) N`, '#fde68a', true], [`ΣM_${A.q.name} = ${fq(A.SMP)} N·m${spinSym(A.SMP)}`, FBD_COL.P, true]], 'bl')
+      ];
+    }
+
+    // Right half: the kinetic diagram (m ā and Ī α, or split about P)
+    function drawKdHalf(st, F, kF, V) {
+      const A = F.A, s = st.s, G = { x: s[0], y: s[1] }, Gp = worldToPixel(G.x, G.y), al = st.D.al, nm = A.q.name;
+      ctx.save(); ctx.globalAlpha = 0.35; drawKnBody(st); ctx.restore();
+      const base = Vec.len(V.ma) > 1e-9 ? Math.atan2(V.ma.y, -V.ma.x) : Math.PI * 0.75;
+      const curl = () => { if (Math.abs(al) > 1e-12) drawSpinArrow(Gp.px, Gp.py, 32, Math.sign(al) * 5, FBD_COL.Ia, `Ī α = ${fq(A.IGal)} N·m${spinSym(al)}`, base); };
+      let title, sum;
+      if (!V.split) {
+        if (kn.fbd.arm && Vec.len(V.ma) > 1e-12 && A.dma > 1e-9) fbdArm(A.Pw, G, Vec.unit(V.ma), FBD_COL.ma, `d = ${fq(A.dma)} m`);
+        if (Vec.len(V.ma) > 1e-12) fbdArrow(G, V.ma, kF, FBD_COL.ma, 3.2, 12, `m ā = ${fq(Vec.len(V.ma))} N`, 1);
+        curl();
+        title = [['운동 선도 (Kinetic Diagram)', FBD_COL.t2, true], ['G에 m ā, 우력 Ī α', '#94a3b8']];
+        sum = [[`m ā = (${fq(V.ma.x)}, ${fq(V.ma.y)}) N`, '#e9d5ff', true], [`Īα + ρ̄×mā = ${fq(A.KD)} N·m${spinSym(A.KD)}`, FBD_COL.P, true]];
+      } else {
+        const Pp = worldToPixel(A.Pw.x, A.Pw.y);
+        ctx.save(); ctx.setLineDash([2, 4]); ctx.strokeStyle = FBD_COL.rho; ctx.globalAlpha = 0.85; ctx.lineWidth = 1.4;
+        ctx.beginPath(); ctx.moveTo(Pp.px, Pp.py); ctx.lineTo(Gp.px, Gp.py); ctx.stroke(); ctx.restore();
+        const ra = Math.atan2(Gp.py - Pp.py, Gp.px - Pp.px);
+        queueLabel(`ρ̄ = ${fq(A.rhoL)} m`, FBD_COL.rho, (Pp.px + Gp.px) / 2, (Pp.py + Gp.py) / 2, ra + Math.PI / 2, 2);
+        if (kn.fbd.arm && Vec.len(V.maP) > 1e-12) {
+          const d = Math.abs(Vec.cross(A.rho, V.maP)) / Vec.len(V.maP);
+          if (d > 1e-9) fbdArm(A.Pw, G, Vec.unit(V.maP), FBD_COL.maP, `d = ${fq(d)} m`);
+        }
+        if (Vec.len(V.mrw) > 1e-12) fbdArrow(G, V.mrw, kF, FBD_COL.mrw, 2.2, 10, `m ρ̄ ω² = ${fq(Vec.len(V.mrw))} N`, 2, false, true);
+        if (Vec.len(V.mra) > 1e-12) fbdArrow(G, V.mra, kF, FBD_COL.mra, 2.8, 11, `m ρ̄ α = ${fq(Vec.len(V.mra))} N`, 1);
+        if (Vec.len(V.maP) > 1e-12) fbdArrow(G, V.maP, kF, FBD_COL.maP, 2.8, 11, `m a_${nm} = ${fq(Vec.len(V.maP))} N`, 1);
+        curl();
+        title = [['운동 선도 — P 기준으로 나눔', FBD_COL.t2, true], ['m ā = m a_P + m α×ρ̄ − m ω²ρ̄', '#94a3b8']];
+        const tot = A.IPal + A.rxmaP;
+        sum = [[`I_${nm} = Ī + mρ̄² = ${fq(A.IP)} kg·m²`, '#e9d5ff', true], [`I_${nm}α + ρ̄×m a_${nm} = ${fq(tot)} N·m${spinSym(tot)}`, FBD_COL.P, true]];
+      }
+      fbdMarkP(A.Pw, nm);
+      drawCG(Gp);
+      if (A.q.key !== 'G') queueLabel('G', '#ffffff', Gp.px, Gp.py, -Math.PI * 0.8, 0, NAME_FONT);
+      return [fbdBox(title, 'tl'), fbdBox(sum, 'bl')];
+    }
+
+    function drawKfFbd(st, F) {
+      if (!fbdCtx) return;
+      const wrap = fbdCv.parentElement, W = wrap.clientWidth;
+      if (W < 60) return;
+      const side = W >= 620, gap = side ? 36 : 30;
+      const hh = side ? Math.round(Math.min(400, Math.max(280, W * 0.36))) : Math.round(Math.min(340, Math.max(240, W * 0.8)));
+      const H = side ? hh : 2 * hh + gap;
+      if (wrap.style.height !== `${H}px`) wrap.style.height = `${H}px`;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const cw = Math.round(W * dpr), ch = Math.round(H * dpr);
+      if (fbdCv.width !== cw || fbdCv.height !== ch) { fbdCv.width = cw; fbdCv.height = ch; }
+      const hw = side ? (W - gap) / 2 : W;
+      const halves = (side ? [{ x0: 0, y0: 0 }, { x0: (W + gap) / 2, y0: 0 }] : [{ x0: 0, y0: 0 }, { x0: 0, y0: hh + gap }]).map(h => ({ ...h, w: hw, h: hh }));
+
+      const P = st.P, s = st.s, D = st.D, th = s[2], G = { x: s[0], y: s[1] }, w = s[5], al = D.al, m = P.m, A = F.A;
+      const ma = { x: m * D.ax, y: m * D.ay };
+      const split = kn.fbd.kd === 'P' && A.rhoL > 1e-7 * P.R;
+      const V = { ma, split, maP: Vec.mul(A.aP, m), mra: Vec.mul(Vec.kx(al, A.rho), m), mrw: Vec.mul(A.rho, -m * w * w) };
+      // One view and one force scale for both halves (so ΣF and m ā are drawn the same length).
+      // The longest arrow is about one body radius long; the largest scale at which the body, the arrows,
+      // the couples around G and a nearby P all fit is found by bisection (the drawing grows with the scale).
+      const body = P.g.verts.map(v => Vec.add(G, Vec.rot(v, th)));
+      if (kn.cons === 'pin') body.push(ZERO);
+      // a clicked point is not part of the fit, so that the view stays put while it is dragged
+      const nearP = A.q.key !== 'custom' && Vec.len(Vec.sub(A.Pw, G)) < 2.5 * P.R;
+      const arrows = [];
+      F.loads.forEach(L => { if (L.kind !== 'couple' && L.kind !== 'rcouple' && Vec.len(L.F) > 1e-12) arrows.push([L.at, L.F, !!L.push]); });
+      arrows.push([G, ma, false]);
+      if (split) [V.maP, V.mra, V.mrw].forEach(v => arrows.push([G, v, false]));
+      const Fm = Math.max(0, ...arrows.map(a => Vec.len(a[1])));
+      const top = 42, bot = 44, availW = hw - 24, availH = hh - top - bot;
+      const extent = sc => {
+        const Lmax = Math.min(Math.max(0.95 * P.R * sc, 36), 0.3 * Math.min(hw, hh));
+        const kpx = Fm > 1e-9 ? Lmax / Fm : 0;   // px per N
+        let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity;
+        const add = (x, y) => { x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y); };
+        body.forEach(p => add(p.x * sc, p.y * sc));
+        add(G.x * sc - 40, G.y * sc - 40); add(G.x * sc + 40, G.y * sc + 40);
+        if (nearP) { add(A.Pw.x * sc - 14, A.Pw.y * sc - 14); add(A.Pw.x * sc + 14, A.Pw.y * sc + 14); }
+        arrows.forEach(([p, v, push]) => {
+          const bx = p.x * sc, by = p.y * sc, sg = push ? -1 : 1;
+          add(bx, by); add(bx + sg * v.x * kpx, by + sg * v.y * kpx);
+        });
+        return { x0, x1, y0, y1, kpx };
+      };
+      let lo = 1e-3, hi = 1e6;
+      for (let i = 0; i < 48; i++) {
+        const mid = Math.sqrt(lo * hi), e = extent(mid);
+        if (e.x1 - e.x0 <= availW && e.y1 - e.y0 <= availH) lo = mid; else hi = mid;
+      }
+      const sc = lo, ext = extent(sc);
+      const ox = 12 + (availW - (ext.x1 - ext.x0)) / 2 - ext.x0;
+      const oy = top + (availH - (ext.y1 - ext.y0)) / 2 + ext.y1;
+      const kF = ext.kpx / sc;   // world length per N
+
+      const saved = { ctx, W: state.viewW, H: state.viewH, sc: state.scale, oo: state.originOffset };
+      ctx = fbdCtx;
+      try {
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx.clearRect(0, 0, W, H);
+        ctx.save();
+        [[halves[0], 'rgba(252, 211, 77, 0.28)'], [halves[1], 'rgba(216, 180, 254, 0.28)']].forEach(([hf, c]) => {
+          ctx.strokeStyle = c; ctx.lineWidth = 1;
+          ctx.beginPath();
+          if (ctx.roundRect) ctx.roundRect(hf.x0 + 2.5, hf.y0 + 2.5, hf.w - 5, hf.h - 5, 6); else ctx.rect(hf.x0 + 2.5, hf.y0 + 2.5, hf.w - 5, hf.h - 5);
+          ctx.stroke();
+        });
+        ctx.fillStyle = '#f8fafc'; ctx.font = "bold 30px Inter, 'Noto Sans KR', sans-serif";
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        if (side) ctx.fillText('=', W / 2, hh / 2); else ctx.fillText('=', W / 2, hh + gap / 2 + 1);
+        ctx.restore();
+        halves.forEach((hf, i) => {
+          ctx.save();
+          ctx.translate(hf.x0, hf.y0);
+          ctx.beginPath(); ctx.rect(0, 0, hf.w, hf.h); ctx.clip();
+          state.viewW = hf.w; state.viewH = hf.h; state.scale = sc; state.originOffset = { x: ox, y: oy };
+          resetOverlay();
+          placeLabels(i === 0 ? drawFbdHalf(st, F, kF) : drawKdHalf(st, F, kF, V));
+          ctx.restore();
+        });
+      } finally {
+        ctx = saved.ctx;
+        state.viewW = saved.W; state.viewH = saved.H; state.scale = saved.sc; state.originOffset = saved.oo;
+        resetOverlay();
+      }
+      fbdGeom = { halves, sc, ox, oy, G, th, pts: F.pts.filter(q => q.p).map(q => ({ key: q.key, w: knPointKin(st, q.p).pos })) };
+    }
+
+    // Buttons for the moment centre (rebuilt only when the set of points changes)
+    function kfFbdChips(F) {
+      const box = document.getElementById('kf_fbd_pts');
+      const sig = F.pts.map(q => q.key).join(',');
+      if (sig !== kfChipSig) {
+        kfChipSig = sig;
+        box.innerHTML = F.pts.map(q => `<button type="button" class="fbd-chip tap" data-fbd-pt="${q.key}" aria-pressed="false" title="${q.name}: ${q.label}">${q.name}<small>${q.label}</small></button>`).join('');
+      }
+      const has = F.pts.some(q => q.key === kn.fbd.pt);
+      box.querySelectorAll('[data-fbd-pt]').forEach(b => {
+        const on = String(has ? b.dataset.fbdPt === kn.fbd.pt : b.dataset.fbdPt === 'G');
+        if (b.getAttribute('aria-pressed') !== on) b.setAttribute('aria-pressed', on);
+      });
+    }
+
+    // Moment panel: equations, notes, the table of moments about P and the comparison over several points
+    function updateKfMom(st, F) {
+      const A = F.A, q = A.q, P = st.P, m = P.m, D = st.D, al = D.al, aG = { x: D.ax, y: D.ay }, n = q.tex, nm = q.name;
+      knSetHtml('kf_mom_pt', `<i class="fa-solid fa-crosshairs"></i> P = ${nm} (${q.label})`);
+      const cmpRows = F.pts.filter(p => p.p);
+      const sig = `${F.loads.map(L => L.key).join(',')}|${cmpRows.map(p => p.key).join(',')}`;
+      if (sig !== kfMomSig) {
+        kfMomSig = sig;
+        const tb = document.getElementById('kf_mom_tb');
+        tb.innerHTML = F.loads.map(L => `<tr><td class="nm"><span class="dot" style="background:${L.color}"></span>${kfSubHtml(L.name)}${L.reac ? ` ${knSmall('반력')}` : ''}</td><td data-c="r${L.key}"></td><td data-c="f${L.key}"></td><td data-c="d${L.key}"></td><td data-c="m${L.key}"></td><td class="desc" data-c="n${L.key}"></td></tr>`).join('') +
+          '<tr class="total"><td class="nm">ΣM<sub>P</sub></td><td class="desc">자유물체도의 합</td><td data-c="totf"></td><td>—</td><td data-c="totm"></td><td class="desc">외력 + 반력</td></tr>' +
+          '<tr class="sub"><td class="nm">Ī α</td><td>—</td><td>—</td><td>—</td><td data-c="kia"></td><td class="desc">운동 선도의 우력 (어느 점에서나 같음)</td></tr>' +
+          '<tr class="sub"><td class="nm">ρ̄ × m ā</td><td data-c="krho"></td><td data-c="kma"></td><td data-c="kd"></td><td data-c="kmm"></td><td class="desc">G를 지나는 m ā의 모멘트 (r 칸 = ρ̄, F 칸 = m ā)</td></tr>' +
+          '<tr class="total"><td class="nm">운동 선도의 합</td><td class="desc">Īα + ρ̄ × mā</td><td>—</td><td>—</td><td data-c="kdt"></td><td class="desc" data-c="kchk"></td></tr>';
+        const tc = document.getElementById('kf_cmp_tb');
+        tc.innerHTML = cmpRows.map(p => `<tr data-fbd-pt="${p.key}"><td class="nm">${p.name} ${knSmall(p.label)}</td>${['r', 'i', 's', 'k', 'a', 'c', 'v'].map(c => `<td data-c="c${c}|${p.key}"></td>`).join('')}</tr>`).join('');
+        kfMomCells = {};
+        [tb, tc].forEach(b => b.querySelectorAll('[data-c]').forEach(td => { kfMomCells[td.dataset.c] = td; }));
+      }
+      const set = (k, t) => setText(kfMomCells[k], t);
+      A.terms.forEach(t => {
+        const k = t.L.key;
+        set(`r${k}`, t.isC ? '—' : fxy(t.r));
+        set(`f${k}`, t.isC ? `우력 ${fq(t.L.Mz)} N·m` : fxy(t.L.F));
+        set(`d${k}`, t.isC ? '—' : fq(t.d));
+        set(`m${k}`, fq(t.M));
+        set(`n${k}`, t.isC ? '우력: 어느 점에 대해서도 같은 모멘트' : t.drop ? 'P를 지남 → 0 (식에서 빠짐)' : t.L.reac ? '반력 (모르는 값으로 식에 남음)' : '');
+        const td = kfMomCells[`m${k}`];
+        if (td) td.classList.toggle('drop', t.drop);
+      });
+      set('totf', fxy(A.SF)); set('totm', fq(A.SMP));
+      set('kia', fq(A.IGal));
+      set('krho', fxy(A.rho)); set('kma', fxy(Vec.mul(aG, m))); set('kd', fq(A.dma)); set('kmm', fq(A.rxma));
+      set('kdt', fq(A.KD));
+      const scaleM = Math.max(Math.abs(A.SMP), Math.abs(A.KD), Math.abs(A.IGal), Math.abs(A.rxma), 1e-9);
+      const good = Math.abs(A.SMP - A.KD) <= 1e-6 * scaleM + 1e-9;
+      set('kchk', good ? '= ΣM_P (자유물체도) ✓' : `ΣM_P와 차이 ${fq(A.SMP - A.KD)}`);
+      // comparison over the candidate points
+      const verdict = { G: '✓ P = G', a0: '✓ a_P = 0', par: '✓ a_P ∥ ρ̄', '': '✗ 보정항 필요' };
+      cmpRows.forEach(p => {
+        const B = p.key === q.key ? A : knMomentAbout(st, p, F.loads), cs = knIpCase(B, st);
+        set(`cr|${p.key}`, fq(B.rhoL)); set(`ci|${p.key}`, fq(B.IP)); set(`cs|${p.key}`, fq(B.SMP)); set(`ck|${p.key}`, fq(B.KD));
+        set(`ca|${p.key}`, fq(B.IPal)); set(`cc|${p.key}`, fq(B.rxmaP)); set(`cv|${p.key}`, verdict[cs]);
+        const tv = kfMomCells[`cv|${p.key}`];
+        if (tv) { tv.classList.toggle('ok', !!cs); tv.classList.toggle('no', !cs); }
+      });
+      document.querySelectorAll('#kf_cmp_tb tr[data-fbd-pt]').forEach(tr => tr.classList.toggle('sel', tr.dataset.fbdPt === q.key));
+
+      // Notes: which loads drop out, which reactions remain, is ΣM_P = I_P α allowed here, a hint for a good point
+      const cs = knIpCase(A, st), lines = [];
+      if (F.missing) lines.push(`<span class="no">선택한 점이 지금은 없습니다</span> (예: ω = 0이면 순간중심이 무한히 멀리 있음) — 이 순간은 G에 대해 계산했습니다.`);
+      const dropped = A.terms.filter(t => t.drop).map(t => kfSubHtml(t.L.name));
+      lines.push(`<b>식에서 빠지는 하중</b> (작용선이 P를 지나 모멘트 0): ${dropped.length ? dropped.join(', ') : '없음'}`);
+      if (F.loads.some(L => L.reac)) {
+        const rem = A.terms.filter(t => t.L.reac && !t.drop).map(t => kfSubHtml(t.L.name) + (t.isC ? ' (우력)' : ''));
+        lines.push(rem.length
+          ? `<b>이 식에 남는 반력</b>: ${rem.join(', ')} — ΣF = mā 식과 함께 풀어야 합니다.`
+          : '<span class="ok">반력이 모두 빠졌습니다</span> — 이 모멘트 식에는 모르는 반력이 없어 이것만으로 풀 수 있습니다.');
+      }
+      const sub = `<sub>${nm}</sub>`;
+      if (cs === 'G') lines.push('<span class="ok">P = G</span>: ρ̄ = 0 이므로 ΣM<sub>G</sub> = Īα — 가장 기본적인 꼴입니다.');
+      else if (cs === 'a0') lines.push(`<span class="ok">a${sub} = 0</span> (${q.key === 'O' ? '고정된 핀' : '가속도가 0인 점'}) 이므로 ρ̄ × m a${sub} = 0 → <b>ΣM${sub} = I${sub}α</b> 로 쓸 수 있습니다. I${sub} = Ī + m ρ̄² = ${fq(P.IG)} + ${fq(m)}(${fq(A.rhoL)})² = ${fq(A.IP)} kg·m².`);
+      else if (cs === 'par') lines.push(`<span class="ok">a${sub} ∥ ρ̄</span> (P의 가속도가 G를 향하거나 G에서 멀어지는 방향${q.key === 'C' && st.mode === 0 ? ' — 미끄러지지 않고 구르는 바퀴의 접촉점은 a<sub>C</sub> = rω²로 G를 향함' : ''}) 이므로 ρ̄ × m a${sub} = 0 → <b>ΣM${sub} = I${sub}α</b> 로 쓸 수 있습니다. I${sub} = ${fq(A.IP)} kg·m².`);
+      else lines.push(`<span class="no">주의</span>: 여기서는 ρ̄ × m a${sub} = ${fq(A.rxmaP)} N·m ≠ 0 이므로 <b>ΣM${sub} = I${sub}α 로 쓰면 틀립니다</b> (I${sub}α = ${fq(A.IPal)} N·m, 실제 ΣM${sub} = ${fq(A.SMP)} N·m). 운동 선도의 모멘트 Īα + ρ̄ × mā를 그대로 쓰거나, I${sub}α에 ρ̄ × m a${sub}를 더해야 합니다.` +
+        (q.key === 'IC' ? ' 순간중심은 속도만 0이고 가속도는 0이 아니어서 일반적으로 이 꼴이 성립하지 않습니다.' : ''));
+      if ((kn.cons === 'trans' || kn.cons === 'rail') && cs !== 'G') lines.push(`병진이므로 α = 0 → Īα = 0 이지만, G가 아닌 점에 대한 모멘트 합은 ΣM${sub} = ρ̄ × mā (= ± m ā d) = ${fq(A.KD)} N·m 로 <b>0이 아닙니다</b>.`);
+      let tip = '';
+      if (kn.cons === 'pin' && q.key !== 'O') tip = '핀 O에 대해 모멘트를 잡으면 핀 반력 R<sub>O</sub>가 빠지고 a<sub>O</sub> = 0 이므로 ΣM<sub>O</sub> = I<sub>O</sub>α 하나로 α를 바로 구합니다.';
+      else if (kn.cons === 'roll' && q.key !== 'C') tip = '접촉점 C에 대해 잡으면 N과 마찰력 F<sub>f</sub>가 함께 빠집니다. 미끄러지지 않고 구르면 ΣM<sub>C</sub> = I<sub>C</sub>α 입니다.';
+      else if (kn.cons === 'rail' && knFeet(st) && q.key !== 'A' && q.key !== 'B') tip = '모서리 A (또는 B)에 대해 잡으면 N<sub>A</sub> (N<sub>B</sub>)가 빠져 다른 쪽 반력을 바로 구할 수 있습니다 (병진: ΣM<sub>A</sub> = m ā d).';
+      else if (kn.cons === 'free' && q.key !== 'G') tip = '반력이 없는 자유 운동에서는 G에 대한 ΣM<sub>G</sub> = Īα가 가장 간단합니다. 가속도 0인 점 Z에 대해서도 ΣM<sub>Z</sub> = I<sub>Z</sub>α 가 성립합니다.';
+      if (tip) lines.push(`<b>팁</b>: ${tip}`);
+      knSetHtml('kf_mom_note', lines.join('<br>'));
+
+      // Equations (KaTeX)
+      const box = knEqBox('kf_mom_eq', 'panel-kf-mom');
+      if (!box) return;
+      const ub = (v, lab, gray) => `\\underbrace{${gray ? '\\color{#94a3b8}' : ''}${kfParen(v)}}_{${lab}}`;
+      const fl = F.loads.filter(L => L.kind !== 'couple' && L.kind !== 'rcouple');
+      const comp = c => `\\textstyle\\sum F_${c} &= ${fl.length && fl.length <= 6 ? fl.map(L => ub(L.F[c], L.tex)).join(' + ') + ' = ' : ''}${tq(A.SF[c])}${TX.N} \\;=\\; m\\bar a_${c} = (${tq(m)})(${tq(aG[c])}) = ${tq(m * aG[c])}${TX.N}`;
+      const secs = [];
+      secs.push(['① 힘의 식 ΣF = m ā — 기준점과 상관없이 같습니다 (반력 포함)', `\\begin{aligned}${comp('x')}\\\\ ${comp('y')}\\end{aligned}`]);
+      const mt = A.terms;
+      secs.push([`② P = ${nm}에 대한 모멘트 — 자유물체도 (모든 외력과 반력, 회색 = P를 지나 0)`,
+        `\\textstyle\\sum M_{${n}} = \\sum(\\mathbf r_{i/${n}}\\times\\mathbf F_i) + \\sum M = ${mt.length && mt.length <= 7 ? mt.map(t => ub(t.M, t.L.tex, t.drop)).join(' + ') + ' = ' : ''}${tq(A.SMP)}${TX.Nm}`]);
+      const rho = A.rho, maV = Vec.mul(aG, m), maPV = Vec.mul(A.aP, m);
+      secs.push(['③ 운동 선도의 모멘트 — G 기준 (m ā는 G를 지나고, Ī α는 우력)', `\\begin{aligned}
+        \\bar{\\boldsymbol\\rho} &= \\mathbf r_{G/${n}} = ${texCol(rho)}\\,\\text{m},\\qquad m\\bar{\\mathbf a} = ${texCol(maV)}${TX.N}\\\\
+        \\bar I\\alpha + \\bar{\\boldsymbol\\rho}\\times m\\bar{\\mathbf a} &= (${tq(P.IG)})(${tq(al)}) + \\big[(${tq(rho.x)})(${tq(maV.y)}) - (${tq(rho.y)})(${tq(maV.x)})\\big] = ${tq(A.IGal)} + ${kfParen(A.rxma)} = ${tq(A.KD)}${TX.Nm}\\\\
+        &\\phantom{=}\\ \\ \\big(\\,|\\bar{\\boldsymbol\\rho}\\times m\\bar{\\mathbf a}| = m\\bar a\\,d,\\quad d = ${tq(A.dma)}\\,\\text{m}\\,\\big)
+      \\end{aligned}`]);
+      secs.push([`④ 같은 식을 P = ${nm}의 관성 모멘트로 — 평행축 정리 I<sub>P</sub> = Ī + m ρ̄²`, `\\begin{aligned}
+        I_{${n}} &= \\bar I + m|\\bar{\\boldsymbol\\rho}|^2 = ${tq(P.IG)} + (${tq(m)})(${tq(A.rhoL)})^2 = ${tq(A.IP)}${TX.kgm2}\\\\
+        \\mathbf a_{${n}} &= \\bar{\\mathbf a} - \\boldsymbol\\alpha\\times\\bar{\\boldsymbol\\rho} + \\omega^2\\bar{\\boldsymbol\\rho} = ${texCol(A.aP)}${TX.ua}\\\\
+        I_{${n}}\\alpha + \\bar{\\boldsymbol\\rho}\\times m\\mathbf a_{${n}} &= (${tq(A.IP)})(${tq(al)}) + \\big[(${tq(rho.x)})(${tq(maPV.y)}) - (${tq(rho.y)})(${tq(maPV.x)})\\big] = ${tq(A.IPal)} + ${kfParen(A.rxmaP)} = ${tq(A.IPal + A.rxmaP)}${TX.Nm}
+      \\end{aligned}`]);
+      secs.push(['⑤ 확인: 자유물체도 = 운동 선도', `\\textstyle\\sum M_{${n}} = ${tq(A.SMP)} \\;=\\; \\bar I\\alpha + \\bar{\\boldsymbol\\rho}\\times m\\bar{\\mathbf a} = ${tq(A.KD)} \\;=\\; I_{${n}}\\alpha + \\bar{\\boldsymbol\\rho}\\times m\\mathbf a_{${n}} = ${tq(A.IPal + A.rxmaP)}${TX.Nm}${good ? '\\ \\ \\checkmark' : ''}`]);
+      renderEqSections(box, secs, `kfmom|${q.key}|${mt.length}`);
+    }
+
+    function updateKfFbd(st) {
+      const vis = (key, id) => panelVisible(key) && !document.getElementById(id).classList.contains('collapsed');
+      const showFbd = vis('kffbd', 'panel-kf-fbd'), showMom = vis('kfmom', 'panel-kf-mom');
+      if (!showFbd && !showMom) return;
+      const F = kfFbdAnalysis(st);
+      if (showFbd) { kfFbdChips(F); drawKfFbd(st, F); }
+      if (showMom) {
+        const now = performance.now();
+        if (!state.isPlaying || now - kfMomLast > 150) { kfMomLast = now; updateKfMom(st, F); }
+      }
+    }
+
+    function bindKfFbd() {
+      if (!fbdCv) return;
+      const choose = key => { kn.fbd.pt = key; kfMomLast = 0; if (state.mode === 'kf') requestDraw(); };
+      document.getElementById('kf_fbd_pts').addEventListener('click', e => { const b = e.target.closest('[data-fbd-pt]'); if (b) choose(b.dataset.fbdPt); });
+      document.getElementById('kf_cmp_tb').addEventListener('click', e => { const tr = e.target.closest('tr[data-fbd-pt]'); if (tr) choose(tr.dataset.fbdPt); });
+      const segG = document.getElementById('kf_kd_G'), segP = document.getElementById('kf_kd_P');
+      const setKd = v => {
+        kn.fbd.kd = v;
+        segG.setAttribute('aria-pressed', String(v === 'G'));
+        segP.setAttribute('aria-pressed', String(v === 'P'));
+        if (state.mode === 'kf') requestDraw();
+      };
+      segG.addEventListener('click', () => setKd('G'));
+      segP.addEventListener('click', () => setKd('P'));
+      document.getElementById('kf_fbd_arm').addEventListener('change', e => { kn.fbd.arm = e.target.checked; if (state.mode === 'kf') requestDraw(); });
+      // Click / tap on either diagram: the point becomes P (snaps to a named point nearby); drag to move it
+      let dragging = false;
+      const pick = (e, snap) => {
+        const g = fbdGeom;
+        if (!g) return '';
+        const rc = fbdCv.getBoundingClientRect(), x = e.clientX - rc.left, y = e.clientY - rc.top;
+        const hf = g.halves.find(h => x >= h.x0 && x <= h.x0 + h.w && y >= h.y0 && y <= h.y0 + h.h);
+        if (!hf) return '';
+        const wp = { x: (x - hf.x0 - g.ox) / g.sc, y: (g.oy - (y - hf.y0)) / g.sc };
+        if (snap) {
+          let best = null, bd = 14;
+          g.pts.forEach(q => {
+            if (q.key === 'custom') return;
+            const d = Math.hypot(q.w.x - wp.x, q.w.y - wp.y) * g.sc;
+            if (d < bd) { bd = d; best = q; }
+          });
+          if (best) { kn.fbd.pt = best.key; return 'snap'; }
+        }
+        const pb = Vec.rot(Vec.sub(wp, g.G), -g.th);
+        kn.fbd.custom = { x: r3(pb.x), y: r3(pb.y) };
+        kn.fbd.pt = 'custom';
+        return 'custom';
+      };
+      fbdCv.addEventListener('pointerdown', e => {
+        if (e.button) return;
+        const r = pick(e, true);
+        if (!r) return;
+        dragging = r === 'custom';
+        if (dragging) { try { fbdCv.setPointerCapture(e.pointerId); } catch (err) { /* ignore */ } }
+        kfMomLast = 0;
+        requestDraw();
+      });
+      fbdCv.addEventListener('pointermove', e => { if (dragging && pick(e, false)) { kfMomLast = 0; requestDraw(); } });
+      fbdCv.addEventListener('pointerup', () => { dragging = false; });
+      fbdCv.addEventListener('pointercancel', () => { dragging = false; });
+      if (window.ResizeObserver) new ResizeObserver(() => { if (state.mode === 'kf') requestDraw(); }).observe(fbdCv.parentElement);
     }
 
     // ② Work · energy
@@ -7614,6 +8295,7 @@
       document.getElementById('kf_eq_pt').addEventListener('change', e => { kn.eqPt = e.target.value; kfEqLast = 0; if (isKn()) draw(); });
 
       document.querySelectorAll('[data-kn-preset]').forEach(b => b.addEventListener('click', () => applyKnPreset(b.dataset.knPreset)));
+      bindKfFbd();
       makeKnChart('kw', 'kw_chart', 'kw_tip', 'kw_legend', 'J');
       makeKnChart('ki1', 'ki_chart1', 'ki_tip1', 'ki_legend1', 'kg·m/s');
       makeKnChart('ki2', 'ki_chart2', 'ki_tip2', 'ki_legend2', 'kg·m²/s');
@@ -7621,7 +8303,7 @@
 
     /* ---------- Start-up of the CH05 ② / ③ and CH06 tabs ---------- */
     function initModes() {
-      Object.assign(onScreen, { linkres: true, linkeq: true, rotres: true, roteq: true, kfres: true, kfeq: true, kwres: true, kweq: true, kires: true, kieq: true });
+      Object.assign(onScreen, { linkres: true, linkeq: true, rotres: true, roteq: true, kffbd: true, kfmom: true, kfres: true, kfeq: true, kwres: true, kweq: true, kires: true, kieq: true });
       bindLinkUI();
       bindRotUI();
       bindKnUI();
